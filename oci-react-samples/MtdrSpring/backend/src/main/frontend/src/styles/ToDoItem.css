@@ -1,0 +1,42 @@
+/* Task Item */
+.task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding: 15px 20px;
+  }
+  
+  .task-item:last-child {
+    border-bottom: none;
+  }
+  
+  /* Task Name */
+  .task-name {
+    font-size: 16px;
+  }
+  
+  /* Timestamp */
+  .task-timestamp {
+    color: gray;
+    align-items: 'right';
+    font-size: 14px;
+  }
+  
+  /* Button */
+  .task-button {
+    background-color: white;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  
+  .task-button:hover {
+    background-color: #d9534f;
+  }
+
+  .task-button.clicked {
+    background-color: #a84932; /* Green color when clicked */
+  }
