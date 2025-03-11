@@ -67,17 +67,13 @@ public class EmployeeController {
     }
 
     @DeleteMapping(value = "employees/{id}")
-    public ResponseEntity<Employee> deleteEmployee(@PathVariable("id") int id){
+    public ResponseEntity<Boolean> deleteEmployee(@PathVariable("id") int id){
         Boolean flag = false; 
         try{
             flag = employeeService.deleteEmployee(id);
-            if(flag){
-                return new ResponseEntity<>(HttpStatus.OK);
-            }else{
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
+            return new ResponseEntity<>(flag, HttpStatus.OK);
         } catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(flag, HttpStatus.NOT_FOUND);
         }
     }
 }
