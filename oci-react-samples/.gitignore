@@ -27,6 +27,7 @@ hs_err_pid*
 
 # dependencies
 frontend/node_modules
+oci-react-samples\MtdrSpring\backend\src\main\frontend\node_modules
 frontend/.pnp
 .pnp.js
 
@@ -48,3 +49,7 @@ frontend/package-lock.json
 frontend/npm-debug.log*
 frontend/yarn-debug.log*
 frontend/yarn-error.log*
+
+# PDF
+*.pdf   // ignore all pdf files
+oci-react-samples\Delivery#1 (Requirements) (Luis).pdf // ignore specific pdf file
