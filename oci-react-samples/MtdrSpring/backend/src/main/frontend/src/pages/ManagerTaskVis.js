@@ -4,6 +4,7 @@ import '../styles/ManagerTaskVis.css';
 import React from 'react';
 import ToDoItem from "../components/ToDoItem";
 import ManagerModalTask from "../components/ManagerModalTask.js";
+import TaskCreation from "../components/TaskCreation";
 
 export default function ManagerTaskVis() {
     const [users] = useState([
@@ -12,36 +13,45 @@ export default function ManagerTaskVis() {
         { id: 3, name: 'Usuario 3' },
     ]);
 
-    const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
-    const [selectedTaskIndex, setSelectedTaskIndex] = useState(null); // Track selected task
-    const [modalAction, setModalAction] = useState(null); // To track if modal is saved or canceled
+    const [isTaskCreationModalOpen, setIsTaskCreationModalOpen] = useState(false); 
+    const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState(false);
+    const [selectedTaskIndex, setSelectedTaskIndex] = useState(null); 
+    const [modalAction, setModalAction] = useState(null); 
     const navigate = useNavigate();
 
-    const openModal = (index) => {
-        setIsModalOpen(true); // Open modal
-        setSelectedTaskIndex(index); // Select task when clicked
-        setModalAction(null); // Reset action before opening modal
+    const openTaskDetailsModal = (index) => {
+        setIsTaskDetailsModalOpen(true); 
+        setSelectedTaskIndex(index); 
+        setModalAction(null); 
     };
 
-    const closeModal = () => {
-        setIsModalOpen(false); // Close modal
+    const closeTaskDetailsModal = () => {
+        setIsTaskDetailsModalOpen(false); 
+    };
+
+    const openTaskCreationModal = () => {
+        setIsTaskCreationModalOpen(true);
+    };
+
+    const closeTaskCreationModal = () => {
+        setIsTaskCreationModalOpen(false);
     };
 
     const handleSaveClick = () => {
-        setModalAction('save'); // Set the action to save when Save is clicked
-        closeModal(); // Simply close the modal without interacting with ToDoItem
+        setModalAction('save'); 
+        closeTaskDetailsModal(); 
     };
 
     const handleCancelClick = () => {
-        setModalAction('cancel'); // Set the action to cancel when Cancel is clicked
-        closeModal(); // Close modal
+        setModalAction('cancel'); 
+        closeTaskDetailsModal(); 
     };
 
     return (
         <div className="mtvContainer">
             <div className="taskContainer">
                 <h1>TO DO LIST</h1>
-                <button className="addButton" onClick={() => navigate('../tc')}>
+                <button className="addButton" onClick={openTaskCreationModal}>
                     Create Task
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -55,23 +65,33 @@ export default function ManagerTaskVis() {
                     <ToDoItem
                         name="Task 1"
                         timestamp="2021-10-01"
-                        onClick={() => openModal(0)} // Open modal only when the task item is clicked
-                        shouldTrigger={modalAction !== 'save'} // Only trigger button if modal action is not save
+                        onClick={() => openTaskDetailsModal(0)} 
+                        shouldTrigger={modalAction !== 'save'} 
                     />
                     <ToDoItem
                         name="Task 2"
                         timestamp="2021-10-02"
-                        onClick={() => openModal(1)} // Open modal only when the task item is clicked
-                        shouldTrigger={modalAction !== 'save'} // Only trigger button if modal action is not save
+                        onClick={() => openTaskDetailsModal(1)} 
+                        shouldTrigger={modalAction !== 'save'} 
                     />
                 </div>
             ))}
 
-            {isModalOpen && (
+
+            {isTaskCreationModalOpen && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <TaskCreation onClose={closeTaskCreationModal} />
+                    </div>
+                </div>
+            )}
+
+
+            {isTaskDetailsModalOpen && (
                 <ManagerModalTask
-                    setOpen={closeModal}
-                    handleDoneClick={handleSaveClick} // Save button closes the modal
-                    handleCancelClick={handleCancelClick} // Cancel button closes the modal
+                    setOpen={closeTaskDetailsModal}
+                    handleDoneClick={handleSaveClick} 
+                    handleCancelClick={handleCancelClick} 
                 />
             )}
         </div>
