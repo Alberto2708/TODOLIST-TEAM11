@@ -6,7 +6,7 @@ export default function ManagerModalTask({ setOpen, handleDoneClick }) {
 
   const closeModal = () => {
     setModalOpen(false);
-    setOpen(false); // Close modal without triggering anything else
+    setOpen(false); 
   };
 
   return (
@@ -41,11 +41,9 @@ export default function ManagerModalTask({ setOpen, handleDoneClick }) {
               </div>
             </div>
             <div className="modal-footer">
-              {/* Save button now just closes the modal */}
               <button onClick={handleDoneClick} className="btn btn-danger">
                 Save
               </button>
-              {/* Cancel button just closes the modal */}
               <button onClick={closeModal} className="btn btn-cancel">
                 Cancel
               </button>
