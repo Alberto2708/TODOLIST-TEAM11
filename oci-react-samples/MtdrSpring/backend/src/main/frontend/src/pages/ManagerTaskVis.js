@@ -15,7 +15,7 @@ export default function ManagerTaskVis() {
     const navigate = useNavigate();
 
     return (
-        <div> 
+        <div className="mtvContainer"> 
             <div className="taskContainer">   
                 <h1>TO DO LIST</h1>
                 <button className="addButton" onClick={() => navigate('../tc')}>
