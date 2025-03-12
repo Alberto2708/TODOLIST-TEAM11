@@ -155,30 +155,53 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
 				firstRow.add(BotLabels.ADD_NEW_ITEM.getLabel());
 				keyboard.add(firstRow);
 
+				// Título grande "MY TO DO LIST"
 				KeyboardRow myTodoListTitleRow = new KeyboardRow();
-				myTodoListTitleRow.add(BotLabels.MY_TODO_LIST.getLabel());
+				myTodoListTitleRow.add("✦✦✦ MY TODO LIST ✦✦✦");
 				keyboard.add(myTodoListTitleRow);
+				
+				// Encabezados de columnas
+				KeyboardRow headerRow = new KeyboardRow();
+				headerRow.add("Description | Date | Status");
+				keyboard.add(headerRow);
 
 				List<ToDoItem> activeItems = allItems.stream().filter(item -> item.isDone() == false)
 						.collect(Collectors.toList());
 
 				for (ToDoItem item : activeItems) {
-
-					KeyboardRow currentRow = new KeyboardRow();
-					currentRow.add(item.getDescription());
-					currentRow.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.DONE.getLabel());
-					keyboard.add(currentRow);
+					// Primera fila: Descripción y fecha
+					KeyboardRow descriptionRow = new KeyboardRow();
+					String dateStr = "";
+					if (item.getCreation_ts() != null) {
+						dateStr = item.getCreation_ts().toLocalDate().toString();
+					}
+					descriptionRow.add(item.getDescription() + " | " + dateStr + " | □");
+					keyboard.add(descriptionRow);
+					
+					// Segunda fila: Opciones para marcar como completado
+					KeyboardRow actionsRow = new KeyboardRow();
+					actionsRow.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.DONE.getLabel());
+					keyboard.add(actionsRow);
 				}
 
 				List<ToDoItem> doneItems = allItems.stream().filter(item -> item.isDone() == true)
 						.collect(Collectors.toList());
 
 				for (ToDoItem item : doneItems) {
-					KeyboardRow currentRow = new KeyboardRow();
-					currentRow.add(item.getDescription());
-					currentRow.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.UNDO.getLabel());
-					currentRow.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.DELETE.getLabel());
-					keyboard.add(currentRow);
+					// Primera fila: Descripción y fecha
+					KeyboardRow descriptionRow = new KeyboardRow();
+					String dateStr = "";
+					if (item.getCreation_ts() != null) {
+						dateStr = item.getCreation_ts().toLocalDate().toString();
+					}
+					descriptionRow.add(item.getDescription() + " | " + dateStr + " | ✓");
+					keyboard.add(descriptionRow);
+					
+					// Segunda fila: Opciones para deshacer o eliminar
+					KeyboardRow actionsRow = new KeyboardRow();
+					actionsRow.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.UNDO.getLabel());
+					actionsRow.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.DELETE.getLabel());
+					keyboard.add(actionsRow);
 				}
 
 				// command back to main screen
@@ -190,7 +213,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
 
 				SendMessage messageToTelegram = new SendMessage();
 				messageToTelegram.setChatId(chatId);
-				messageToTelegram.setText(BotLabels.MY_TODO_LIST.getLabel());
+				messageToTelegram.setText("Tu lista de tareas");
 				messageToTelegram.setReplyMarkup(keyboardMarkup);
 
 				try {
