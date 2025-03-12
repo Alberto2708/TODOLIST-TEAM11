@@ -50,6 +50,10 @@ frontend/npm-debug.log*
 frontend/yarn-debug.log*
 frontend/yarn-error.log*
 
+<<<<<<< HEAD
 # PDF
 *.pdf   // ignore all pdf files
 oci-react-samples\Delivery#1 (Requirements) (Luis).pdf // ignore specific pdf file
+=======
+MtdrSpring/backend/src/main/resources/application.properties
+>>>>>>> origin/main

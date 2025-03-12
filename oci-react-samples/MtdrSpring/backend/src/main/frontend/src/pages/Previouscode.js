@@ -11,8 +11,8 @@
  * @author  jean.de.lavarene@oracle.com
  */
 import React, { useState, useEffect } from 'react';
-import NewItem from './NewItem';
-import API_LIST from './API';
+import NewItem from '../NewItem';
+import API_LIST from '../components/API';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, TableBody, CircularProgress } from '@mui/material';
 import Moment from 'react-moment';
@@ -185,7 +185,7 @@ function App() {
     }
     return (
       <div className="App">
-        <h1>MY TODO LIST</h1>
+        <h1>Pude</h1>
         <NewItem addItem={addItem} isInserting={isInserting}/>
         { error &&
           <p>Error: {error.message}</p>
