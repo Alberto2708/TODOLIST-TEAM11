@@ -1,22 +1,25 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import "../styles/ToDoItem.css";
 
-const ToDoItem = ({ name, timestamp }) => {
-    const [isClicked, setIsClicked] = useState(false);
+const ToDoItem = ({ name, timestamp, onClick, triggerClick }) => {
+  const [isClicked, setIsClicked] = useState(false);
+
+  React.useEffect(() => {
+    if (triggerClick) {
+      setIsClicked(true);
+    }
+  }, [triggerClick]);
 
   const handleClick = () => {
-    // Toggle the clicked state
     setIsClicked(!isClicked);
+    onClick(); 
   };
+
   return (
-    <div className="task-item">
+    <div className="task-item" onClick={handleClick}>
       <span className="task-name">{name}</span>
-      <span className="task-timestamp">{timestamp}</span> 
-      <button
-        className={`task-button ${isClicked ? 'clicked' : ''}`}
-        onClick={handleClick}
-      >
+      <span className="task-timestamp">{timestamp}</span>
+      <button className={`task-button ${isClicked ? "clicked" : ""}`}>
         ✔️
       </button>
     </div>
