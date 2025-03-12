@@ -33,7 +33,11 @@ public class EmployeeService {
     public List<Employee> findByManagerId(int managerId){
         List<Employee> employees = employeeRepository.findByManagerId(managerId);
         return employees;
+    }
 
+    public Employee findByEmail(String email){
+        Employee employee = employeeRepository.findByEmail(email);
+        return employee;
     }
 
     public ResponseEntity<Employee> getEmployeeById(int id){

@@ -15,4 +15,5 @@ import javax.transaction.Transactional;
 public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     List <Employee> findByProjectId(int projectId);
     List <Employee> findByManagerId(int managerId);
+    Employee findByEmail(String email);
 }

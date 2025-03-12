@@ -43,7 +43,16 @@ public class EmployeeController {
         }
     }
 
-    //If it aint working, delete <Employee>
+    @GetMapping(value = "/employees/{email}")
+    public ResponseEntity<Employee> getEmployeeByEmail(String email){
+        try{
+            Employee emp = employeeService.findByEmail(email);
+            return new ResponseEntity<Employee>(emp, HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @PostMapping(value = "/employees")
     public ResponseEntity addEmployee(@RequestBody Employee employee) throws Exception{
         Employee emp = employeeService.addEmployee(employee);
@@ -54,7 +63,6 @@ public class EmployeeController {
                 .headers(responseHeaders).build();
     }
 
-    //If it aint working, delete <Employee>
     @PutMapping(value = "employees/{id}")
     public ResponseEntity updateEmployee(@RequestBody Employee employee, @PathVariable int id) {
         try{
