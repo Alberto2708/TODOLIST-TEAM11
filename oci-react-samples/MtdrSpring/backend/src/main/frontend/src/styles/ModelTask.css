@@ -98,3 +98,20 @@
   .btn-cancel:hover {
     background-color: #c9302c;
   }
+
+  .modal-description {
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .modal-line {
+    display: flex;
+    justify-content: space-between; /* Pushes button to the right */
+    align-items: center;
+    margin-bottom: 10px; /* Adds spacing between lines */
+  }
+  
+  .modal-line button {
+    margin-left: 10px; /* Optional: Adjusts the space between text and the button */
+    margin-right: 0;
+  }
