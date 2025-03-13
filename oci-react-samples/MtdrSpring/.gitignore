@@ -6,3 +6,4 @@ Wallet/
 
 backend/src/main/resources/application.properties
 **/resources/**
+resources/application.properties
