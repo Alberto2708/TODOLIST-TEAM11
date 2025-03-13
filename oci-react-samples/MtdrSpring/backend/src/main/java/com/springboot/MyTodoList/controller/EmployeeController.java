@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.MyTodoList.model.Employee;
+import com.springboot.MyTodoList.model.EmployeeResponse;
 import com.springboot.MyTodoList.service.EmployeeService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,11 +44,21 @@ public class EmployeeController {
         }
     }
 
-    @GetMapping(value = "/employees/{email}")
-    public ResponseEntity<Employee> getEmployeeByEmail(String email){
+
+    //Post request for login
+    //Returns a EmployeeResponse object with the employeeId and managerId if the email and password are correct
+    //Returns a 401 status code if the password is incorrect
+    //Returns a 404 status code if the email is not found
+    @PostMapping(value = "/employees/{email}")
+    public ResponseEntity<EmployeeResponse> getEmployeeByEmail(String email, String password){
         try{
             Employee emp = employeeService.findByEmail(email);
-            return new ResponseEntity<Employee>(emp, HttpStatus.OK);
+            if (emp.getPassword().equals(password)){
+                EmployeeResponse response = new EmployeeResponse(emp.getID(), emp.getManagerId());
+                return new ResponseEntity<EmployeeResponse>(response, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
         } catch (Exception e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
