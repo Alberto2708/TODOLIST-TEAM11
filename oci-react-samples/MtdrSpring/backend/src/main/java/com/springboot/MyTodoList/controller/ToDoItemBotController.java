@@ -84,50 +84,67 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
 					logger.error(e.getLocalizedMessage(), e);
 				}
 
-			} else if (messageTextFromTelegram.indexOf(BotLabels.DONE.getLabel()) != -1) {
+			} else if (messageTextFromTelegram.indexOf(BotLabels.COMPLETED.getLabel()) != -1) {
 
-				String done = messageTextFromTelegram.substring(0,
+				String completed = messageTextFromTelegram.substring(0,
 						messageTextFromTelegram.indexOf(BotLabels.DASH.getLabel()));
-				Integer id = Integer.valueOf(done);
+				Integer id = Integer.valueOf(completed);
 
 				try {
 
 					ToDoItem item = getToDoItemById(id).getBody();
-					item.setDone(true);
+					item.setStatus("COMPLETED");
 					updateToDoItem(item, id);
-					BotHelper.sendMessageToTelegram(chatId, BotMessages.ITEM_DONE.getMessage(), this);
+					BotHelper.sendMessageToTelegram(chatId, BotMessages.ITEM_COMPLETED.getMessage(), this);
 
 				} catch (Exception e) {
 					logger.error(e.getLocalizedMessage(), e);
 				}
 
-			} else if (messageTextFromTelegram.indexOf(BotLabels.UNDO.getLabel()) != -1) {
+			} else if (messageTextFromTelegram.indexOf(BotLabels.PENDING.getLabel()) != -1) {
 
-				String undo = messageTextFromTelegram.substring(0,
+				String pending = messageTextFromTelegram.substring(0,
 						messageTextFromTelegram.indexOf(BotLabels.DASH.getLabel()));
-				Integer id = Integer.valueOf(undo);
+				Integer id = Integer.valueOf(pending);
 
 				try {
 
 					ToDoItem item = getToDoItemById(id).getBody();
-					item.setDone(false);
+					item.setStatus("PENDING");
 					updateToDoItem(item, id);
-					BotHelper.sendMessageToTelegram(chatId, BotMessages.ITEM_UNDONE.getMessage(), this);
+					BotHelper.sendMessageToTelegram(chatId, BotMessages.ITEM_PENDING.getMessage(), this);
 
 				} catch (Exception e) {
 					logger.error(e.getLocalizedMessage(), e);
 				}
 
-			} else if (messageTextFromTelegram.indexOf(BotLabels.DELETE.getLabel()) != -1) {
+			} else if (messageTextFromTelegram.indexOf(BotLabels.CANCELLED.getLabel()) != -1) {
 
-				String delete = messageTextFromTelegram.substring(0,
+				String cancelled = messageTextFromTelegram.substring(0,
 						messageTextFromTelegram.indexOf(BotLabels.DASH.getLabel()));
-				Integer id = Integer.valueOf(delete);
+				Integer id = Integer.valueOf(cancelled);
 
 				try {
 
 					deleteToDoItem(id).getBody();
-					BotHelper.sendMessageToTelegram(chatId, BotMessages.ITEM_DELETED.getMessage(), this);
+					BotHelper.sendMessageToTelegram(chatId, BotMessages.ITEM_CANCELLED.getMessage(), this);
+
+				} catch (Exception e) {
+					logger.error(e.getLocalizedMessage(), e);
+				}
+
+			} else if (messageTextFromTelegram.indexOf(BotLabels.REVIEWING.getLabel()) != -1) {
+
+				String reviewing = messageTextFromTelegram.substring(0,
+						messageTextFromTelegram.indexOf(BotLabels.DASH.getLabel()));
+				Integer id = Integer.valueOf(reviewing);
+
+				try {
+
+					ToDoItem item = getToDoItemById(id).getBody();
+					item.setStatus("PENDING");
+					updateToDoItem(item, id);
+					BotHelper.sendMessageToTelegram(chatId, BotMessages.ITEM_REVIEWING.getMessage(), this);
 
 				} catch (Exception e) {
 					logger.error(e.getLocalizedMessage(), e);
@@ -159,25 +176,48 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
 				myTodoListTitleRow.add(BotLabels.MY_TODO_LIST.getLabel());
 				keyboard.add(myTodoListTitleRow);
 
-				List<ToDoItem> activeItems = allItems.stream().filter(item -> item.isDone() == false)
+				// ---------- Filter items by status ----------
+				// COMPLETED
+				List<ToDoItem> completedItems = allItems.stream().filter(item -> item.getStatus() == "COMPLETED")
 						.collect(Collectors.toList());
 
-				for (ToDoItem item : activeItems) {
-
+				for (ToDoItem item : completedItems) {
 					KeyboardRow currentRow = new KeyboardRow();
 					currentRow.add(item.getDescription());
-					currentRow.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.DONE.getLabel());
+					currentRow.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.COMPLETED.getLabel());
 					keyboard.add(currentRow);
 				}
 
-				List<ToDoItem> doneItems = allItems.stream().filter(item -> item.isDone() == true)
+				// PENDING
+				List<ToDoItem> pendingItems = allItems.stream().filter(item -> item.getStatus() == "PENDING")
 						.collect(Collectors.toList());
 
-				for (ToDoItem item : doneItems) {
+				for (ToDoItem item : pendingItems) {
 					KeyboardRow currentRow = new KeyboardRow();
 					currentRow.add(item.getDescription());
-					currentRow.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.UNDO.getLabel());
-					currentRow.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.DELETE.getLabel());
+					currentRow.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.PENDING.getLabel());
+					keyboard.add(currentRow);
+				}
+
+				// CANCELLED
+				List<ToDoItem> cancelledItems = allItems.stream().filter(item -> item.getStatus() == "CANCELLED")
+						.collect(Collectors.toList());
+				
+				for (ToDoItem item : cancelledItems) {
+					KeyboardRow currentRow = new KeyboardRow();
+					currentRow.add(item.getDescription());
+					currentRow.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.CANCELLED.getLabel());
+					keyboard.add(currentRow);
+				}
+
+				// REVIEWING
+				List<ToDoItem> reviewingItems = allItems.stream().filter(item -> item.getStatus() == "REVIEWING")
+						.collect(Collectors.toList());
+				
+				for (ToDoItem item : reviewingItems) {
+					KeyboardRow currentRow = new KeyboardRow();
+					currentRow.add(item.getDescription());
+					currentRow.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.REVIEWING.getLabel());
 					keyboard.add(currentRow);
 				}
 
@@ -220,10 +260,15 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
 
 			else {
 				try {
+					// Create new ToDoItem
 					ToDoItem newItem = new ToDoItem();
+
+					// Set values
+					newItem.setStartDate(OffsetDateTime.now());
+					newItem.setStatus("PENDING");
 					newItem.setDescription(messageTextFromTelegram);
-					newItem.setCreation_ts(OffsetDateTime.now());
-					newItem.setDone(false);
+
+					// Add ToDoItem
 					ResponseEntity entity = addToDoItem(newItem);
 
 					SendMessage messageToTelegram = new SendMessage();

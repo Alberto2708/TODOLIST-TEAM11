@@ -3,14 +3,32 @@ package com.springboot.MyTodoList.util;
 public enum BotMessages {
 	
 	HELLO_MYTODO_BOT(
-	"Hello! I'm MyTodoList Bot!\nType a new todo item below and press the send button (blue arrow), or select an option below:"),
-	BOT_REGISTERED_STARTED("Bot registered and started succesfully!"),
-	ITEM_DONE("Item done! Select /todolist to return to the list of todo items, or /start to go to the main screen."), 
-	ITEM_UNDONE("Item undone! Select /todolist to return to the list of todo items, or /start to go to the main screen."), 
-	ITEM_DELETED("Item deleted! Select /todolist to return to the list of todo items, or /start to go to the main screen."),
-	TYPE_NEW_TODO_ITEM("Type a new todo item below and press the send button (blue arrow) on the rigth-hand side."),
-	NEW_ITEM_ADDED("New item added! Select /todolist to return to the list of todo items, or /start to go to the main screen."),
-	BYE("Bye! Select /start to resume!");
+		"Hi! I'm MyTodoList Bot. Use menu to select an option"
+		),
+	BOT_REGISTERED_STARTED(
+		"Bot registered and started succesfully!"
+		),
+	ITEM_COMPLETED(
+		"Completed! Use /todolist or /start to continue."
+		),
+	ITEM_PENDING(
+		"Task pending! Use /todolist or /start to continue."
+		), 
+	ITEM_CANCELLED(
+		"Task cancelled! Use /todolist or /start to continue."
+		),
+	ITEM_REVIEWING(
+		"Task under review! Use /todolist or /start to continue."
+		),
+	TYPE_NEW_TODO_ITEM(
+		"Type your new task and send it."
+		),
+	NEW_ITEM_ADDED(
+		"Task added! Use /todolist or /start to continue."
+		),
+	BYE(
+		"Bye! Use /start to resume!"
+		);
 
 	private String message;
 
