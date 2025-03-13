@@ -93,7 +93,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
 				try {
 
 					ToDoItem item = getToDoItemById(id).getBody();
-					item.setDone(true);
+					item.setStatus("Completed");
 					updateToDoItem(item, id);
 					BotHelper.sendMessageToTelegram(chatId, BotMessages.ITEM_DONE.getMessage(), this);
 
@@ -110,7 +110,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
 				try {
 
 					ToDoItem item = getToDoItemById(id).getBody();
-					item.setDone(false);
+					item.setStatus("Pending");
 					updateToDoItem(item, id);
 					BotHelper.sendMessageToTelegram(chatId, BotMessages.ITEM_UNDONE.getMessage(), this);
 
@@ -165,7 +165,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
 				headerRow.add("Description | Date | Status");
 				keyboard.add(headerRow);
 
-				List<ToDoItem> activeItems = allItems.stream().filter(item -> item.isDone() == false)
+				List<ToDoItem> activeItems = allItems.stream().filter(item -> !"Completed".equals(item.getStatus()))
 						.collect(Collectors.toList());
 
 				for (ToDoItem item : activeItems) {
@@ -180,11 +180,11 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
 					
 					// Segunda fila: Opciones para marcar como completado
 					KeyboardRow actionsRow = new KeyboardRow();
-					actionsRow.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.DONE.getLabel());
+					actionsRow.add(item.getId() + BotLabels.DASH.getLabel() + BotLabels.DONE.getLabel());
 					keyboard.add(actionsRow);
 				}
 
-				List<ToDoItem> doneItems = allItems.stream().filter(item -> item.isDone() == true)
+				List<ToDoItem> doneItems = allItems.stream().filter(item -> "Completed".equals(item.getStatus()))
 						.collect(Collectors.toList());
 
 				for (ToDoItem item : doneItems) {
@@ -199,8 +199,8 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
 					
 					// Segunda fila: Opciones para deshacer o eliminar
 					KeyboardRow actionsRow = new KeyboardRow();
-					actionsRow.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.UNDO.getLabel());
-					actionsRow.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.DELETE.getLabel());
+					actionsRow.add(item.getId() + BotLabels.DASH.getLabel() + BotLabels.UNDO.getLabel());
+					actionsRow.add(item.getId() + BotLabels.DASH.getLabel() + BotLabels.DELETE.getLabel());
 					keyboard.add(actionsRow);
 				}
 
@@ -246,7 +246,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
 					ToDoItem newItem = new ToDoItem();
 					newItem.setDescription(messageTextFromTelegram);
 					newItem.setCreation_ts(OffsetDateTime.now());
-					newItem.setDone(false);
+					newItem.setStatus("Pending");
 					ResponseEntity entity = addToDoItem(newItem);
 
 					SendMessage messageToTelegram = new SendMessage();
@@ -286,9 +286,9 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
 	public ResponseEntity addToDoItem(@RequestBody ToDoItem todoItem) throws Exception {
 		ToDoItem td = toDoItemService.addToDoItem(todoItem);
 		HttpHeaders responseHeaders = new HttpHeaders();
-		responseHeaders.set("location", "" + td.getID());
+		responseHeaders.set("location", "" + td.getId());
 		responseHeaders.set("Access-Control-Expose-Headers", "location");
-		// URI location = URI.create(""+td.getID())
+		// URI location = URI.create(""+td.getId())
 
 		return ResponseEntity.ok().headers(responseHeaders).build();
 	}

@@ -35,9 +35,9 @@ public class ToDoItemController {
     public ResponseEntity addToDoItem(@RequestBody ToDoItem todoItem) throws Exception{
         ToDoItem td = toDoItemService.addToDoItem(todoItem);
         HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("location",""+td.getID());
+        responseHeaders.set("location",""+td.getId());
         responseHeaders.set("Access-Control-Expose-Headers","location");
-        //URI location = URI.create(""+td.getID())
+        //URI location = URI.create(""+td.getId())
 
         return ResponseEntity.ok()
                 .headers(responseHeaders).build();
