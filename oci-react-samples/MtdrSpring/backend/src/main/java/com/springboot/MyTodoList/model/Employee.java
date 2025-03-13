@@ -17,7 +17,7 @@ public class Employee {
     @Column(name = "NAME")
     String name;
     @Column(name = "MANAGER_ID")
-    int managerId;
+    Integer managerId;
     @Column(name = "EMAIL")
     String email;
     @Column(name = "PASSWORD")
@@ -32,7 +32,7 @@ public class Employee {
     }
 
     //Full Constructor
-    public Employee(int ID, String name, int managerId, String email, String password, int projectId) {
+    public Employee(int ID, String name, Integer managerId, String email, String password, int projectId) {
         this.ID = ID;
         this.name = name;
         this.managerId = managerId;
@@ -59,11 +59,11 @@ public class Employee {
         this.name = name;
     }
 
-    public int getManagerId() {
+    public Integer getManagerId() {
         return managerId;
     }
 
-    public void setManagerId(int managerId) {
+    public void setManagerId(Integer managerId) {
         this.managerId = managerId;
     }
 
