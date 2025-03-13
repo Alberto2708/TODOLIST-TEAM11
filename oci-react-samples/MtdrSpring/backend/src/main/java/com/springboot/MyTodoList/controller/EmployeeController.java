@@ -49,7 +49,7 @@ public class EmployeeController {
     //Returns a EmployeeResponse object with the employeeId and managerId if the email and password are correct
     //Returns a 401 status code if the password is incorrect
     //Returns a 404 status code if the email is not found
-    @PostMapping(value = "/employees/{email}")
+    @PostMapping(value = "/employees/login")
     public ResponseEntity<EmployeeResponse> getEmployeeByEmail(String email, String password){
         try{
             Employee emp = employeeService.findByEmail(email);
