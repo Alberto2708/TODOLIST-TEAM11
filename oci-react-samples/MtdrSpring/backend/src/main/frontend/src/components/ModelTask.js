@@ -29,9 +29,6 @@ export default function ModalTask({ setOpen, handleDoneClick }) {
               </div>
             </div>
             <div className="modal-footer">
-              <button onClick={handleDoneClick} className="btn btn-danger">
-                Done
-              </button>
               <button onClick={closeModal} className="btn btn-cancel">
                 Cancel
               </button>
