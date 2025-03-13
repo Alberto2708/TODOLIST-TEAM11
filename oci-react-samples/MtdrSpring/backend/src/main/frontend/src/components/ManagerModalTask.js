@@ -15,37 +15,40 @@ export default function ManagerModalTask({ setOpen, handleDoneClick }) {
         <div className="modal-container">
           <div className="modal-content">
             <div className="modal-header">
-              <div className="icon-container">
-                <span className="info-symbol">ⓘ</span>
-              </div>
               <div className="header-text">
                 <h3 className="modal-title">Task Details</h3>
-                <div className="modal-description">
-                  <div className="modal-line">
-                    Name: <br />
-                    <button className="btn btn-cancel">Edit</button>
-                  </div>
-                  <div className="modal-line">
-                    Responsible: <br />
-                    <button className="btn btn-cancel">Edit</button>
-                  </div>
-                  <div className="modal-line">
-                    Description: <br />
-                    <button className="btn btn-cancel">Edit</button>
-                  </div>
-                  <div className="modal-line">
-                    Due date: <br />
-                    <button className="btn btn-cancel">Edit</button>
-                  </div>
+              </div>
+              <div className="close-btn" onClick={closeModal}>
+                <span className="cross-symbol">x</span>
+              </div>
+            </div>
+
+            <div className="modal-body">
+              <div className="modal-description">
+                <div className="modal-line">
+                  Name: <br />
+                  <button className="btn btn-cancel">Edit</button>
+                </div>
+                <div className="modal-line">
+                  Responsible: <br />
+                  <button className="btn btn-cancel">Edit</button>
+                </div>
+                <div className="modal-line">
+                  Description: <br />
+                  <button className="btn btn-cancel">Edit</button>
+                </div>
+                <div className="modal-line">
+                  Due date: <br />
+                  <button className="btn btn-cancel">Edit</button>
                 </div>
               </div>
             </div>
             <div className="modal-footer">
-              <button onClick={handleDoneClick} className="btn btn-danger">
+              <button className="btn btn-danger">
                 Save
               </button>
-              <button onClick={closeModal} className="btn btn-cancel">
-                Cancel
+              <button className="btn btn-cancel">
+                Delete
               </button>
             </div>
           </div>
