@@ -65,15 +65,13 @@ export default function ManagerTaskVis() {
                     <ToDoItem
                         name="Task 1"
                         timestamp="2021-10-01"
-                        onClick={() => openTaskDetailsModal(0)} 
-                        shouldTrigger={modalAction !== 'save'} 
-                    />
-                    <ToDoItem
+                        onClick={() => openTaskDetailsModal(0)} // Solo abre el modal de detalles
+                        />
+                        <ToDoItem
                         name="Task 2"
                         timestamp="2021-10-02"
-                        onClick={() => openTaskDetailsModal(1)} 
-                        shouldTrigger={modalAction !== 'save'} 
-                    />
+                        onClick={() => openTaskDetailsModal(1)} // Solo abre el modal de detalles
+                        />
                 </div>
             ))}
 
