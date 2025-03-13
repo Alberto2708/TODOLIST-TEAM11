@@ -25,22 +25,28 @@ public class EmployeeService {
         return employees;
     }
 
-    public List<Employee> findByProjectId(int projectId){
+    public List<Employee> findByProjectId(Integer projectId){
         List<Employee> employees = employeeRepository.findByProjectId(projectId);
         return employees;
     }
 
-    public List<Employee> findByManagerId(int managerId){
+    public List<Employee> findByManagerId(Integer managerId){
         List<Employee> employees = employeeRepository.findByManagerId(managerId);
         return employees;
     }
 
-    public Employee findByEmail(String email){
-        Employee employee = employeeRepository.findByEmail(email);
-        return employee;
+    public ResponseEntity<Employee> findEmployeeByEmail(String email){
+        try{
+            Employee emp = employeeRepository.findByEmail(email);
+        System.out.println(emp.toString());
+        return new ResponseEntity<> (emp, HttpStatus.OK);
+        }catch(Exception e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
-    public ResponseEntity<Employee> getEmployeeById(int id){
+
+    public ResponseEntity<Employee> findEmployeeById(Integer id){
         Optional<Employee> employeeData = employeeRepository.findById(id);
         if (employeeData.isPresent()){
             return new ResponseEntity<>(employeeData.get(), HttpStatus.OK);
@@ -48,11 +54,21 @@ public class EmployeeService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    public List<Employee> findEmployeeByProjectId(Integer projectId){
+        try{
+            List<Employee> employees = employeeRepository.findByProjectId(projectId);
+        return employees;
+        }catch(Exception e){
+            return null;
+        }
+    }
+
     public Employee addEmployee(Employee employee){
         return employeeRepository.save(employee);
     }
 
-    public boolean deleteEmployee(int id){
+    public boolean deleteEmployee(Integer id){
         try{
             employeeRepository.deleteById(id);
             return true;
@@ -61,7 +77,7 @@ public class EmployeeService {
         }
     }
 
-    public Employee updateEmployee(int id, Employee emp){
+    public Employee updateEmployee(Integer id, Employee emp){
         Optional<Employee> employeeData = employeeRepository.findById(id);
         if(employeeData.isPresent()){
             Employee employee = employeeData.get();

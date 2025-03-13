@@ -1,19 +1,19 @@
 package com.springboot.MyTodoList.model;
 
 public class EmployeeResponse {
-    public int employeeId;
+    public Integer employeeId;
     public Integer managerId;
 
-    public EmployeeResponse(int employeeId, Integer managerId) {
+    public EmployeeResponse(Integer employeeId, Integer managerId) {
         this.employeeId = employeeId;
         this.managerId = managerId;
     }
 
-    public int getEmployeeId() {
+    public Integer getEmployeeId() {
         return employeeId;
     }
 
-    public void setEmployeeId(int employeeId) {
+    public void setEmployeeId(Integer employeeId) {
         this.employeeId = employeeId;
     }
 

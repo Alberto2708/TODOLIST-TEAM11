@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.springboot.MyTodoList.model.Employee;
 import com.springboot.MyTodoList.model.EmployeeResponse;
 import com.springboot.MyTodoList.service.EmployeeService;
+import com.springboot.MyTodoList.model.LoginRequest;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -34,10 +36,20 @@ public class EmployeeController {
         return employeeService.findAll();
     }
 
-    @GetMapping(value = "/employees/{id}")
-    public ResponseEntity<Employee> getEmployeeById(int id){
+    @GetMapping(value = "/employees/projectId/{projectId}")
+    public List <Employee> getAllEmployeesByProjectId(@PathVariable Integer projectId) {
         try{
-            ResponseEntity <Employee> responseEntity  = employeeService.getEmployeeById(id);
+            return employeeService.findEmployeeByProjectId(projectId);
+        } catch (Exception e){
+            return null;
+        }
+    }
+    
+
+    @GetMapping(value = "/employees/{id}")
+    public ResponseEntity<Employee> getEmployeeById(@PathVariable Integer id){
+        try{
+            ResponseEntity <Employee> responseEntity  = employeeService.findEmployeeById(id);
             return new ResponseEntity <Employee> (responseEntity.getBody(), HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -50,22 +62,26 @@ public class EmployeeController {
     //Returns a 401 status code if the password is incorrect
     //Returns a 404 status code if the email is not found
     @PostMapping(value = "/employees/login")
-    public ResponseEntity<EmployeeResponse> getEmployeeByEmail(String email, String password){
+    public ResponseEntity<EmployeeResponse> getEmployeeByEmail(@RequestBody LoginRequest loginRequest){
         try{
-            Employee emp = employeeService.findByEmail(email);
-            if (emp.getPassword().equals(password)){
-                EmployeeResponse response = new EmployeeResponse(emp.getID(), emp.getManagerId());
+            ResponseEntity <Employee> emp = employeeService.findEmployeeByEmail(loginRequest.getEmail());
+            System.out.println(emp.toString());
+            if (emp.getBody().getPassword().equals(loginRequest.getPassword())){
+                EmployeeResponse response = new EmployeeResponse(emp.getBody().getID(), emp.getBody().getManagerId());
                 return new ResponseEntity<EmployeeResponse>(response, HttpStatus.OK);
             } else {
+                System.out.println("Incorrect password");
                 return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             }
         } catch (Exception e){
+            System.out.println(e);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping(value = "/employees")
     public ResponseEntity addEmployee(@RequestBody Employee employee) throws Exception{
+        System.out.print(employee.toString());
         Employee emp = employeeService.addEmployee(employee);
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("location", "" + emp.getID());
@@ -75,7 +91,7 @@ public class EmployeeController {
     }
 
     @PutMapping(value = "employees/{id}")
-    public ResponseEntity updateEmployee(@RequestBody Employee employee, @PathVariable int id) {
+    public ResponseEntity updateEmployee(@RequestBody Employee employee, @PathVariable Integer id) {
         try{
             Employee emp = employeeService.updateEmployee(id, employee);
             System.out.println(emp.toString());
@@ -86,7 +102,7 @@ public class EmployeeController {
     }
 
     @DeleteMapping(value = "employees/{id}")
-    public ResponseEntity<Boolean> deleteEmployee(@PathVariable("id") int id){
+    public ResponseEntity<Boolean> deleteEmployee(@PathVariable("id") Integer id){
         Boolean flag = false; 
         try{
             flag = employeeService.deleteEmployee(id);
