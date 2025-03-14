@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../styles/ToDoItem.css";
 
-const ToDoItem = ({ name, timestamp, onClick }) => {
+const ToDoItem = ({ name, timestamp, statusColor, taskStatus, onClick }) => {
   const [isClicked, setIsClicked] = useState(false);
 
   const handleTaskClick = () => {
@@ -17,11 +17,12 @@ const ToDoItem = ({ name, timestamp, onClick }) => {
     <div className="task-item" onClick={handleTaskClick}>
       <span className="task-name">{name}</span>
       <span className="task-timestamp">{timestamp}</span>
+      <span className="task-status" style={{ color: statusColor }}>{taskStatus}</span>
       <button
         className={`task-button ${isClicked ? "clicked" : ""}`}
         onClick={handleButtonClick}
       >
-        ✔️
+        ➕
       </button>
     </div>
   );
