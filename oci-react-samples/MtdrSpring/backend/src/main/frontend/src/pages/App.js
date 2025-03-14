@@ -9,7 +9,6 @@ const App = () => {
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/home" element={<h2>Welcome to Home Page</h2>} />
         <Route path="/usertasks" element= {<UserTaskVisualization/>} />
         <Route path="/managertasks" element= {<ManagerTaskVis/>} />
       </Routes>
