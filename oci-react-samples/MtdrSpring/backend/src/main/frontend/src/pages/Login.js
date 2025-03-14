@@ -29,6 +29,7 @@ function Login() {
                 const result = await response.json();
                 console.log("Login successful", result);
                 // Handle successful login, e.g., store token, redirect, etc.
+                localStorage.setItem("employeeId", result.employeeId);
 
                 if(result.managerId==null){
                     console.log("Manager login");
