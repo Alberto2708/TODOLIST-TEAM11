@@ -15,40 +15,49 @@ public class ToDoItemService {
 
     @Autowired
     private ToDoItemRepository toDoItemRepository;
-    public List<ToDoItem> findAll(){
+
+    public List<ToDoItem> findAll() {
         List<ToDoItem> todoItems = toDoItemRepository.findAll();
         return todoItems;
     }
-    public ResponseEntity<ToDoItem> getItemById(int id){
+
+    public ResponseEntity<ToDoItem> getItemById(Integer id) {
         Optional<ToDoItem> todoData = toDoItemRepository.findById(id);
-        if (todoData.isPresent()){
+        if (todoData.isPresent()) {
             return new ResponseEntity<>(todoData.get(), HttpStatus.OK);
-        }else{
+        } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    public ToDoItem addToDoItem(ToDoItem toDoItem){
+
+    public ToDoItem addToDoItem(ToDoItem toDoItem) {
         return toDoItemRepository.save(toDoItem);
     }
 
-    public boolean deleteToDoItem(int id){
-        try{
+    public boolean deleteToDoItem(Integer id) {
+        try {
             toDoItemRepository.deleteById(id);
             return true;
-        }catch(Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
-    public ToDoItem updateToDoItem(int id, ToDoItem td){
+
+    public ToDoItem updateToDoItem(Integer id, ToDoItem td) {
         Optional<ToDoItem> toDoItemData = toDoItemRepository.findById(id);
-        if(toDoItemData.isPresent()){
+        if (toDoItemData.isPresent()) {
             ToDoItem toDoItem = toDoItemData.get();
             toDoItem.setID(id);
-            toDoItem.setCreation_ts(td.getCreation_ts());
+            toDoItem.setName(td.getName());
+            toDoItem.setStatus(td.getStatus());
+            toDoItem.setManagerId(td.getManagerId());
+            toDoItem.setCompletionTs(td.getCompletionTs());
+            toDoItem.setStartDate(td.getStartDate());
+            toDoItem.setDeadline(td.getDeadline());
+            toDoItem.setProjectId(td.getProjectId());
             toDoItem.setDescription(td.getDescription());
-            toDoItem.setDone(td.isDone());
             return toDoItemRepository.save(toDoItem);
-        }else{
+        } else {
             return null;
         }
     }
