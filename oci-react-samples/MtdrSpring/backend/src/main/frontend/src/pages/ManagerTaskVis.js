@@ -14,6 +14,7 @@ export default function ManagerTaskVis() {
     const [employeeId, setEmployeeId] = useState(null);
     const [employees, setEmployees] = useState([]);
     const [tasks, setTasks] = useState({});
+    const [kpis, setKpis] = useState({});
     const [selectedTask, setSelectedTask] = useState(null);
     const navigate = useNavigate();
 
@@ -32,6 +33,7 @@ export default function ManagerTaskVis() {
             setEmployees(data);
             data.forEach(employee => {
                 fetchTasks(employee.id);
+                fetchKpi(employee.id);
             });
         } catch (error) {
             console.error("Error fetching employees:", error);
@@ -54,6 +56,21 @@ export default function ManagerTaskVis() {
         }
     };
 
+    const fetchKpi = async (assignedDevId) => {
+        try {
+            const response = await fetch(`/devassignedtasks/kpi/${assignedDevId}`);
+            if (response.ok) {
+                const text = await response.text();
+                const data = text ? JSON.parse(text) : null;
+                setKpis(prevKpis => ({ ...prevKpis, [assignedDevId]: data }));
+            } else {
+                console.error("Error fetching KPI:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error fetching KPIs:", error);
+        }
+    };
+
     const getStatusColor = (status) => {
         switch (status) {
             case "PENDING":
@@ -72,6 +89,15 @@ export default function ManagerTaskVis() {
         setSelectedTaskIndex(index); 
         setSelectedTask(tasks[employeeId][index]);
         setModalAction(null); 
+    };
+
+    const calculateKpi = (employeeId) => {
+        if(kpis[employeeId] === null) {
+            return "more information needed";
+        } 
+        else{
+            return kpis[employeeId];
+        }
     };
 
     const closeTaskDetailsModal = () => {
@@ -110,7 +136,7 @@ export default function ManagerTaskVis() {
 
             {employees.map((employee) => (
                 tasks[employee.id] && tasks[employee.id].length > 0 && (
-                    <div key={employee.id}>
+                    <div key={employee.id} className="employee-task-list">
                         <h2>{employee.name}'s to do list:</h2>
                         {tasks[employee.id].map((task, index) => (
                             <ToDoItem
@@ -123,6 +149,7 @@ export default function ManagerTaskVis() {
                                 userName={employee.name}
                             />
                         ))}
+                        <h3>Average days of completion before deadline: {calculateKpi(employee.id)}</h3>
                     </div>
                 )
             ))}
