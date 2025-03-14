@@ -30,7 +30,7 @@ export default function ManagerModalTask({ setOpen, handleDoneClick }) {
                   <button className="btn btn-cancel">Edit</button>
                 </div>
                 <div className="modal-line">
-                  Responsible: <br />
+                  Status: <br />
                   <button className="btn btn-cancel">Edit</button>
                 </div>
                 <div className="modal-line">

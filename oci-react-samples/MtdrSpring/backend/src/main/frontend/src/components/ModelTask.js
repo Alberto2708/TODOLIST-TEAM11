@@ -22,7 +22,7 @@ export default function ModalTask({ setOpen, handleDoneClick }) {
                 <h3 className="modal-title">Task Details</h3>
                 <p className="modal-description">
                   Name: <br />
-                  Responsible: <br />
+                  Status: <br />
                   Description: <br />
                   Due date:
                 </p>

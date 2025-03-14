@@ -1,15 +1,56 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/Login.css"; // Import the CSS file
-import "../components/API"; // Import the API file
+import EMPLOYEE_API from "../components/API"; // Import the API file
 
-const Login = () => {
+function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [isLoading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
-    const handleLogin = (e) => {
-        e.preventDefault();
-        console.log("Logging in with", email, password);
-    };
+    async function handleLogin(event) {
+        event.preventDefault();
+        console.log("handleLogin(" + email + ", " + password + ")");
+        setLoading(true);
+
+        const data = { email, password };
+
+        try {
+            const response = await fetch("employees/login", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log("Login successful", result);
+                // Handle successful login, e.g., store token, redirect, etc.
+                localStorage.setItem("employeeId", result.employeeId);
+
+                if(result.managerId==null){
+                    console.log("Manager login");
+                    navigate("/managertasks");
+                }
+                else{
+                    console.log("Employee login");
+                    navigate("/usertasks");
+                }
+            } else {
+                const error = await response.json();
+                console.error("Login failed", error);
+                // Handle login failure, e.g., show error message
+            }
+        } catch (error) {
+            console.error("Error during login", error);
+            // Handle network or other errors
+        } finally {
+            setLoading(false);
+        }
+    }
 
     return (
         <div className="login-container">
@@ -29,10 +70,10 @@ const Login = () => {
                     placeholder="Password" 
                     value={password} 
                     onChange={(e) => setPassword(e.target.value)}
-                    required 
-                    pattern="^(?=.*\d)[A-Za-z\d]{8,}$"
                 />
-                <button type="submit">Login</button>
+                <button type="submit" disabled={isLoading}>
+                    {isLoading ? "Logging in..." : "Login"}
+                </button>
             </form>
         </div>
     );
