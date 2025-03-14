@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.springboot.MyTodoList.model.Employee;
 import com.springboot.MyTodoList.model.EmployeeResponse;
 import com.springboot.MyTodoList.service.EmployeeService;
+
+import oracle.sql.TRANSDUMP;
+
 import com.springboot.MyTodoList.model.LoginRequest;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -53,6 +56,15 @@ public class EmployeeController {
             return new ResponseEntity <Employee> (responseEntity.getBody(), HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping(value = "/employees/managerId/{managerId}")
+    public List<Employee> getEmployeesByManagerId(@PathVariable Integer managerId) {
+        try{
+            return employeeService.findByManagerId(managerId);
+        } catch (Exception e){
+            return null;
         }
     }
 

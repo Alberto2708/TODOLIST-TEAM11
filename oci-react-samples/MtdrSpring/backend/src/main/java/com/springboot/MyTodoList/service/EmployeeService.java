@@ -31,8 +31,12 @@ public class EmployeeService {
     }
 
     public List<Employee> findByManagerId(Integer managerId){
-        List<Employee> employees = employeeRepository.findByManagerId(managerId);
-        return employees;
+        try{
+            List<Employee> employees = employeeRepository.findByManagerId(managerId);
+            return employees;
+        }catch(Exception e){
+            return null;
+        } 
     }
 
     public ResponseEntity<Employee> findEmployeeByEmail(String email){
