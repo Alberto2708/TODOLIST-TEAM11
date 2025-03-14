@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import '../styles/ManagerTaskVis.css';
 import React from 'react';
@@ -7,21 +7,70 @@ import ManagerModalTask from "../components/ManagerModalTask.js";
 import TaskCreation from "../components/TaskCreation";
 
 export default function ManagerTaskVis() {
-    const [users] = useState([
-        { id: 1, name: 'Usuario 1' },
-        { id: 2, name: 'Usuario 2' },
-        { id: 3, name: 'Usuario 3' },
-    ]);
-
     const [isTaskCreationModalOpen, setIsTaskCreationModalOpen] = useState(false); 
     const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState(false);
     const [selectedTaskIndex, setSelectedTaskIndex] = useState(null); 
     const [modalAction, setModalAction] = useState(null); 
+    const [employeeId, setEmployeeId] = useState(null);
+    const [employees, setEmployees] = useState([]);
+    const [tasks, setTasks] = useState({});
+    const [selectedTask, setSelectedTask] = useState(null);
     const navigate = useNavigate();
 
-    const openTaskDetailsModal = (index) => {
+    useEffect(() => {
+        const employeeId = localStorage.getItem("employeeId");
+        setEmployeeId(employeeId);
+        if (employeeId) {
+            fetchEmployees(employeeId);
+        }
+    }, []);
+
+    const fetchEmployees = async (managerId) => {
+        try {
+            const response = await fetch(`/employees/managerId/${managerId}`);
+            const data = await response.json();
+            setEmployees(data);
+            data.forEach(employee => {
+                fetchTasks(employee.id);
+            });
+        } catch (error) {
+            console.error("Error fetching employees:", error);
+        }
+    };
+
+    const fetchTasks = async (assignedDevId) => {
+        try {
+            const response = await fetch(`/devassignedtasks/${assignedDevId}`);
+            const data = await response.json();
+            const parsedTasks = data.map(item => ({
+                name: item.body.name,
+                deadline: new Date(item.body.deadline).toLocaleDateString(),
+                description: item.body.description,
+                status: item.body.status,
+            }));
+            setTasks(prevTasks => ({ ...prevTasks, [assignedDevId]: parsedTasks }));
+        } catch (error) {
+            console.error("Error fetching tasks:", error);
+        }
+    };
+
+    const getStatusColor = (status) => {
+        switch (status) {
+            case "PENDING":
+                return "orange";
+            case "COMPLETED":
+                return "green";
+            case "OVERDUE":
+                return "red";
+            default:
+                return "black";
+        }
+    };
+
+    const openTaskDetailsModal = (employeeId, index) => {
         setIsTaskDetailsModalOpen(true); 
         setSelectedTaskIndex(index); 
+        setSelectedTask(tasks[employeeId][index]);
         setModalAction(null); 
     };
 
@@ -59,22 +108,24 @@ export default function ManagerTaskVis() {
                 </button>
             </div>
 
-            {users.map(user => (
-                <div key={user.id} className="taskList">
-                    <h2>{user.name}'s to do list:</h2>
-                    <ToDoItem
-                        name="Task 1"
-                        timestamp="2021-10-01"
-                        onClick={() => openTaskDetailsModal(0)} // Solo abre el modal de detalles
-                        />
-                        <ToDoItem
-                        name="Task 2"
-                        timestamp="2021-10-02"
-                        onClick={() => openTaskDetailsModal(1)} // Solo abre el modal de detalles
-                        />
-                </div>
+            {employees.map((employee) => (
+                tasks[employee.id] && tasks[employee.id].length > 0 && (
+                    <div key={employee.id}>
+                        <h2>{employee.name}'s to do list:</h2>
+                        {tasks[employee.id].map((task, index) => (
+                            <ToDoItem
+                                key={index}
+                                name={task.name}
+                                timestamp={task.deadline}
+                                statusColor={getStatusColor(task.status)}
+                                taskStatus={task.status}
+                                onClick={() => openTaskDetailsModal(employee.id, index)}
+                                userName={employee.name}
+                            />
+                        ))}
+                    </div>
+                )
             ))}
-
 
             {isTaskCreationModalOpen && (
                 <div className="modal-overlay">
@@ -84,12 +135,12 @@ export default function ManagerTaskVis() {
                 </div>
             )}
 
-
-            {isTaskDetailsModalOpen && (
+            {isTaskDetailsModalOpen && selectedTask && (
                 <ManagerModalTask
                     setOpen={closeTaskDetailsModal}
                     handleDoneClick={handleSaveClick} 
                     handleCancelClick={handleCancelClick} 
+                    task={selectedTask} // Pass the selected task as a prop
                 />
             )}
         </div>

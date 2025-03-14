@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import "../styles/ModelTask.css";
 
-export default function ManagerModalTask({ setOpen, handleDoneClick }) {
+export default function ManagerModalTask({ setOpen, handleDoneClick, task }) {
   const [open, setModalOpen] = useState(true);
 
   const closeModal = () => {
@@ -26,19 +26,19 @@ export default function ManagerModalTask({ setOpen, handleDoneClick }) {
             <div className="modal-body">
               <div className="modal-description">
                 <div className="modal-line">
-                  Name: <br />
+                  Name: {task.name}<br />
                   <button className="btn btn-cancel">Edit</button>
                 </div>
                 <div className="modal-line">
-                  Status: <br />
+                  Status: {task.status}<br />
                   <button className="btn btn-cancel">Edit</button>
                 </div>
                 <div className="modal-line">
-                  Description: <br />
+                  Description: {task.description} <br />
                   <button className="btn btn-cancel">Edit</button>
                 </div>
                 <div className="modal-line">
-                  Due date: <br />
+                  Due date: {task.deadline}<br />
                   <button className="btn btn-cancel">Edit</button>
                 </div>
               </div>
