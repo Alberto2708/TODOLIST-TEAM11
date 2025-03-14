@@ -34,6 +34,7 @@ public class ToDoItemService {
         return toDoItemRepository.save(toDoItem);
     }
 
+
     public boolean deleteToDoItem(Integer id) {
         try {
             toDoItemRepository.deleteById(id);
@@ -48,18 +49,35 @@ public class ToDoItemService {
         if (toDoItemData.isPresent()) {
             ToDoItem toDoItem = toDoItemData.get();
             toDoItem.setID(id);
-            toDoItem.setName(td.getName());
-            toDoItem.setStatus(td.getStatus());
-            toDoItem.setManagerId(td.getManagerId());
-            toDoItem.setCompletionTs(td.getCompletionTs());
-            toDoItem.setStartDate(td.getStartDate());
-            toDoItem.setDeadline(td.getDeadline());
-            toDoItem.setProjectId(td.getProjectId());
-            toDoItem.setDescription(td.getDescription());
+            if (td.getName() != null){
+                toDoItem.setName(td.getName());
+            }
+            if (td.getStatus() != null){
+                toDoItem.setStatus(td.getStatus());
+            }
+            if (td.getManagerId() != null){
+                toDoItem.setManagerId(td.getManagerId());
+            }
+            if (td.getCompletionTs() != null){
+                toDoItem.setCompletionTs(td.getCompletionTs());
+            }
+            if (td.getStartDate() != null){
+                toDoItem.setStartDate(td.getStartDate());
+            }
+            if (td.getDeadline() != null){
+                toDoItem.setDeadline(td.getDeadline());
+            }
+            if (td.getProjectId() != null){
+                toDoItem.setProjectId(td.getProjectId());
+            }
+            if (td.getDescription() != null){
+                toDoItem.setDescription(td.getDescription());
+            }
             return toDoItemRepository.save(toDoItem);
         } else {
             return null;
         }
+
     }
 
 }
