@@ -47,11 +47,15 @@ public class DevAssignedTaskController {
     public Float getCompletionDaysMean(@PathVariable Integer assignedDevId) {
         try{
             List<DevAssignedTask>  assignedDev = devAssignedTaskService.getDevAssignedTasksByAssignedDevId(assignedDevId);
-            System.out.println(assignedDev.size());
+            //System.out.println(assignedDev.size()); // Return number of tasks assigned to the developer.
             List<ResponseEntity<ToDoItem>> tasks = new ArrayList<>();
             for(DevAssignedTask task : assignedDev){
-                System.out.println(task.getToDoItemId());
-                tasks.add(toDoItemService.getItemById(task.getToDoItemId()));
+                //System.out.println(task.getToDoItemId()); //Returns the task id
+                //System.out.println(toDoItemService.getItemById(task.getToDoItemId()).getBody().getStatus()); //Returns the status of the task
+                if (toDoItemService.getItemById(task.getToDoItemId()).getBody().getStatus().matches("COMPLETED")){
+                    tasks.add(toDoItemService.getItemById(task.getToDoItemId()));
+                    //System.out.println("Hello World from adding task!!!");
+                }
             }
             Float sum = 0.0f;
             for(ResponseEntity<ToDoItem> task : tasks){
