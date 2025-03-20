@@ -1,16 +1,14 @@
+//This model is the representation of the EMPLOYEE table that exists already in the autonomous database.
 package com.springboot.MyTodoList.model;
 
 import javax.persistence.*;
 
-/*
-    representation of the EMPLOYEE table that exists already
-    in the autonomous database
- */
 @Entity
 @Table(name = "EMPLOYEE")
 public class Employee {
 
     //Attributes
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer ID;

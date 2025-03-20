@@ -1,3 +1,5 @@
+//This model is the representation of the ToDoItem table that exists already in the autonomous database.
+
 package com.springboot.MyTodoList.model;
 
 import javax.persistence.*;
@@ -6,6 +8,8 @@ import java.time.OffsetDateTime;
 @Entity
 @Table(name = "TODOITEM")
 public class ToDoItem {
+
+    //Attributes
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer ID;
@@ -34,8 +38,10 @@ public class ToDoItem {
     @Column(name = "DESCRIPTION")
     String description;
 
+    //Empty Constructor
     public ToDoItem(){}
 
+    //Full Constructor
     public ToDoItem(Integer ID, String name, String status, Integer managerId, OffsetDateTime completionTs, OffsetDateTime startDate, OffsetDateTime deadline, Integer projectId, String description) {
         this.ID = ID;
         this.name = name;
@@ -47,6 +53,8 @@ public class ToDoItem {
         this.projectId = projectId;
         this.description = description;
     }
+
+    //Getters and setters
 
     public Integer getID() {
         return ID;
@@ -120,6 +128,8 @@ public class ToDoItem {
         this.description = description;
     }
 
+
+    //toString method override
     @Override
     public String toString() {
         return "ToDoItem{" +
