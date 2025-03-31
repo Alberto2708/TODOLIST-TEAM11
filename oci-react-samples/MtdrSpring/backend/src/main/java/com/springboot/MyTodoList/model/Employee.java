@@ -24,7 +24,7 @@ public class Employee {
     @Column(name = "PROJECT_ID")
     Integer projectId;
     @Column(name = "TELEGRAM_ID")
-    Integer telegramId;
+    Long telegramId;
 
 
     //Empty Constructor
@@ -33,7 +33,7 @@ public class Employee {
     }
 
     //Full Constructor
-    public Employee(Integer id, String name, Integer managerId, String email, String password, Integer projectId, Integer telegramId) {
+    public Employee(Integer id, String name, Integer managerId, String email, String password, Integer projectId, Long telegramId) {
         this.ID = id;
         this.name = name;
         this.managerId = managerId;
@@ -93,11 +93,11 @@ public class Employee {
         this.projectId = projectId;
     }
 
-    public Integer getTelegramId() {
+    public Long getTelegramId() {
         return telegramId;
     }
 
-    public void setTelegramId(Integer telegramId) {
+    public void setTelegramId(Long telegramId) {
         this.telegramId = telegramId;
     }
 
