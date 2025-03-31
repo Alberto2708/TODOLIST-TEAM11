@@ -12,6 +12,7 @@ public class ToDoItem {
     //Attributes
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "TODOITEM_ID")
     Integer ID;
     
     @Column(name = "NAME")
@@ -32,17 +33,20 @@ public class ToDoItem {
     @Column(name = "DEADLINE")
     OffsetDateTime deadline;
     
-    @Column(name = "PROJECT_ID")
+    @Column(name = "SPRINT_ID")
     Integer projectId;
     
     @Column(name = "DESCRIPTION")
     String description;
+    
+    @Column(name = "EST_HOURS")
+    Integer estHours;
 
     //Empty Constructor
     public ToDoItem(){}
 
     //Full Constructor
-    public ToDoItem(Integer ID, String name, String status, Integer managerId, OffsetDateTime completionTs, OffsetDateTime startDate, OffsetDateTime deadline, Integer projectId, String description) {
+    public ToDoItem(Integer ID, String name, String status, Integer managerId, OffsetDateTime completionTs, OffsetDateTime startDate, OffsetDateTime deadline, Integer projectId, String description, Integer estHours) {
         this.ID = ID;
         this.name = name;
         this.status = status;
@@ -52,6 +56,7 @@ public class ToDoItem {
         this.deadline = deadline;
         this.projectId = projectId;
         this.description = description;
+        this.estHours = estHours;
     }
 
     //Getters and setters
@@ -128,6 +133,14 @@ public class ToDoItem {
         this.description = description;
     }
 
+    public Integer getEstHours() {
+        return estHours;
+    }
+
+    public void setEstHours(Integer estHours) {
+        this.estHours = estHours;
+    }
+
 
     //toString method override
     @Override
@@ -142,6 +155,7 @@ public class ToDoItem {
                 ", deadline=" + deadline + '\n' +
                 ", projectId=" + projectId + '\n' +
                 ", description='" + description + '\n' +
+                ", estHours=" + estHours + '\n' +
                 '}';
     }
 }
