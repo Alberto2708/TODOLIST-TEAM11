@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -77,7 +76,6 @@ public class EmployeeController {
     public ResponseEntity<EmployeeResponse> getEmployeeByEmail(@RequestBody LoginRequest loginRequest){
         try{
             ResponseEntity <Employee> emp = employeeService.findEmployeeByEmail(loginRequest.getEmail());
-            System.out.println(emp.toString());
             if (emp.getBody().getPassword().equals(loginRequest.getPassword())){
                 EmployeeResponse response = new EmployeeResponse(emp.getBody().getID(), emp.getBody().getManagerId());
                 return new ResponseEntity<EmployeeResponse>(response, HttpStatus.OK);
@@ -106,12 +104,13 @@ public class EmployeeController {
     public ResponseEntity updateEmployee(@RequestBody Employee employee, @PathVariable Integer id) {
         try{
             Employee emp = employeeService.updateEmployee(id, employee);
-            System.out.println(emp.toString());
             return new ResponseEntity<>(emp, HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
+
+    //Add a PutMapping to add employees telegram id
 
     @DeleteMapping(value = "employees/{id}")
     public ResponseEntity<Boolean> deleteEmployee(@PathVariable("id") Integer id){

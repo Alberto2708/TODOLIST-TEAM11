@@ -11,6 +11,7 @@ public class Employee {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "EMPLOYEE_ID")
     Integer ID;
     @Column(name = "NAME")
     String name;
@@ -22,6 +23,8 @@ public class Employee {
     String password;
     @Column(name = "PROJECT_ID")
     Integer projectId;
+    @Column(name = "TELEGRAM_ID")
+    Integer telegramId;
 
 
     //Empty Constructor
@@ -30,13 +33,14 @@ public class Employee {
     }
 
     //Full Constructor
-    public Employee(Integer id, String name, Integer managerId, String email, String password, Integer projectId) {
+    public Employee(Integer id, String name, Integer managerId, String email, String password, Integer projectId, Integer telegramId) {
         this.ID = id;
         this.name = name;
         this.managerId = managerId;
         this.email = email;
         this.password = password;
         this.projectId = projectId;
+        this.telegramId = telegramId;
     }
     
     //Getters and setters
@@ -89,6 +93,13 @@ public class Employee {
         this.projectId = projectId;
     }
 
+    public Integer getTelegramId() {
+        return telegramId;
+    }
+
+    public void setTelegramId(Integer telegramId) {
+        this.telegramId = telegramId;
+    }
 
     //toString method override
     @Override
@@ -99,7 +110,8 @@ public class Employee {
                 ", managerId=" + managerId +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", projectId=" + projectId +
+                ", projectId='" + projectId + '\'' +
+                ", telegramId=" + telegramId + 
                 '}';
     }
 

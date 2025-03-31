@@ -42,7 +42,6 @@ public class EmployeeService {
     public ResponseEntity<Employee> findEmployeeByEmail(String email){
         try{
             Employee emp = employeeRepository.findByEmail(email);
-        System.out.println(emp.toString());
         return new ResponseEntity<> (emp, HttpStatus.OK);
         }catch(Exception e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -72,6 +71,9 @@ public class EmployeeService {
         return employeeRepository.save(employee);
     }
 
+
+
+        //It must not delete the Employee, just change the status
     public boolean deleteEmployee(Integer id){
         try{
             employeeRepository.deleteById(id);
@@ -86,11 +88,25 @@ public class EmployeeService {
         if(employeeData.isPresent()){
             Employee employee = employeeData.get();
             employee.setID(id);
-            employee.setName(emp.getName());
-            employee.setManagerId(emp.getManagerId());
-            employee.setEmail(emp.getEmail());
-            employee.setPassword(emp.getPassword());
-            employee.setProjectId(emp.getProjectId());
+
+            if (emp.getName() != null){
+                employee.setName(emp.getName());
+            }
+            if (emp.getManagerId() != null){
+                employee.setManagerId(emp.getManagerId());
+            }
+            if (emp.getEmail() != null){
+                employee.setEmail(emp.getEmail());
+            }
+            if (emp.getPassword() != null){
+                employee.setPassword(emp.getPassword());
+            }
+            if (emp.getProjectId() != null){
+                employee.setProjectId(emp.getProjectId());
+            }
+            if (emp.getTelegramId() != null){
+                employee.setTelegramId(emp.getTelegramId());
+            }
             return employeeRepository.save(employee);
         }else{
             return null;
