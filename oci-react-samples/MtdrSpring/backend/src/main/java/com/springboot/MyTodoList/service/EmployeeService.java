@@ -112,4 +112,18 @@ public class EmployeeService {
             return null;
         }
     }
+
+    public Boolean isEmployeeTelegramIdExists(Integer id){
+        try{
+            Employee emp = employeeRepository.findById(id).get();
+            if (emp.getTelegramId() != null){
+                return true;
+            } else {
+                return false;
+            }
+        }catch(Exception e){
+            return false;
+        }
+    }
+
 }

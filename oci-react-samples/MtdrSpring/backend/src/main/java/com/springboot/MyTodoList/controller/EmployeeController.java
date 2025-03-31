@@ -89,6 +89,22 @@ public class EmployeeController {
         }
     }
 
+    //Post request to validate if employee has telegram Id
+    
+    @PostMapping(value = "/employees/telegramId/{employeeId}")
+    public ResponseEntity<Boolean> getEmployeeByTelegramId(@PathVariable Integer employeeId){
+        try{
+            Boolean res = employeeService.isEmployeeTelegramIdExists(employeeId);
+            if (res == true){
+                return new ResponseEntity<>(true, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(false, HttpStatus.OK);
+            }
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @PostMapping(value = "/employees")
     public ResponseEntity addEmployee(@RequestBody Employee employee) throws Exception{
         //System.out.print(employee.toString());
@@ -109,8 +125,6 @@ public class EmployeeController {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
-
-    //Add a PutMapping to add employees telegram id
 
     @DeleteMapping(value = "employees/{id}")
     public ResponseEntity<Boolean> deleteEmployee(@PathVariable("id") Integer id){
