@@ -91,7 +91,7 @@ public class EmployeeController {
 
     @PostMapping(value = "/employees")
     public ResponseEntity addEmployee(@RequestBody Employee employee) throws Exception{
-        System.out.print(employee.toString());
+        //System.out.print(employee.toString());
         Employee emp = employeeService.addEmployee(employee);
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("location", "" + emp.getID());

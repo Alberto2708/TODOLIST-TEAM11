@@ -7,7 +7,7 @@ import java.util.Objects;
 import javax.persistence.*;
 
 @Embeddable
-public class DevAssignedTaskId implements Serializable {
+public class AssignedDevId implements Serializable {
 
     //Attributes
 
@@ -16,16 +16,16 @@ public class DevAssignedTaskId implements Serializable {
     @Column(name = "TODOITEM_ID")
     private Integer toDoItemId;
 
-    @Column(name = "ASSIGNED_DEV_ID")
-    private Integer assignedDevId;
+    @Column(name = "EMPLOYEE_ID")
+    private Integer employeeId;
 
 
     //Constructors
-    public DevAssignedTaskId() {}
+    public AssignedDevId() {}
 
-    public DevAssignedTaskId(Integer toDoItemId, Integer assignedDevId) {
+    public AssignedDevId(Integer toDoItemId, Integer employeeId) {
         this.toDoItemId = toDoItemId;
-        this.assignedDevId = assignedDevId;
+        this.employeeId = employeeId;
     }
 
     // Getters and Setters
@@ -38,12 +38,12 @@ public class DevAssignedTaskId implements Serializable {
         this.toDoItemId = toDoItemId;
     }
 
-    public Integer getAssignedDevId() {
-        return assignedDevId;
+    public Integer getEmployeeId() {
+        return employeeId;
     }
 
-    public void setAssignedDevId(Integer assignedDevId) {
-        this.assignedDevId = assignedDevId;
+    public void setEmployeeId(Integer employeeId) {
+        this.employeeId = employeeId;
     }
 
 
@@ -53,14 +53,14 @@ public class DevAssignedTaskId implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        DevAssignedTaskId that = (DevAssignedTaskId) o;
-        return Objects.equals(toDoItemId, that.toDoItemId) && Objects.equals(assignedDevId, that.assignedDevId);
+        AssignedDevId that = (AssignedDevId) o;
+        return Objects.equals(toDoItemId, that.toDoItemId) && Objects.equals(employeeId, that.employeeId);
     }
 
     //hashCode() function override
     
     @Override
     public int hashCode() {
-        return Objects.hash(toDoItemId, assignedDevId);
+        return Objects.hash(toDoItemId, employeeId);
     }
 }

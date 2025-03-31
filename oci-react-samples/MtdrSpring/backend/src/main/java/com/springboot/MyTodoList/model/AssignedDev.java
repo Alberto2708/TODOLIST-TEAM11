@@ -7,30 +7,30 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "DEVASSIGNEDTASK")
-public class DevAssignedTask implements Serializable {
+@Table(name = "ASSIGNEDDEV")
+public class AssignedDev implements Serializable {
     //Attributes
 
     @EmbeddedId
-    private DevAssignedTaskId id;
+    private AssignedDevId id;
 
 
     //Constructors
 
-    public DevAssignedTask() {}
+    public AssignedDev() {}
 
-    public DevAssignedTask(DevAssignedTaskId id) {
+    public AssignedDev(AssignedDevId id) {
         this.id = id;
     }
 
 
     //Getters and Setters
 
-    public DevAssignedTaskId getId() {
+    public AssignedDevId getId() {
         return id;
     }
 
-    public void setId(DevAssignedTaskId id) {
+    public void setId(AssignedDevId id) {
         this.id = id;
     }
 
@@ -43,11 +43,11 @@ public class DevAssignedTask implements Serializable {
     }
 
     public Integer getAssignedDevId() {
-        return id.getAssignedDevId();
+        return id.getEmployeeId();
     }
 
     public void setAssignedDevId(Integer assignedDevId) {
-        id.setAssignedDevId(assignedDevId);
+        id.setEmployeeId(assignedDevId);
     }
 
 
@@ -57,7 +57,7 @@ public class DevAssignedTask implements Serializable {
     public String toString() {
         return "DevAssignedTask{" +
                 "toDoItemId=" + id.getToDoItemId() + '\n' +
-                ", assignedDevId='" + id.getAssignedDevId() + '\n' +
+                ", assignedDevId='" + id.getEmployeeId() + '\n' +
                 '}';
     }
 }

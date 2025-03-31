@@ -34,7 +34,7 @@ public class ToDoItem {
     OffsetDateTime deadline;
     
     @Column(name = "SPRINT_ID")
-    Integer projectId;
+    Integer sprintId;
     
     @Column(name = "DESCRIPTION")
     String description;
@@ -46,7 +46,7 @@ public class ToDoItem {
     public ToDoItem(){}
 
     //Full Constructor
-    public ToDoItem(Integer ID, String name, String status, Integer managerId, OffsetDateTime completionTs, OffsetDateTime startDate, OffsetDateTime deadline, Integer projectId, String description, Integer estHours) {
+    public ToDoItem(Integer ID, String name, String status, Integer managerId, OffsetDateTime completionTs, OffsetDateTime startDate, OffsetDateTime deadline, Integer sprintId, String description, Integer estHours) {
         this.ID = ID;
         this.name = name;
         this.status = status;
@@ -54,7 +54,7 @@ public class ToDoItem {
         this.completionTs = completionTs;
         this.startDate = startDate;
         this.deadline = deadline;
-        this.projectId = projectId;
+        this.sprintId = sprintId;
         this.description = description;
         this.estHours = estHours;
     }
@@ -118,11 +118,11 @@ public class ToDoItem {
     }
 
     public Integer getProjectId() {
-        return projectId;
+        return sprintId;
     }
 
-    public void setProjectId(Integer projectId) {
-        this.projectId = projectId;
+    public void setProjectId(Integer sprintId) {
+        this.sprintId = sprintId;
     }
 
     public String getDescription() {
@@ -153,7 +153,7 @@ public class ToDoItem {
                 ", completionTs=" + completionTs + '\n' +
                 ", startDate=" + startDate + '\n' +
                 ", deadline=" + deadline + '\n' +
-                ", projectId=" + projectId + '\n' +
+                ", sprintId=" + sprintId + '\n' +
                 ", description='" + description + '\n' +
                 ", estHours=" + estHours + '\n' +
                 '}';
