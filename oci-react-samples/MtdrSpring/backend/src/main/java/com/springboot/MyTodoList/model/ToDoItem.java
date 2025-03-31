@@ -117,11 +117,11 @@ public class ToDoItem {
         this.deadline = deadline;
     }
 
-    public Integer getProjectId() {
+    public Integer getSprintId() {
         return sprintId;
     }
 
-    public void setProjectId(Integer sprintId) {
+    public void setSprintId(Integer sprintId) {
         this.sprintId = sprintId;
     }
 

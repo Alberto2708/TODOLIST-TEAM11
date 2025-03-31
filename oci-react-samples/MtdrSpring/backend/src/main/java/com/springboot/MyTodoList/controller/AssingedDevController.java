@@ -6,8 +6,10 @@ import com.springboot.MyTodoList.model.ToDoItem;
 
 import com.springboot.MyTodoList.model.AssignedDev;
 import com.springboot.MyTodoList.model.AssignedDevId;
+import com.springboot.MyTodoList.model.SubToDoItem;
 import com.springboot.MyTodoList.service.AssignedDevService;
 import com.springboot.MyTodoList.service.ToDoItemService;
+import com.springboot.MyTodoList.service.SubToDoItemService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.http.HttpHeaders;
@@ -30,6 +32,8 @@ public class AssingedDevController {
     private AssignedDevService assignedDevService;
     @Autowired
     private ToDoItemService toDoItemService;
+    @Autowired
+    private SubToDoItemService subToDoItemService;
 
 
     @GetMapping(value = "/devassignedtasks")
@@ -41,10 +45,10 @@ public class AssingedDevController {
     @GetMapping(value = "/devassignedtasks/{assignedDevId}")
     public List<ResponseEntity<ToDoItem>> getDevAssignedTasksByAssignedDevId(@PathVariable Integer assignedDevId) {
         try{
-            List<AssignedDev>  assignedDev = assignedDevService.getAssignedDevsByDevId(assignedDevId);
-            System.out.println(assignedDev.size());
+            List<AssignedDev>  assignedDevs = assignedDevService.getAssignedDevsByDevId(assignedDevId);
+            System.out.println(assignedDevs.size());
             List<ResponseEntity<ToDoItem>> tasks = new ArrayList<>();
-            for(AssignedDev task : assignedDev){
+            for(AssignedDev task : assignedDevs){
                 System.out.println(task.getToDoItemId());
                 tasks.add(toDoItemService.getItemById(task.getToDoItemId()));
             }
@@ -54,6 +58,49 @@ public class AssingedDevController {
             return null;
         }
     }
+
+    //Get assigned tasks by developer id and sprint id
+    @GetMapping(value = "/devassignedtasks/{assignedDevId}/sprint/{sprintId}")
+    public List<ResponseEntity<ToDoItem>> getAssignedTasksByAssignedDevAndSprint(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
+        try{
+            List<AssignedDev>  assignedDevs = assignedDevService.getAssignedDevsByDevId(assignedDevId);
+            System.out.println(assignedDevs.size());
+            List<ResponseEntity<ToDoItem>> tasks = new ArrayList<>();
+            for(AssignedDev task : assignedDevs){
+                if (toDoItemService.getItemById(task.getToDoItemId()).getBody().getSprintId() == sprintId){
+                    tasks.add(toDoItemService.getItemById(task.getToDoItemId()));
+                }
+            }
+            return tasks;
+        }catch(Exception e){
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    //Get father tasks by developer id and sprint id
+    @GetMapping(value = "/devassignedtasks/{assignedDevId}/sprint/{sprintId}/father")
+    public List<ResponseEntity<ToDoItem>> getAssignedTasksByAssignedDevAndSprintFather(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
+        try{
+            List<AssignedDev>  assignedDevs = assignedDevService.getAssignedDevsByDevId(assignedDevId);
+            System.out.println(assignedDevs.size());
+            List<ResponseEntity<ToDoItem>> tasks = new ArrayList<>();
+            for(AssignedDev task : assignedDevs){
+                //Add logic for subtasks verification
+                if (toDoItemService.getItemById(task.getToDoItemId()).getBody().getSprintId() == sprintId ){
+                    if (subToDoItemService.checkIfIdIsntSubToDoItem(task.getToDoItemId())){
+                        tasks.add(toDoItemService.getItemById(task.getToDoItemId()));
+                    }
+                }
+            }
+            return tasks;
+        }catch(Exception e){
+            System.out.println(e);
+            return null;
+        }
+    }
+
+
 
 
     //Debe calcular el promedio de dias que le sobra a un desarrollador para terminar sus tareas asignadas

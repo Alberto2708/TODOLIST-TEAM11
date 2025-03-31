@@ -67,8 +67,8 @@ public class ToDoItemService {
             if (td.getDeadline() != null){
                 toDoItem.setDeadline(td.getDeadline());
             }
-            if (td.getProjectId() != null){
-                toDoItem.setProjectId(td.getProjectId());
+            if (td.getSprintId() != null){
+                toDoItem.setSprintId(td.getSprintId());
             }
             if (td.getDescription() != null){
                 toDoItem.setDescription(td.getDescription());
