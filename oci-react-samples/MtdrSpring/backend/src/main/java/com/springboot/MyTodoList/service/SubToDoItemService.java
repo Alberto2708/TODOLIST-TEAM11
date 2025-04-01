@@ -22,4 +22,12 @@ public class SubToDoItemService {
             return null;
         }
     }
+
+    public List<Integer> findAllSubToDoItemsByToDoItemId(Integer toDoItemId){
+        try{
+            return subToDoItemRepository.findAllSubToDoItemIdsByToDoItemId(toDoItemId);
+        }catch(Exception e){
+            return null;
+        }
+    }
 }

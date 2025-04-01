@@ -22,4 +22,7 @@ import com.springboot.MyTodoList.model.SubToDoItemId;
 public interface SubToDoItemRepository extends JpaRepository<SubToDoItem, SubToDoItemId> {
     @Query("SELECT d FROM SubToDoItem d WHERE d.id.subToDoItemId = :subToDoItemId")
     List<SubToDoItem> findBySubToDoItemId(Integer subToDoItemId);
+
+    @Query("SELECT d.id.subToDoItemId FROM SubToDoItem d WHERE d.id.toDoItemId = :toDoItemId")
+    List<Integer> findAllSubToDoItemIdsByToDoItemId(@Param("toDoItemId") Integer toDoItemId);
 }
