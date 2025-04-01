@@ -77,7 +77,7 @@ public class EmployeeController {
         try{
             ResponseEntity <Employee> emp = employeeService.findEmployeeByEmail(loginRequest.getEmail());
             if (emp.getBody().getPassword().equals(loginRequest.getPassword())){
-                EmployeeResponse response = new EmployeeResponse(emp.getBody().getID(), emp.getBody().getManagerId());
+                EmployeeResponse response = new EmployeeResponse(emp.getBody().getID(), emp.getBody().getManagerId(), emp.getBody().getProjectId());
                 return new ResponseEntity<EmployeeResponse>(response, HttpStatus.OK);
             } else {
                 System.out.println("Incorrect password");

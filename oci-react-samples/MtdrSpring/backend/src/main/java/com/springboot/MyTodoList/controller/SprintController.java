@@ -34,8 +34,8 @@ public class SprintController {
         }
     }
 
-    @GetMapping(value = "sprint/project/{projectId}")
-    public List<Sprint> getSprintsByTeamId(@PathVariable Integer projectId) {
+    @GetMapping(value = "sprint/projects/{projectId}")
+    public List<Sprint> getSprintsByProjectId(@PathVariable Integer projectId) {
         try{
             List<Sprint> sprints = sprintService.findSprintsByProjectId(projectId);
             return sprints;
@@ -43,6 +43,8 @@ public class SprintController {
             return null;
         }
     }
+
+    //@GetMapping(value = "sprint/project/{projectId}")
     
     @PostMapping(value="/sprint")
     public ResponseEntity addSprint(@RequestBody Sprint sprint) throws Exception{
