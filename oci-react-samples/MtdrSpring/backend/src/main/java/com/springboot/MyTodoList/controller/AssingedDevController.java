@@ -36,13 +36,13 @@ public class AssingedDevController {
     private SubToDoItemService subToDoItemService;
 
 
-    @GetMapping(value = "/devassignedtasks")
+    @GetMapping(value = "/assignedDev")
     public List<AssignedDev> getAllDevAssignedTasks() {
         return assignedDevService.findAll();
     }
     
 
-    @GetMapping(value = "/devassignedtasks/{assignedDevId}")
+    @GetMapping(value = "/assignedDev/{assignedDevId}")
     public List<ResponseEntity<ToDoItem>> getDevAssignedTasksByAssignedDevId(@PathVariable Integer assignedDevId) {
         try{
             List<AssignedDev>  assignedDevs = assignedDevService.getAssignedDevsByDevId(assignedDevId);
@@ -60,7 +60,7 @@ public class AssingedDevController {
     }
 
     //Get assigned tasks by developer id and sprint id
-    @GetMapping(value = "/devassignedtasks/{assignedDevId}/sprint/{sprintId}")
+    @GetMapping(value = "/assignedDev/{assignedDevId}/sprint/{sprintId}")
     public List<ResponseEntity<ToDoItem>> getAssignedTasksByAssignedDevAndSprint(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
         try{
             List<AssignedDev>  assignedDevs = assignedDevService.getAssignedDevsByDevId(assignedDevId);
@@ -79,7 +79,7 @@ public class AssingedDevController {
     }
 
     //Get father tasks by developer id and sprint id
-    @GetMapping(value = "/devassignedtasks/{assignedDevId}/sprint/{sprintId}/father")
+    @GetMapping(value = "/assignedDev/{assignedDevId}/sprint/{sprintId}/father")
     public List<ResponseEntity<ToDoItem>> getAssignedTasksByAssignedDevAndSprintFather(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
         try{
             List<AssignedDev>  assignedDevs = assignedDevService.getAssignedDevsByDevId(assignedDevId);
@@ -104,7 +104,7 @@ public class AssingedDevController {
 
 
     //Debe calcular el promedio de dias que le sobra a un desarrollador para terminar sus tareas asignadas
-    @GetMapping(value = "/devassignedtasks/kpi/{assignedDevId}")
+    @GetMapping(value = "/assignedDev/kpi/{assignedDevId}")
     public Float getCompletionDaysMean(@PathVariable Integer assignedDevId) {
         try{
             List<AssignedDev>  assignedDev = assignedDevService.getAssignedDevsByDevId(assignedDevId);
@@ -130,7 +130,7 @@ public class AssingedDevController {
         }
     }
 
-    @PostMapping(value = "/devassignedtasks")
+    @PostMapping(value = "/assignedDev")
     public ResponseEntity addDevAssignedTask(@RequestBody AssignedDev devAssignedTask) throws Exception{
         System.out.println(devAssignedTask);
         System.out.println(devAssignedTask.getToDoItemId());

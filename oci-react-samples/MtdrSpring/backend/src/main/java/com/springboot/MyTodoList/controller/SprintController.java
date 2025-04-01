@@ -15,10 +15,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 public class SprintController {
     @Autowired
     private SprintService sprintService;
+
+    @GetMapping(value="sprint/{sprintId}")
+    public ResponseEntity<Sprint> getSprintById(@PathVariable Integer sprintId) {
+        try{
+            ResponseEntity<Sprint> responseEntity = sprintService.findSprintById(sprintId);
+            return new ResponseEntity<Sprint>(responseEntity.getBody(), HttpStatus.OK);
+        }catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+    
     
 }
