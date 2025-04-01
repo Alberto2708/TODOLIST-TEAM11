@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -103,7 +104,7 @@ public class AssingedDevController {
 
 
 
-    //Debe calcular el promedio de dias que le sobra a un desarrollador para terminar sus tareas asignadas
+    //Debe calcular el promedio de horas que le sobra a un desarrollador para terminar sus tareas asignadas
     @GetMapping(value = "/assignedDev/kpi/{assignedDevId}")
     public Float getCompletionDaysMean(@PathVariable Integer assignedDevId) {
         try{
@@ -120,7 +121,7 @@ public class AssingedDevController {
             }
             Float sum = 0.0f;
             for(ResponseEntity<ToDoItem> task : tasks){
-                sum += task.getBody().getDeadline().getDayOfYear() - task.getBody().getCompletionTs().getDayOfYear();
+                sum += Duration.between(task.getBody().getCompletionTs(), task.getBody().getDeadline()).toHours();
             }
             return sum/tasks.size();
             
