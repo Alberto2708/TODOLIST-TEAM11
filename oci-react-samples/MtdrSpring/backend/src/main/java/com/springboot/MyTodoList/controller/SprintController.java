@@ -3,6 +3,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.springboot.MyTodoList.model.Employee;
 import com.springboot.MyTodoList.model.Sprint;
 import com.springboot.MyTodoList.service.SprintService;
 
@@ -31,6 +32,26 @@ public class SprintController {
         }catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @GetMapping(value = "sprint/project/{projectId}")
+    public List<Sprint> getSprintsByTeamId(@PathVariable Integer projectId) {
+        try{
+            List<Sprint> sprints = sprintService.findSprintsByProjectId(projectId);
+            return sprints;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
+    @PostMapping(value="/sprint")
+    public ResponseEntity addSprint(@RequestBody Sprint sprint) throws Exception{
+        Sprint spr = sprintService.addSprint(sprint);
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("location", "" + spr.getID());
+        responseHeaders.set("Access-Control-Expose-Headers", "location");
+        return ResponseEntity.ok()
+                .headers(responseHeaders).build();
     }
     
     

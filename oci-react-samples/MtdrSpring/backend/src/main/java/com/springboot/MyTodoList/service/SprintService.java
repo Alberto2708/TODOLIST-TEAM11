@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
+import java.util.List;
 
 @Service
 public class SprintService {
@@ -22,5 +23,21 @@ public class SprintService {
         }
     }
 
-    
+    public List<Sprint> findSprintsByProjectId(Integer projectId) {
+        try {
+            List<Sprint> sprints = sprintRepository.findSprintsByProjectId(projectId);
+            return sprints;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public Sprint addSprint(Sprint sprint) throws Exception {
+        try {
+            return sprintRepository.save(sprint);
+        } catch (Exception e) {
+            throw new Exception("Error adding sprint: " + e.getMessage());
+        }
+    }
+
 }
