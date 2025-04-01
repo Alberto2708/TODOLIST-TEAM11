@@ -93,4 +93,16 @@ public class ToDoItemService {
         }
     }
 
+    public ToDoItem undoCompletion(Integer id) {
+        Optional<ToDoItem> toDoItemData = toDoItemRepository.findById(id);
+        if (toDoItemData.isPresent()) {
+            ToDoItem toDoItem = toDoItemData.get();
+            toDoItem.setStatus("PENDING");
+            toDoItem.setCompletionTs(null);
+            return toDoItemRepository.save(toDoItem);
+        } else {
+            return null;
+        }
+    }
+
 }
