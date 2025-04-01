@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import java.time.OffsetDateTime;
 
 import java.util.List;
 import java.util.Optional;
@@ -78,6 +79,18 @@ public class ToDoItemService {
             return null;
         }
 
+    }
+
+    public ToDoItem completeTask(Integer id) {
+        Optional<ToDoItem> toDoItemData = toDoItemRepository.findById(id);
+        if (toDoItemData.isPresent()) {
+            ToDoItem toDoItem = toDoItemData.get();
+            toDoItem.setStatus("COMPLETED");
+            toDoItem.setCompletionTs(OffsetDateTime.now());
+            return toDoItemRepository.save(toDoItem);
+        } else {
+            return null;
+        }
     }
 
 }

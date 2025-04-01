@@ -67,6 +67,16 @@ public class ToDoItemController {
         }
     }
 
+    @PutMapping(value="todolist/complete/{id}")
+    public ResponseEntity completeTask(@PathVariable Integer id) {
+        try {
+            ToDoItem toDoItem = toDoItemService.completeTask(id);
+            return new ResponseEntity<>(toDoItem, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+    }
+
     // @CrossOrigin
     @DeleteMapping(value = "todolist/{id}")
     public ResponseEntity<Boolean> deleteToDoItem(@PathVariable("id") Integer id) {
