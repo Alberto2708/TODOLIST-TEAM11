@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.List;
+import java.time.OffsetDateTime;
+ 
 
 @Service
 public class SprintService {
@@ -29,6 +31,20 @@ public class SprintService {
             return sprints;
         } catch (Exception e) {
             return null;
+        }
+    }
+    
+    public ResponseEntity<Sprint> findActualSprintByProjectId(Integer projectId) {
+        try {
+            List<Sprint> sprints = findSprintsByProjectId(projectId);
+            for (Sprint sprint : sprints) {
+                if (sprint.getStartDate().isBefore(OffsetDateTime.now()) && sprint.getEndDate().isAfter(OffsetDateTime.now())) {
+                    return new ResponseEntity<> (sprint, HttpStatus.OK);
+                }
+            }
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 

@@ -28,7 +28,7 @@ public class SprintController {
     public ResponseEntity<Sprint> getSprintById(@PathVariable Integer sprintId) {
         try{
             ResponseEntity<Sprint> responseEntity = sprintService.findSprintById(sprintId);
-            return new ResponseEntity<Sprint>(responseEntity.getBody(), HttpStatus.OK);
+            return responseEntity;
         }catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -44,7 +44,16 @@ public class SprintController {
         }
     }
 
-    //@GetMapping(value = "sprint/project/{projectId}")
+    //Get Actual Sprint by Project ID
+    @GetMapping(value = "sprint/project/{projectId}")
+    public ResponseEntity<Sprint> getActualSprintByProjectId(@PathVariable Integer projectId) {
+        try{
+            ResponseEntity<Sprint> sprint = sprintService.findActualSprintByProjectId(projectId);
+            return sprint;
+        } catch (Exception e) {
+            return null;
+        }
+    }
     
     @PostMapping(value="/sprint")
     public ResponseEntity addSprint(@RequestBody Sprint sprint) throws Exception{
