@@ -20,7 +20,7 @@ function UserTaskVisualization() {
 
   const fetchTasks = async (employeeId) => {
     try {
-      const response = await fetch(`/devassignedtasks/${employeeId}`);
+      const response = await fetch(`/assignedDev/${employeeId}/sprint/1`);
       const data = await response.json();
       const parsedTasks = data.map(item => ({
         name: item.body.name,
