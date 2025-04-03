@@ -3,6 +3,7 @@ import "../styles/TaskCreation.css";
 
 export default function TaskCreation({ onClose, onTaskCreated, managerId, projectId, sprintId }) {
     const [taskName, setTaskName] = useState("");
+    const [parentName, setParentName] = useState("");
     const [description, setDescription] = useState("");
     const [dueDate, setDueDate] = useState("");
     const [responsibles, setResponsibles] = useState([{ id: "", name: "" }]);
@@ -75,18 +76,21 @@ export default function TaskCreation({ onClose, onTaskCreated, managerId, projec
             const taskData = {
                 name: taskName,
                 status: "PENDING",
-                managerId,
+                managerId: managerId,
                 startDate: new Date().toISOString(),
                 deadline: new Date(dueDate).toISOString(),
-                description,
-                projectId,
-                sprintId,
-                estHours,
+                description: description,
+                projectId: projectId,
+                sprintId: sprintId,
+                estHours: estHours,
             };
 
             const response = await fetch('/todolist', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
                 body: JSON.stringify(taskData)
             });
 
@@ -102,12 +106,18 @@ export default function TaskCreation({ onClose, onTaskCreated, managerId, projec
             try {
                 for (const responsible of responsibles) {
                     const assignationData = {
-                        id: { toDoItemId: taskId, employeeId: responsible.id }
+                        id: {
+                            toDoItemId: taskId,
+                            employeeId: responsible.id
+                        }
                     };
 
                     const assignation = await fetch(`/assignedDev`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
                         body: JSON.stringify(assignationData)
                     });
 
@@ -119,7 +129,9 @@ export default function TaskCreation({ onClose, onTaskCreated, managerId, projec
 
                 alert("Task created and assigned successfully!");
                 onClose();
-                if (onTaskCreated) onTaskCreated();
+                if (onTaskCreated) {
+                    onTaskCreated();
+                }
             } catch (error) {
                 console.error("Error assigning task:", error);
                 alert(`Error assigning task: ${error.message}`);
@@ -147,7 +159,7 @@ export default function TaskCreation({ onClose, onTaskCreated, managerId, projec
                         
                         <div className="tc-form-group">
                             <label>Task Name</label>
-                            <input type="text" value={taskName} onChange={(e) => setTaskName(e.target.value)} required />
+                            <input type="text" placeholder="Enter task name" value={taskName} onChange={(e) => setTaskName(e.target.value)} required />
                         </div>
 
                         <div className="tc-form-group">
@@ -161,24 +173,66 @@ export default function TaskCreation({ onClose, onTaskCreated, managerId, projec
                                                 <option key={employee.id} value={employee.id}>{employee.name}</option>
                                             ))}
                                         </select>
-                                        <button type="button" onClick={() => removeResponsibleField(index)}>Remove</button>
+                                        <button type="button" onClick={() => removeResponsibleField(index)} className="remove-button">Remove</button>
                                     </div>
                                 ))}
                             </div>
-                            <button type="button" onClick={addResponsibleField}>Add Another</button>
-                        </div>
-
-                        <div className="tc-form-group">
-                            <label>Due Date</label>
-                            <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} required />
+                            <button type="button" onClick={addResponsibleField} className="add-button">Add Another</button>
+                            
+                            <div className="tc-form-group">
+                                <label>Due Date</label>
+                                <input
+                                    type="date"
+                                    value={dueDate}
+                                    onChange={(e) => setDueDate(e.target.value)}
+                                    min={new Date().toISOString().split('T')[0]}
+                                    required
+                                />
+                            </div>
                         </div>
 
                         <div className="tc-form-group">
                             <label>Estimated Hours</label>
-                            <input type="number" min="0.5" step="0.5" max="4" value={estHours} onChange={(e) => setEstHours(e.target.value)} required />
+                            <input
+                                type="number"
+                                min="0.5"
+                                step="0.5"
+                                max="4"
+                                value={estHours}
+                                onChange={(e) => setEstHours(e.target.value)}
+                                required
+                            />
                         </div>
 
-                        <button type="submit" disabled={isSubmitting || isAssigning}>Create Task</button>
+                        <div className="tc-form-group">
+                            <label>Description</label>
+                            <textarea
+                                placeholder="Enter task description"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                rows="4"
+                                required
+                            />
+                        </div>
+
+                        <div className="tc-modal-footer">
+                            <button
+                                type="button"
+                                onClick={onClose}
+                                className="tc-btn tc-btn-cancel"
+                                disabled={isSubmitting}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                className="tc-btn tc-btn-primary"
+                                disabled={isSubmitting || isAssigning || loadingEmployees || responsibles.length === 0}
+                            >
+                                {isSubmitting ? 'Creating...' : isAssigning ? 'Assigning...' : 'Create Task'}
+                            </button>
+
+                        </div>
                     </form>
                 </div>
             </div>
