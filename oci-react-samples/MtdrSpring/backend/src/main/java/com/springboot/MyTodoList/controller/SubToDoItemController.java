@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.springboot.MyTodoList.model.SubToDoItem;
 import com.springboot.MyTodoList.service.ToDoItemService;
+import com.springboot.MyTodoList.model.ToDoItem;
+import com.springboot.MyTodoList.service.AssignedDevService;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
@@ -29,6 +31,9 @@ public class SubToDoItemController {
 
     @Autowired
     private ToDoItemService toDoItemService;
+
+    @Autowired
+    private AssignedDevService assignedDevService;
 
     //Get Mapping to get all subToDoItems by ToDoItemId
     @GetMapping(value="subToDoItems/{toDoItemId}")
@@ -42,12 +47,33 @@ public class SubToDoItemController {
     }
 
     @GetMapping(value="subToDoItems/toDoItem/{toDoItemId}")
-    public List<ResponseEntity<ToDoItem>> getMethodName(@PathVariable Integer toDoItemId) {
+    public List<ResponseEntity<ToDoItem>> getSubToDoItemsBytoDoItemId(@PathVariable Integer toDoItemId) {
         try{
             List<SubToDoItem> subToDoItems = subToDoItemService.findAllSubToDoItemsByToDoItemId(toDoItemId);
             List<ResponseEntity<ToDoItem>> toDoItems = new ArrayList<>();
             for(SubToDoItem subToDoItem : subToDoItems){
                 toDoItems.add(toDoItemService.getItemById(subToDoItem.getSubToDoItemId()));
+            }
+            return toDoItems;
+        } catch(Exception e){
+            return null;
+        }
+    }
+
+    @GetMapping(value="subToDoItems/toDoItem/{toDoItemId}/employee/{employeeId}")
+    public List<ToDoItem> getSubToDoItemsByToDoItemIdAndEmployeeId(@PathVariable Integer toDoItemId, @PathVariable Integer employeeId) {
+        try{
+            List<SubToDoItem> subToDoItems = subToDoItemService.findAllSubToDoItemsByToDoItemId(toDoItemId);
+            System.out.println(subToDoItems.size());
+            if (subToDoItems.isEmpty()) {
+                return null;
+            }
+            List<ToDoItem> toDoItems = new ArrayList<>();
+            for(SubToDoItem subToDoItem : subToDoItems){
+                System.out.println(subToDoItem.toString());
+                if (assignedDevService.checkIfToDoItemIsAssignedToEmployeByIds(subToDoItem.getSubToDoItemId(), employeeId)){
+                    toDoItems.add(toDoItemService.getItemById(subToDoItem.getSubToDoItemId()).getBody());
+                }
             }
             return toDoItems;
         } catch(Exception e){

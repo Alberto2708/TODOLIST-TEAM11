@@ -15,6 +15,20 @@ public class AssignedDevService {
     @Autowired
     private AssignedDevRepository assignedDevRepository;
 
+
+    public Boolean checkIfToDoItemIsAssignedToEmployeByIds(Integer toDoItemId, Integer assignedDevId) {
+        try {
+            if (assignedDevRepository.findByToDoItemIdAndEmployeeId(toDoItemId, assignedDevId).isEmpty()) {
+                //Returns false if the x Employee doesn't has x ToDoItem assigned
+                return false;
+            } else {
+                //Returns true if the x Employee has x ToDoItem assigned
+                return true;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
     public List<AssignedDev> findAll() {
         List<AssignedDev> devAssignedTasks = assignedDevRepository.findAll();
         return devAssignedTasks;
