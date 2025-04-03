@@ -103,7 +103,6 @@ public class AssingedDevController {
     public List<ResponseEntity<ToDoItem>> getAssignedTasksByAssignedDevAndSprintFather(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
         try{
             List<AssignedDev>  assignedDevs = assignedDevService.getAssignedDevsByDevId(assignedDevId);
-            System.out.println(assignedDevs.size());
             List<ResponseEntity<ToDoItem>> tasks = new ArrayList<>();
             for(AssignedDev task : assignedDevs){
                 //Add logic for subtasks verification

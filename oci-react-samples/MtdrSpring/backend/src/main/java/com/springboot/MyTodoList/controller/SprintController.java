@@ -64,7 +64,6 @@ public class SprintController {
     public ResponseEntity<Integer> getCompletedTasksBySprint(@PathVariable Integer sprintId) {
         try{
             List<ToDoItem> tasks = toDoItemService.getToDoItemsBySprintId(sprintId);
-            System.out.println(tasks);
             if(tasks.size() == 0) {
                 return null;
             }
@@ -74,7 +73,6 @@ public class SprintController {
                     sum += 1;
                 }
             }
-            System.out.println("Sum: " + sum);
             Integer response = (int) (((double) sum / tasks.size()) * 100);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e) {
