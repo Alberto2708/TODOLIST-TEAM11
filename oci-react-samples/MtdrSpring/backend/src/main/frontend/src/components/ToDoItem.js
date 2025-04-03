@@ -41,13 +41,15 @@ const ToDoItem = ({ name, timestamp, statusColor, taskStatus, subTasks = [], onC
       {isExpanded && (
         <div className="subtask-container">
           {subTasks.map((subTask, index) => (
-            <div key={index} className="subtask">
-              <span className="subtask-name">{subTask.name}</span>
-              <span className="subtask-timestamp">{subTask.timestamp}</span>
-              <span className="subtask-status" style={{ color: subTask.statusColor }}>
-                {subTask.taskStatus}
-              </span>
-            </div>
+            <ToDoItem
+              key={index}
+              name={subTask.name}
+              timestamp={subTask.timestamp}
+              statusColor={subTask.statusColor}
+              taskStatus={subTask.taskStatus}
+              subTasks={subTask.subTasks || []} // Recursively pass subtasks
+              onClick={onClick} // Pass the same onClick function
+            />
           ))}
         </div>
       )}

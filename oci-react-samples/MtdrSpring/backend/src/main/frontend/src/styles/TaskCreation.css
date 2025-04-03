@@ -14,6 +14,8 @@
 
 
 .tc-modal-container {
+    max-height: 90vh;
+    overflow-y: auto; /* Enable vertical scrolling if content overflows */
     background-color: #C74634; 
     border-radius: 8px;
     width: 90%; 
@@ -115,4 +117,49 @@
 
 .tc-btn-cancel:hover {
     background-color: #e2e6ea;
+}
+
+.responsible-field-container {
+    max-height: 300px; /* Limit the height of the responsibles section */
+    overflow-y: auto; /* Enable vertical scrolling */
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 0.5rem;
+}
+
+.responsible-field {
+    display: flex; /* Align items in a row */
+    align-items: center; /* Vertically align the items */
+    gap: 1rem; /* Add spacing between the dropdown and the button */
+    margin-bottom: 1rem; /* Add spacing between rows */
+}
+
+.add-button {
+    margin-top: 5px; /* Add some space above the "Add Another" button */
+    padding: 5px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+.add-button:hover {
+    background-color: #0056b3;
+}
+
+.remove-button {
+    padding: 5 px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #dc3545;
+    color: white;
+    cursor: pointer;
+}
+
+.remove-button:hover {
+    background-color: #a71d2a;
 }
