@@ -61,7 +61,7 @@ public class SprintController {
     }
 
     @GetMapping(value = "/sprint/{sprintId}/kpi")
-    public Integer getCompletedTasksBySprint(@PathVariable Integer sprintId) {
+    public ResponseEntity<Integer> getCompletedTasksBySprint(@PathVariable Integer sprintId) {
         try{
             List<ToDoItem> tasks = toDoItemService.getToDoItemsBySprintId(sprintId);
             System.out.println(tasks);
@@ -76,7 +76,7 @@ public class SprintController {
             }
             System.out.println("Sum: " + sum);
             Integer response = (int) (((double) sum / tasks.size()) * 100);
-            return response;
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e) {
             return null;
         }
