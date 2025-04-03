@@ -47,13 +47,9 @@ public class ToDoItemController {
     @PostMapping(value = "/todolist")
     public ResponseEntity addToDoItem(@RequestBody ToDoItem todoItem) throws Exception {
         ToDoItem td = toDoItemService.addToDoItem(todoItem);
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("location", "" + td.getID());
-        responseHeaders.set("Access-Control-Expose-Headers", "location");
+        Integer responseEntity = td.getID();
+        return new ResponseEntity<>(responseEntity, HttpStatus.CREATED);
         // URI location = URI.create(""+td.getID())
-
-        return ResponseEntity.ok()
-                .headers(responseHeaders).build();
     }
 
     // @CrossOrigin
