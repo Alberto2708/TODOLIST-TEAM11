@@ -75,35 +75,49 @@ export default function ManagerTaskVis() {
         }
     };
 
-    const fetchSubTasks = async (toDoItemId) => {
+    const fetchSubTasks = async (taskId, employeeId) => {
         try {
-            console.log(`Fetching subtasks for toDoItemId: ${toDoItemId}`);
-            const response = await fetch(`/subToDoItems/toDoItem/${toDoItemId}`);
-            if (!response.ok) {
-                console.error(`Error fetching subtasks: ${response.status} - ${response.statusText}`);
-                return [];
-            }
-            const data = await response.json();
-            console.log(`Fetched subtasks data for toDoItemId ${toDoItemId}:`, data);
-    
+          console.log("Fetching subtasks for task ID:", taskId, "and employee ID:", employeeId);
+          const response = await fetch(`subToDoItems/toDoItem/${taskId}/employee/${employeeId}`);
+          if (!response.ok) {
+            console.error("Error fetching subtasks:", response.statusText);
+            return [];
+          }
+      
+          const text = await response.text();
+          if (!text) {
+            // Handle empty response
+            console.warn(`Empty response for task ID ${taskId}`);
+            return [];
+          }
+      
+          try {
+            const data = JSON.parse(text); // Parse the JSON response
+            console.log(`Fetched subtasks data for toDoItemId ${taskId}:`, data);
+      
+            // Adjust parsing logic based on the actual structure of the response
             const parsedSubTasks = await Promise.all(
-                data.map(async (item) => ({
-                    id: item.body.id,
-                    name: item.body.name,
-                    deadline: new Date(item.body.deadline).toLocaleDateString(),
-                    description: item.body.description,
-                    status: item.body.status,
-                    subTasks: await fetchSubTasks(item.body.id), // Fetch subtasks recursively
-                }))
+              data.map(async (item) => ({
+                id: item.id, // Adjusted to match the structure of your response
+                name: item.name,
+                deadline: new Date(item.deadline).toLocaleDateString(),
+                description: item.description,
+                status: item.status,
+                subTasks: await fetchSubTasks(item.id, employeeId), // Fetch subtasks recursively
+              }))
             );
-    
-            setSubTasks(prevSubTasks => ({ ...prevSubTasks, [toDoItemId]: parsedSubTasks }));
+      
+            setSubTasks((prevSubTasks) => ({ ...prevSubTasks, [taskId]: parsedSubTasks }));
             return parsedSubTasks;
+          } catch (error) {
+            console.error("Invalid JSON response:", text);
+            return [];
+          }
         } catch (error) {
-            console.error("Error fetching subtasks:", error);
-            return []; // Return an empty array in case of an error
+          console.error("Error fetching subtasks:", error);
+          return [];
         }
-    };
+      };
 
 
     const fetchTasks = async (assignedDevId, sprintId) => {
@@ -120,7 +134,7 @@ export default function ManagerTaskVis() {
             const parsedTasks = await Promise.all(
                 data.map(async (item) => {
                     console.log(`Fetching subtasks for task ID: ${item.body.id}`);
-                    const subTasks = await fetchSubTasks(item.body.id); // Await the subtasks
+                    const subTasks = await fetchSubTasks(item.body.id, assignedDevId); // Await the subtasks
                     console.log(`Fetched subtasks for task ID ${item.body.id}:`, subTasks);
     
                     return {
