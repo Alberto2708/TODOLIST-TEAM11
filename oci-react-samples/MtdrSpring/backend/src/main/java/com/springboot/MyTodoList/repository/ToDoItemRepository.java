@@ -20,5 +20,5 @@ public interface ToDoItemRepository extends JpaRepository<ToDoItem,Integer> {
     @Query("SELECT d FROM ToDoItem d WHERE d.id.managerId = :managerId AND d.id.sprintId = :sprintId")
     List<ToDoItem> findByManagerIdAndSprintId(@Param("managerId") Integer managerId, @Param("sprintId") Integer sprintId);
 
-
+    List<ToDoItem> findBySprintId(@Param("sprintId") Integer sprintId);
 }

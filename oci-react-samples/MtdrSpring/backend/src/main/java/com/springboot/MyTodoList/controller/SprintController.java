@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.springboot.MyTodoList.model.Employee;
 import com.springboot.MyTodoList.model.Sprint;
 import com.springboot.MyTodoList.service.SprintService;
+import com.springboot.MyTodoList.service.ToDoItemService;
+import com.springboot.MyTodoList.model.ToDoItem;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class SprintController {
     @Autowired
     private SprintService sprintService;
+    
+    @Autowired
+    private ToDoItemService toDoItemService;
 
     @GetMapping(value="/sprint/{sprintId}")
     public ResponseEntity<Sprint> getSprintById(@PathVariable Integer sprintId) {
@@ -54,6 +59,29 @@ public class SprintController {
             return null;
         }
     }
+
+    @GetMapping(value = "/sprint/{sprintId}/kpi")
+    public Integer getCompletedTasksBySprint(@PathVariable Integer sprintId) {
+        try{
+            List<ToDoItem> tasks = toDoItemService.getToDoItemsBySprintId(sprintId);
+            System.out.println(tasks);
+            if(tasks.size() == 0) {
+                return null;
+            }
+            Integer sum = 0;
+            for (ToDoItem task : tasks) {
+                if (task.getStatus().matches("COMPLETED")) {
+                    sum += 1;
+                }
+            }
+            System.out.println("Sum: " + sum);
+            Integer response = (int) (((double) sum / tasks.size()) * 100);
+            return response;
+        }catch (Exception e) {
+            return null;
+        }
+    }
+    
     
     @PostMapping(value="/sprint")
     public ResponseEntity addSprint(@RequestBody Sprint sprint) throws Exception{
