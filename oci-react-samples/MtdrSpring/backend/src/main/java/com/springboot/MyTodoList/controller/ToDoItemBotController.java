@@ -1,7 +1,12 @@
 package com.springboot.MyTodoList.controller;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import javax.sql.DataSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +66,6 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                 break;
             case "/assigntask":
                 if (args.length >= 3) {
-                    // Changed to pass user.getId() as long instead of Long
                     assignTask(conn, chatId, user.getId(), Long.parseLong(args[1]), args[2]);
                 } else {
                     sendMessage(chatId, "❌ Format: /assigntask [taskId] employee@example.com");
@@ -152,50 +156,50 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
 
     private void assignTask(Connection conn, long chatId, long assignerTelegramId, long taskId, String email) 
         throws SQLException {
-    try {
-        // Get assigner's employee ID (must be a manager)
-        Integer assignerId = getEmployeeIdByTelegramId(conn, assignerTelegramId);
-        if (assignerId == null || !isManager(conn, assignerId)) {
-            sendMessage(chatId, "⛔ Only managers can assign tasks");
-            return;
-        }
+        try {
+            // Get assigner's employee ID (must be a manager)
+            Integer assignerId = getEmployeeIdByTelegramId(conn, assignerTelegramId);
+            if (assignerId == null || !isManager(conn, assignerId)) {
+                sendMessage(chatId, "⛔ Only managers can assign tasks");
+                return;
+            }
 
-        // Find assignee's employee record by email
-        Integer assigneeId = findEmployeeByEmail(conn, email);
-        if (assigneeId == null) {
-            sendMessage(chatId, "❌ Employee with email " + email + " not found");
-            return;
-        }
+            // Find assignee's employee record by email
+            Integer assigneeId = findEmployeeByEmail(conn, email);
+            if (assigneeId == null) {
+                sendMessage(chatId, "❌ Employee with email " + email + " not found");
+                return;
+            }
 
-        // Verify task exists and belongs to assigner's project
-        if (!isTaskValidForAssignment(conn, taskId, assignerId)) {
-            sendMessage(chatId, "❌ You can only assign tasks from your own projects");
-            return;
-        }
+            // Verify task exists and belongs to assigner's project
+            if (!isTaskValidForAssignment(conn, taskId, assignerId)) {
+                sendMessage(chatId, "❌ You can only assign tasks from your own projects");
+                return;
+            }
 
-        // Check if task is already assigned to this employee
-        if (isTaskAlreadyAssigned(conn, taskId, assigneeId)) {
-            sendMessage(chatId, "ℹ️ Task is already assigned to this employee");
-            return;
-        }
+            // Check if task is already assigned to this employee
+            if (isTaskAlreadyAssigned(conn, taskId, assigneeId)) {
+                sendMessage(chatId, "ℹ️ Task is already assigned to this employee");
+                return;
+            }
 
-        // Assign the task
-        String sql = "INSERT INTO TODOUSER.ASSIGNEDDEV (TODOITEM_ID, EMPLOYEE_ID) VALUES (?, ?)";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, taskId);
-            stmt.setInt(2, assigneeId);
-            int updated = stmt.executeUpdate();
-            sendMessage(chatId, updated > 0 
-                ? "✅ Task #" + taskId + " assigned to " + email 
-                : "❌ Failed to assign task");
-            
-            // Notify assignee if they have a Telegram ID
-            notifyAssigneeIfAvailable(conn, assigneeId, taskId);
+            // Assign the task
+            String sql = "INSERT INTO TODOUSER.ASSIGNEDDEV (TODOITEM_ID, EMPLOYEE_ID) VALUES (?, ?)";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setLong(1, taskId);
+                stmt.setInt(2, assigneeId);
+                int updated = stmt.executeUpdate();
+                sendMessage(chatId, updated > 0 
+                    ? "✅ Task #" + taskId + " assigned to " + email 
+                    : "❌ Failed to assign task");
+                
+                // Notify assignee if they have a Telegram ID
+                notifyAssigneeIfAvailable(conn, assigneeId, taskId);
+            }
+        } catch (SQLException e) {
+            handleDatabaseError(chatId, e, "assigning task");
         }
-    } catch (SQLException e) {
-        handleDatabaseError(chatId, e, "assigning task");
     }
-}
 
     private void updateTaskStatus(Connection conn, long chatId, long taskId, String status) 
             throws SQLException {
@@ -303,6 +307,50 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
             }
             return "No employee found with ID: " + employeeId;
         }
+    }
+
+    private Integer findEmployeeByEmail(Connection conn, String email) throws SQLException {
+        String sql = "SELECT EMPLOYEE_ID FROM TODOUSER.EMPLOYEE WHERE LOWER(EMAIL) = LOWER(?)";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() ? rs.getInt(1) : null;
+        }
+    }
+
+    private boolean isTaskValidForAssignment(Connection conn, long taskId, Integer managerId) throws SQLException {
+        String sql = "SELECT 1 FROM TODOUSER.TODOITEM WHERE TODOITEM_ID = ? AND MANAGER_ID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, taskId);
+            stmt.setInt(2, managerId);
+            return stmt.executeQuery().next();
+        }
+    }
+
+    private boolean isTaskAlreadyAssigned(Connection conn, long taskId, Integer employeeId) throws SQLException {
+        String sql = "SELECT 1 FROM TODOUSER.ASSIGNEDDEV WHERE TODOITEM_ID = ? AND EMPLOYEE_ID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, taskId);
+            stmt.setInt(2, employeeId);
+            return stmt.executeQuery().next();
+        }
+    }
+
+    private void notifyAssigneeIfAvailable(Connection conn, Integer employeeId, long taskId) throws SQLException {
+        String sql = "SELECT TELEGRAM_ID FROM TODOUSER.EMPLOYEE WHERE EMPLOYEE_ID = ? AND TELEGRAM_ID IS NOT NULL";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, employeeId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                long telegramId = rs.getLong(1);
+                sendMessage(telegramId, "📬 You've been assigned to task #" + taskId);
+            }
+        }
+    }
+
+    private void handleDatabaseError(long chatId, SQLException e, String operation) {
+        sendMessage(chatId, "⚠️ Database error while " + operation + ". Please try again.");
+        logger.error("DB Error during " + operation, e);
     }
 
     private void sendMessage(long chatId, String text) {
