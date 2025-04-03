@@ -1,43 +1,43 @@
-/* Task Item */
-.task-item {
-    background-color: white;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #ddd;
-    padding: 15px 20px;
-  }
-  
-  .task-item:last-child {
-    border-bottom: none;
-  }
-  
-  /* Task Name */
-  .task-name {
-    font-size: 16px;
-  }
-  
-  /* Timestamp */
-  .task-timestamp {
-    color: gray;
-    align-items: 'right';
-    font-size: 14px;
-  }
-  
-  /* Button */
-  .task-button {
-    background-color: white;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
-    cursor: pointer;
-  }
-  
-  .task-button:hover {
-    background-color: #d9534f;
-  }
+/* Container for each task */
+.task-item-container {
+  display: flex;
+  flex-direction: column;
+}
 
-  .task-button.clicked {
-    background-color: #a84932; /* Green color when clicked */
-  }
+/* Main Task Item */
+.task-item {
+  background-color: white;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  padding: 15px 20px;
+  gap: 10px;
+}
+
+/* Expand button */
+.expand-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding-right: 5px;
+}
+
+/* Subtask Container */
+.subtask-container {
+  margin-left: 40px;
+  padding-left: 10px;
+  border-left: 2px solid #ddd;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Subtask Styling */
+.subtask {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background: #f8f5ee;
+  border-bottom: 1px solid #ddd;
+}
