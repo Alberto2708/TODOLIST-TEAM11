@@ -104,6 +104,7 @@ public class AssingedDevController {
 
 
 
+
     //Debe calcular el promedio de horas que le sobra a un desarrollador para terminar sus tareas asignadas
     @GetMapping(value = "/assignedDev/kpi/{assignedDevId}")
     public Float getCompletionDaysMean(@PathVariable Integer assignedDevId) {
