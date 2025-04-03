@@ -82,7 +82,9 @@ h2{
     border: 1px solid #ccc;
     border-radius: 5px;
     cursor: pointer;
+    margin-top: 15px;
   }
+
   
   .size-6 {
     width: 24px;

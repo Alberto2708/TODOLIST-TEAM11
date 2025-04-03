@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../styles/TaskCreation.css";
 
-export default function TaskCreation({ onClose, onTaskCreated, managerId, projectId, sprintId }) {
+export default function SubTaskCreation({ onClose, onTaskCreated, managerId, projectId, sprintId }) {
     const [taskName, setTaskName] = useState("");
     const [description, setDescription] = useState("");
     const [dueDate, setDueDate] = useState("");
@@ -13,6 +13,9 @@ export default function TaskCreation({ onClose, onTaskCreated, managerId, projec
     const [employees, setEmployees] = useState([]);
     const [loadingEmployees, setLoadingEmployees] = useState(true);
     const [errorLoadingEmployees, setErrorLoadingEmployees] = useState(null);
+    const [parentTasks, setParentTasks] = useState([]); // Array of parent tasks
+    const [loadingParentTasks, setLoadingParentTasks] = useState(true);
+    const [errorLoadingParentTasks, setErrorLoadingParentTasks] = useState(null);
 
     useEffect(() => {
         const fetchEmployees = async () => {
@@ -155,6 +158,15 @@ export default function TaskCreation({ onClose, onTaskCreated, managerId, projec
 
                     <form className="tc-task-creation-form" onSubmit={handleSubmit}>
                         {errorMessage && <p className="tc-error-message">{errorMessage}</p>}
+
+                        <div className="tc-form-group">
+                            <label>Select a parent task</label>
+                            <select>
+                                <option value="">Select Parent Task</option>
+                            </select>
+                        </div>
+
+
                         <div className="tc-form-group">
                             <label>Task Name</label>
                             <input
