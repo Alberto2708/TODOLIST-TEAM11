@@ -25,4 +25,7 @@ public interface SubToDoItemRepository extends JpaRepository<SubToDoItem, SubToD
 
     @Query("SELECT d.id.subToDoItemId FROM SubToDoItem d WHERE d.id.toDoItemId = :toDoItemId")
     List<Integer> findAllSubToDoItemIdsByToDoItemId(@Param("toDoItemId") Integer toDoItemId);
+
+    @Query("SELECT d FROM SubToDoItem d WHERE d.id.toDoItemId = :toDoItemId")
+    List<SubToDoItem> findAllSubToDoItemsByToDoItemId(@Param("toDoItemId") Integer toDoItemId);
 }
