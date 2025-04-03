@@ -65,7 +65,7 @@ public class AssingedDevController {
     public List<ResponseEntity<ToDoItem>> getAssignedTasksByAssignedDevAndSprint(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
         try{
             List<AssignedDev>  assignedDevs = assignedDevService.getAssignedDevsByDevId(assignedDevId);
-            System.out.println(assignedDevs.size());
+            //System.out.println(assignedDevs.size());
             List<ResponseEntity<ToDoItem>> tasks = new ArrayList<>();
             for(AssignedDev task : assignedDevs){
                 if (toDoItemService.getItemById(task.getToDoItemId()).getBody().getSprintId() == sprintId){
@@ -78,6 +78,25 @@ public class AssingedDevController {
             return null;
         }
     }
+
+    @GetMapping(value="/assignedDev/{assignedDevId}/sprint/{sprintId}/kpi")
+    public Integer getCompletedTasksByEmployeeAndSprint(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
+        try{
+            List<ResponseEntity<ToDoItem>> tasks = getAssignedTasksByAssignedDevAndSprint(assignedDevId, sprintId);
+            Integer sum = 0;
+            for (ResponseEntity<ToDoItem> task : tasks){
+                if (task.getBody().getStatus().matches("COMPLETED")){
+                    sum += 1;
+                }
+            }
+            Integer response = (int) (((double) sum / tasks.size()) * 100);
+            return response;
+        }catch(Exception e){
+            System.out.println(e);
+            return null;
+        }
+    }
+    
 
     //Get father tasks by developer id and sprint id
     @GetMapping(value = "/assignedDev/{assignedDevId}/sprint/{sprintId}/father")

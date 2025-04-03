@@ -24,7 +24,7 @@ public class SprintController {
     @Autowired
     private SprintService sprintService;
 
-    @GetMapping(value="sprint/{sprintId}")
+    @GetMapping(value="/sprint/{sprintId}")
     public ResponseEntity<Sprint> getSprintById(@PathVariable Integer sprintId) {
         try{
             ResponseEntity<Sprint> responseEntity = sprintService.findSprintById(sprintId);
@@ -34,7 +34,7 @@ public class SprintController {
         }
     }
 
-    @GetMapping(value = "sprint/projects/{projectId}")
+    @GetMapping(value = "/sprint/projects/{projectId}")
     public List<Sprint> getSprintsByProjectId(@PathVariable Integer projectId) {
         try{
             List<Sprint> sprints = sprintService.findSprintsByProjectId(projectId);
@@ -45,7 +45,7 @@ public class SprintController {
     }
 
     //Get Actual Sprint by Project ID
-    @GetMapping(value = "sprint/project/{projectId}")
+    @GetMapping(value = "/sprint/project/{projectId}")
     public ResponseEntity<Sprint> getActualSprintByProjectId(@PathVariable Integer projectId) {
         try{
             ResponseEntity<Sprint> sprint = sprintService.findActualSprintByProjectId(projectId);
