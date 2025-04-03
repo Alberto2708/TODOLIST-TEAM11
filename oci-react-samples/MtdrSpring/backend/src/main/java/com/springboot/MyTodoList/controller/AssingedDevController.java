@@ -134,8 +134,8 @@ public class AssingedDevController {
 
     @PostMapping(value = "/assignedDev")
     public ResponseEntity addDevAssignedTask(@RequestBody AssignedDev devAssignedTask) throws Exception{
-        System.out.println(devAssignedTask);
-        System.out.println(devAssignedTask.getToDoItemId());
+        //System.out.println(devAssignedTask);
+        //System.out.println(devAssignedTask.getToDoItemId());
         assignedDevService.addAssignedDev(devAssignedTask);
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("location", "" );
