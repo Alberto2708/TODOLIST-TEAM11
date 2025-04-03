@@ -281,7 +281,7 @@ export default function ManagerTaskVis() {
                     subTaskOnClick={() => openSubTaskDetailsModal(task)} // Pass the task to the subtask click handler
                 />
             ))}
-                                <h3>Average days of completion before deadline: {calculateKpi(employee.id)}</h3>
+                                <h3>Average hours of completion before deadline: {calculateKpi(employee.id)}</h3>
                             </div>
                         )
                     ))}

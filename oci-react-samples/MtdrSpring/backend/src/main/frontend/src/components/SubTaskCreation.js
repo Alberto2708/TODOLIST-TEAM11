@@ -169,7 +169,7 @@ export default function SubTaskCreation({ onClose, onTaskCreated, managerId, pro
                 const subTaskData = {
                     id:{
                     toDoItemId: parent,
-                    subToDoItem: taskId
+                    subToDoItemId: taskId
                     }
                 };
 
