@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import "../styles/TaskCreation.css";
 
-export default function TaskCreation({ onClose, onTaskCreated, managerId }) {
+export default function TaskCreation({ onClose, onTaskCreated, managerId, projectId }) {
     const [taskName, setTaskName] = useState("");
     const [description, setDescription] = useState("");
     const [dueDate, setDueDate] = useState("");
     const [responsible, setResponsible] = useState("");
     const [estHours, setEstHours] = useState(1);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    
+    const [passedProjectId, setPassedProjectId] = useState(projectId);
     const [employees, setEmployees] = useState([]);
     const [loadingEmployees, setLoadingEmployees] = useState(true);
     const [errorLoadingEmployees, setErrorLoadingEmployees] = useState(null);
@@ -64,15 +64,17 @@ export default function TaskCreation({ onClose, onTaskCreated, managerId }) {
         try {
             const taskData = {
                 name: taskName,
-                description: description,
-                deadline: new Date(dueDate).toISOString(),
-                managerId: managerId,
                 status: "PENDING",
-                estHours: parseInt(estHours),
-                assignedDevId: parseInt(responsible)
+                managerId: managerId,
+                startDate: new Date().toISOString(),
+                deadline: new Date(dueDate).toISOString(),
+                description: description,
+                projectId: passedProjectId,
+                description: description,
+                estHours: estHours,
             };
 
-            const response = await fetch('http://localhost:8081/api/todolist', {
+            const response = await fetch('http://localhost:8081/todolist', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -136,7 +138,7 @@ export default function TaskCreation({ onClose, onTaskCreated, managerId }) {
                                     <option value="">Select Team Member</option>
                                     {employees.map(employee => (
                                         <option key={employee.ID} value={employee.ID}>
-                                            {employee.name} (ID: {employee.ID})
+                                            {employee.name} 
                                         </option>
                                     ))}
                                 </select>
@@ -159,8 +161,9 @@ export default function TaskCreation({ onClose, onTaskCreated, managerId }) {
                             <label>Estimated Hours </label>
                             <input
                                 type="number"
-                                min="1"
+                                min="0.5"
                                 step="0.5"
+                                max="4"
                                 value={estHours}
                                 onChange={(e) => setEstHours(e.target.value)}
                                 required

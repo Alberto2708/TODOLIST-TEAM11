@@ -184,20 +184,7 @@ export default function ManagerTaskVis() {
                     timestamp={task.deadline}
                     statusColor={getStatusColor(task.status)}
                     taskStatus={task.status}
-                    subTasks={task.subTasks || [  // Provide default subtasks if none exist
-                        {
-                            name: "Initial research",
-                            timestamp: "2/4/2025",
-                            statusColor: "blue",
-                            taskStatus: "IN PROGRESS"
-                        },
-                        {
-                            name: "Write documentation",
-                            timestamp: "3/4/2025",
-                            statusColor: "green",
-                            taskStatus: "COMPLETED"
-                        }
-                    ]}
+                    subTasks={task.subTasks}
                     onClick={() => openTaskDetailsModal(employee.id, index)}
                     userName={employee.name}
                 />
@@ -210,7 +197,10 @@ export default function ManagerTaskVis() {
                     {isTaskCreationModalOpen && (
                         <div className="modal-overlay">
                             <div className="modal-content">
-                                <TaskCreation onClose={closeTaskCreationModal} />
+                                <TaskCreation onClose={closeTaskCreationModal}
+                                onTaskCreated={fetchTasks}
+                                managerId={employeeId}
+                                projectId={projectId} />
                             </div>
                         </div>
                     )}
