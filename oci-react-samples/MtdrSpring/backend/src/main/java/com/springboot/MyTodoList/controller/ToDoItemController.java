@@ -2,6 +2,7 @@ package com.springboot.MyTodoList.controller;
 
 import com.springboot.MyTodoList.model.ToDoItem;
 import com.springboot.MyTodoList.service.ToDoItemService;
+import com.springboot.MyTodoList.service.SubToDoItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -9,11 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
+
 
 
 //ADD
@@ -24,6 +23,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class ToDoItemController {
     @Autowired
     private ToDoItemService toDoItemService;
+
+    @Autowired
+    private SubToDoItemService subToDoItemService;
 
     // @CrossOrigin
     @GetMapping(value = "/todolist")
@@ -41,6 +43,29 @@ public class ToDoItemController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    //Get Father ToDoItems by Manager ID and Sprint ID
+    @GetMapping(value = "/todolist/manager/{managerId}/sprint/{sprintId}")
+    public List<ToDoItem> getFatherToDoItemsByManagerIdAndSprintId(@PathVariable Integer managerId, @PathVariable Integer sprintId) {
+        try{
+
+            List<ToDoItem> tasks = toDoItemService.getFatherToDoItemsByManagerIdAndSprintId(managerId, sprintId);
+            if (tasks.isEmpty()) {
+                return null;
+            }
+            List<ToDoItem> fatherToDoItems = new ArrayList<>();
+            for (ToDoItem task : tasks) {
+                if(subToDoItemService.checkIfIdIsntSubToDoItem(task.getID())){
+                    fatherToDoItems.add(task);
+                }
+            }
+            return fatherToDoItems;
+        } catch(Exception e){
+            System.out.println(e);
+            return null;
+        }
+    }
+    
     
     
     // @CrossOrigin

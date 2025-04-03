@@ -2,6 +2,7 @@ package com.springboot.MyTodoList.service;
 
 import com.springboot.MyTodoList.model.ToDoItem;
 import com.springboot.MyTodoList.repository.ToDoItemRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ public class ToDoItemService {
     @Autowired
     private ToDoItemRepository toDoItemRepository;
 
+
     public List<ToDoItem> findAll() {
         List<ToDoItem> todoItems = toDoItemRepository.findAll();
         return todoItems;
@@ -29,6 +31,11 @@ public class ToDoItemService {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    public List<ToDoItem> getFatherToDoItemsByManagerIdAndSprintId(Integer managerId, Integer sprintId) {
+        List<ToDoItem> todoData = toDoItemRepository.findByManagerIdAndSprintId(managerId, sprintId);
+        return todoData;
     }
 
 

@@ -14,8 +14,10 @@ public class SubToDoItemService {
     public Boolean checkIfIdIsntSubToDoItem(Integer subToDoItemId){
         try{
             if(subToDoItemRepository.findBySubToDoItemId(subToDoItemId).isEmpty()){
+                //Returns true if the id is a Father ToDo Item id
                 return true;
             }else{
+                //Returns false if the id is a Sub ToDo Item id
                 return false;
             }
         }catch(Exception e){
