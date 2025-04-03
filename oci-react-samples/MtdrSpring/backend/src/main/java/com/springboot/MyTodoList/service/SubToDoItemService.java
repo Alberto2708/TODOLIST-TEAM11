@@ -23,9 +23,17 @@ public class SubToDoItemService {
         }
     }
 
-    public List<Integer> findAllSubToDoItemsByToDoItemId(Integer toDoItemId){
+    public List<Integer> findAllSubToDoItemsIdsByToDoItemId(Integer toDoItemId){
         try{
             return subToDoItemRepository.findAllSubToDoItemIdsByToDoItemId(toDoItemId);
+        }catch(Exception e){
+            return null;
+        }
+    }
+    
+    public List<SubToDoItem> findAllSubToDoItemsByToDoItemId(Integer toDoItemId){
+        try{
+            return subToDoItemRepository.findAllSubToDoItemsByToDoItemId(toDoItemId);
         }catch(Exception e){
             return null;
         }
