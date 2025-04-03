@@ -17,6 +17,7 @@ export default function SubTaskCreation({ onClose, onTaskCreated, managerId, pro
     const [parentTasks, setParentTasks] = useState([]); // Array of parent tasks
     const [loadingParentTasks, setLoadingParentTasks] = useState(true);
     const [errorLoadingParentTasks, setErrorLoadingParentTasks] = useState(null);
+    const [isAddingSubTask, setIsAddingSubTask] = useState(false);
     useEffect(() => {
         console.log("Selected parent task:", parent);
     }, [parent]);
@@ -161,6 +162,37 @@ export default function SubTaskCreation({ onClose, onTaskCreated, managerId, pro
                 alert(`Error assigning task: ${error.message}`);
             } finally {
                 setIsAssigning(false);
+            }
+
+            setIsAddingSubTask(true);
+            try {
+                const subTaskData = {
+                    id:{
+                    toDoItemId: parent,
+                    subToDoItem: taskId
+                    }
+                };
+
+                const response = await fetch('/subToDoItems', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(subTaskData)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || 'Failed to create subtask');
+                }
+
+                alert("Subtask created successfully!");
+            } catch (error) {
+                console.error("Error creating subtask:", error);
+                setErrorMessage(error.message);
+            } finally {
+                setIsAddingSubTask(false);
             }
         } catch (error) {
             console.error("Error creating task:", error);

@@ -14,7 +14,7 @@ export default function ManagerTaskVis() {
     const [selectedTaskIndex, setSelectedTaskIndex] = useState(null); 
     const [modalAction, setModalAction] = useState(null); 
     const [employeeId, setEmployeeId] = useState(null);
-    const [projectId, setProjectId] = useState(null);
+    const [passedProjectId, setPassedProjectId] = useState(null);
     const [employees, setEmployees] = useState([]);
     const [tasks, setTasks] = useState({});
     const [subTasks, setSubTasks] = useState({});
@@ -28,7 +28,7 @@ export default function ManagerTaskVis() {
         const employeeId = localStorage.getItem("employeeId");
         const projectId = localStorage.getItem("projectId");
         setEmployeeId(employeeId);
-        setProjectId(projectId);
+        setPassedProjectId(projectId);
         if (employeeId && projectId) {
             fetchActualSprint(projectId, employeeId); // Pass employeeId to fetchActualSprint
         }
@@ -38,9 +38,9 @@ export default function ManagerTaskVis() {
         }
     }, []);
 
-    const handleRefresh = (employeeId, projectId) => {
+    const handleRefresh = (managerId, projectId) => {
         setScreenLoading(true); // Start loading when refreshing
-        fetchActualSprint(projectId);
+        fetchActualSprint(projectId, managerId);
     }
 
     const fetchActualSprint = async (projectId, managerId) => {
@@ -290,9 +290,9 @@ export default function ManagerTaskVis() {
                         <div className="modal-overlay">
                             <div className="modal-content">
                                 <TaskCreation onClose={closeTaskCreationModal}
-                                onTaskCreated={() => handleRefresh(employeeId, projectId)}
+                                onTaskCreated={() => handleRefresh(passedProjectId, employeeId)}
                                 managerId={employeeId}
-                                projectId={projectId}
+                                projectId={passedProjectId}
                                 sprintId={actualSprint.id} />
                             </div>
                         </div>
@@ -302,9 +302,9 @@ export default function ManagerTaskVis() {
                         <div className="modal-overlay">
                             <div className="modal-content">
                                 <SubTaskCreation onClose={closeSubTaskCreationModal}
-                                onTaskCreated={() => handleRefresh(employeeId, projectId)}
+                                onTaskCreated={() => handleRefresh(passedProjectId, employeeId)}
                                 managerId={employeeId}
-                                projectId={projectId}
+                                projectId={passedProjectId}
                                 sprintId={actualSprint.id} />
                             </div>
                         </div>
