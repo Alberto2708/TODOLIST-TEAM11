@@ -19,7 +19,7 @@ export default function TaskCreation({ onClose, onTaskCreated, managerId }) {
                 setLoadingEmployees(true);
                 setErrorLoadingEmployees(null);
                 
-                const response = await fetch(`http://localhost:8081/api/employees/managerId/${managerId}`);
+                const response = await fetch(`http://localhost:8081/employees/managerId/${managerId}`);
                 
                 const contentType = response.headers.get('content-type');
                 if (!contentType || !contentType.includes('application/json')) {

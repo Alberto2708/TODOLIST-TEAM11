@@ -7,6 +7,7 @@ function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
     const navigate = useNavigate();
 
     async function handleLogin(event) {
@@ -24,38 +25,47 @@ function Login() {
                 },
                 body: JSON.stringify(data),
             });
-
+        
+            console.log("Response status:", response.status);
+        
             if (response.ok) {
                 const result = await response.json();
                 console.log("Login successful", result);
-                // Handle successful login, e.g., store token, redirect, etc.
                 localStorage.setItem("employeeId", result.employeeId);
-
-                if(result.managerId==null){
+                localStorage.setItem("managerId", result.managerId);
+                localStorage.setItem("projectId", result.projectId);
+        
+                if (result.managerId == null) {
                     console.log("Manager login");
                     navigate("/managertasks");
-                }
-                else{
+                } else {
                     console.log("Employee login");
                     navigate("/usertasks");
                 }
             } else {
-                const error = await response.json();
-                console.error("Login failed", error);
-                // Handle login failure, e.g., show error message
+                const errorText = await response.text();
+                console.error("Login failed, response:", errorText);
+                
+                if (response.status === 401) {
+                    setErrorMessage("Invalid email or password. Please try again.");
+                } else {
+                    setErrorMessage("An error occurred. Please try again later.");
+                }
             }
         } catch (error) {
             console.error("Error during login", error);
-            // Handle network or other errors
+            setErrorMessage("An error occurred. Please try again later.");
         } finally {
             setLoading(false);
         }
+        
     }
 
     return (
         <div className="login-container">
             <form className="login-box" onSubmit={handleLogin}>
                 <h2>Login</h2>
+                {errorMessage && <p className="error-message">{errorMessage}</p>}{/* Display error message if any */}
                 <input 
                     type="email" 
                     placeholder="Email" 

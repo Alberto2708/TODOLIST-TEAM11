@@ -10,10 +10,51 @@ html, body, #root {
     padding: 2rem;
     position: relative;
 }
+
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Center the content vertically and horizontally */
+  height: 100vh;
+  background-color: #f8f5ee;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+
+.spinner {
+  border: 8px solid #f3f3f3; /* Light gray border */
+  border-top: 8px solid #ff0000;
+  border-left: 8px solid #000000;
+  border-bottom: 8px solid #7f7f7f;
+  border-radius: 50%; /* Make it circular */
+  width: 150px; 
+  height: 150px; 
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 h1{
     font-size: 2rem;
     margin-bottom: 2rem;
     font: 2em sans-serif;
+}
+h2{
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #C74634;
 }
 .employee-task-list {
   margin-bottom: 20px; /* Add space between each employee's task list */
@@ -22,6 +63,14 @@ h1{
 .taskContainer{
     gap: 1rem;
     margin-bottom: 4rem;
+}
+
+.dateContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
 }
 
 .addButton {
