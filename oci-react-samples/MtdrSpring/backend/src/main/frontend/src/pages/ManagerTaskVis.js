@@ -5,10 +5,12 @@ import React from 'react';
 import ToDoItem from "../components/ToDoItem";
 import ManagerModalTask from "../components/ManagerModalTask.js";
 import TaskCreation from "../components/TaskCreation";
+import SubTaskCreation from "../components/SubTaskCreation.js";
 
 export default function ManagerTaskVis() {
     const [isTaskCreationModalOpen, setIsTaskCreationModalOpen] = useState(false); 
     const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState(false);
+    const [isSubTaskCreationModalOpen, setIsSubTaskCreationModalOpen] = useState(false);
     const [selectedTaskIndex, setSelectedTaskIndex] = useState(null); 
     const [modalAction, setModalAction] = useState(null); 
     const [employeeId, setEmployeeId] = useState(null);
@@ -35,6 +37,12 @@ export default function ManagerTaskVis() {
             setScreenLoading(false);
         }
     }, []);
+
+    const handleRefresh = (employeeId, projectId) => {
+        setScreenLoading(true); // Start loading when refreshing
+        fetchEmployees(employeeId, projectId);
+        fetchActualSprint(projectId);
+    }
 
     const fetchActualSprint = async (projectId) => {
         try {
@@ -131,17 +139,36 @@ export default function ManagerTaskVis() {
         setIsTaskDetailsModalOpen(false); 
     };
 
+
     const openTaskCreationModal = () => {
         setIsTaskCreationModalOpen(true);
+    };
+
+    const openSubTaskCreationModal = () => {
+        setIsSubTaskCreationModalOpen(true);
     };
 
     const closeTaskCreationModal = () => {
         setIsTaskCreationModalOpen(false);
     };
 
+    const closeSubTaskCreationModal = () => {
+        setIsSubTaskCreationModalOpen(false);
+    };
+
+    const handleSubTaskSaveClick = () => {
+        setModalAction('save');
+        closeSubTaskCreationModal();
+    };
+
     const handleSaveClick = () => {
         setModalAction('save'); 
         closeTaskDetailsModal(); 
+    };
+
+    const handleSubTaskCancelClick = () => {
+        setModalAction('cancel'); 
+        closeSubTaskCreationModal();
     };
 
     const handleCancelClick = () => {
@@ -167,6 +194,12 @@ export default function ManagerTaskVis() {
                         </div>
                         <button className="addButton" onClick={openTaskCreationModal}>
                             Create Task
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                        </button>
+                        <button className="addButton" onClick={openSubTaskCreationModal}>
+                            Create SubTask
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                             </svg>
@@ -198,9 +231,22 @@ export default function ManagerTaskVis() {
                         <div className="modal-overlay">
                             <div className="modal-content">
                                 <TaskCreation onClose={closeTaskCreationModal}
-                                onTaskCreated={fetchTasks}
+                                onTaskCreated={() => handleRefresh(employeeId, projectId)}
                                 managerId={employeeId}
-                                projectId={projectId} />
+                                projectId={projectId}
+                                sprintId={actualSprint.id} />
+                            </div>
+                        </div>
+                    )}
+
+                    {isSubTaskCreationModalOpen && (
+                        <div className="modal-overlay">
+                            <div className="modal-content">
+                                <SubTaskCreation onClose={closeSubTaskCreationModal}
+                                onTaskCreated={() => handleRefresh(employeeId, projectId)}
+                                managerId={employeeId}
+                                projectId={projectId}
+                                sprintId={actualSprint.id} />
                             </div>
                         </div>
                     )}
@@ -213,6 +259,7 @@ export default function ManagerTaskVis() {
                             task={selectedTask} // Pass the selected task as a prop
                         />
                     )}
+
                 </>
             )}
         </div>
