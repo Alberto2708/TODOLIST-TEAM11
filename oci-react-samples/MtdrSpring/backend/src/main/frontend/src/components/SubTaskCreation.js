@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import "../styles/TaskCreation.css";
 
 export default function SubTaskCreation({ onClose, onTaskCreated, managerId, projectId, sprintId }) {
     const [taskName, setTaskName] = useState("");
+    const [parent, setParent] = useState(""); // State for parent task
     const [description, setDescription] = useState("");
     const [dueDate, setDueDate] = useState("");
     const [responsibles, setResponsibles] = useState([{ id: "", name: "" }]); // Array of assignments
-    const [estHours, setEstHours] = useState(1);
+    const [estHours, setEstHours] = useState(0.5);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isAssigning, setIsAssigning] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
@@ -16,6 +17,9 @@ export default function SubTaskCreation({ onClose, onTaskCreated, managerId, pro
     const [parentTasks, setParentTasks] = useState([]); // Array of parent tasks
     const [loadingParentTasks, setLoadingParentTasks] = useState(true);
     const [errorLoadingParentTasks, setErrorLoadingParentTasks] = useState(null);
+    useEffect(() => {
+        console.log("Selected parent task:", parent);
+    }, [parent]);
 
     useEffect(() => {
         const fetchEmployees = async () => {
@@ -23,7 +27,7 @@ export default function SubTaskCreation({ onClose, onTaskCreated, managerId, pro
                 setLoadingEmployees(true);
                 setErrorLoadingEmployees(null);
 
-                const response = await fetch(`http://localhost:8081/employees/managerId/${managerId}`);
+                const response = await fetch(`/employees/managerId/${managerId}`);
                 const data = await response.json();
                 setEmployees(data);
             } catch (error) {
@@ -34,8 +38,26 @@ export default function SubTaskCreation({ onClose, onTaskCreated, managerId, pro
             }
         };
 
+
+        const fetchParentTasks = async () => {
+            try {
+                setLoadingParentTasks(true);
+                setErrorLoadingParentTasks(null);
+
+                const response = await fetch(`/todolist/manager/${managerId}/sprint/${sprintId}`);
+                const data = await response.json();
+                setParentTasks(data);
+            } catch (error) {
+                console.error("Error loading parent tasks:", error);
+                setErrorLoadingParentTasks(error.message);
+            } finally {
+                setLoadingParentTasks(false);
+            }
+        };
+
         fetchEmployees();
-    }, [managerId]);
+        fetchParentTasks();
+    }, [managerId, sprintId]);
 
     const addResponsibleField = () => {
         setResponsibles([...responsibles, { id: "", name: "" }]);
@@ -87,7 +109,7 @@ export default function SubTaskCreation({ onClose, onTaskCreated, managerId, pro
                 estHours: estHours,
             };
 
-            const response = await fetch('http://localhost:8081/todolist', {
+            const response = await fetch('/todolist', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -114,7 +136,7 @@ export default function SubTaskCreation({ onClose, onTaskCreated, managerId, pro
                         }
                     };
             
-                    const assignation = await fetch(`http://localhost:8081/assignedDev`, {
+                    const assignation = await fetch(`/assignedDev`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -160,10 +182,28 @@ export default function SubTaskCreation({ onClose, onTaskCreated, managerId, pro
                         {errorMessage && <p className="tc-error-message">{errorMessage}</p>}
 
                         <div className="tc-form-group">
-                            <label>Select a parent task</label>
-                            <select>
-                                <option value="">Select Parent Task</option>
+                        <label>Select parent Task</label>
+                        {loadingParentTasks ? (
+                            <p>Loading parent tasks...</p>
+                        ) : errorLoadingParentTasks ? (
+                            <p>Error loading parent tasks</p>
+                        ) : parentTasks.length === 0 ? (
+                            <p className="tc-error-message">No parent tasks available</p>
+                        ) : (
+                            <select
+                            value={parent}
+                            onChange={(e) => setParent(e.target.value)}
+                            required
+                        >
+                            <option value ="">Select parent task</option>
+                            {parentTasks.map((task) => (
+                                <option key={task.id} value={task.id}>
+                                    {task.name}
+                                </option>
+                            ))}
                             </select>
+                        )}
+                            
                         </div>
 
 

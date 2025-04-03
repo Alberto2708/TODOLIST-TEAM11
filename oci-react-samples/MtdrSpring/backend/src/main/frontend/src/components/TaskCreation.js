@@ -3,10 +3,11 @@ import "../styles/TaskCreation.css";
 
 export default function TaskCreation({ onClose, onTaskCreated, managerId, projectId, sprintId }) {
     const [taskName, setTaskName] = useState("");
+    const [parentName, setParentName] = useState("");
     const [description, setDescription] = useState("");
     const [dueDate, setDueDate] = useState("");
-    const [responsibles, setResponsibles] = useState([{ id: "", name: "" }]); // Array of assignments
-    const [estHours, setEstHours] = useState(1);
+    const [responsibles, setResponsibles] = useState([{ id: "", name: "" }]);
+    const [estHours, setEstHours] = useState(0.5);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isAssigning, setIsAssigning] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
@@ -20,7 +21,7 @@ export default function TaskCreation({ onClose, onTaskCreated, managerId, projec
                 setLoadingEmployees(true);
                 setErrorLoadingEmployees(null);
 
-                const response = await fetch(`http://localhost:8081/employees/managerId/${managerId}`);
+                const response = await fetch(`/employees/managerId/${managerId}`);
                 const data = await response.json();
                 setEmployees(data);
             } catch (error) {
@@ -59,7 +60,7 @@ export default function TaskCreation({ onClose, onTaskCreated, managerId, projec
             return;
         }
 
-        if (responsibles.length === 0 || responsibles.some(r => !r.id)) {
+        if (responsibles.some(r => !r.id)) {
             alert("Please assign the task to at least one team member");
             setIsSubmitting(false);
             return;
@@ -84,7 +85,7 @@ export default function TaskCreation({ onClose, onTaskCreated, managerId, projec
                 estHours: estHours,
             };
 
-            const response = await fetch('http://localhost:8081/todolist', {
+            const response = await fetch('/todolist', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -110,8 +111,8 @@ export default function TaskCreation({ onClose, onTaskCreated, managerId, projec
                             employeeId: responsible.id
                         }
                     };
-            
-                    const assignation = await fetch(`http://localhost:8081/assignedDev`, {
+
+                    const assignation = await fetch(`/assignedDev`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -119,13 +120,13 @@ export default function TaskCreation({ onClose, onTaskCreated, managerId, projec
                         },
                         body: JSON.stringify(assignationData)
                     });
-            
+
                     if (!assignation.ok) {
                         const errorData = await assignation.json().catch(() => ({}));
                         throw new Error(errorData.message || `Failed to assign task to employee ID: ${responsible.id}`);
                     }
                 }
-            
+
                 alert("Task created and assigned successfully!");
                 onClose();
                 if (onTaskCreated) {
@@ -155,58 +156,39 @@ export default function TaskCreation({ onClose, onTaskCreated, managerId, projec
 
                     <form className="tc-task-creation-form" onSubmit={handleSubmit}>
                         {errorMessage && <p className="tc-error-message">{errorMessage}</p>}
+                        
                         <div className="tc-form-group">
                             <label>Task Name</label>
-                            <input
-                                type="text"
-                                placeholder="Enter task name"
-                                value={taskName}
-                                onChange={(e) => setTaskName(e.target.value)}
-                                required
-                            />
+                            <input type="text" placeholder="Enter task name" value={taskName} onChange={(e) => setTaskName(e.target.value)} required />
                         </div>
 
                         <div className="tc-form-group">
-    <label>Assign To</label>
-    <div className="responsible-field-container">
-        {responsibles.map((responsible, index) => (
-            <div key={index} className="responsible-field">
-                <select
-                    value={responsible.id}
-                    onChange={(e) => handleResponsibleChange(index, e.target.value)}
-                    required
-                >
-                    <option value="">Select Team Member</option>
-                    {employees.map(employee => (
-                        <option key={employee.id} value={employee.id}>
-                            {employee.name}
-                        </option>
-                    ))}
-                </select>
-                <button
-                    type="button"
-                    onClick={() => removeResponsibleField(index)}
-                    className="remove-button"
-                >
-                    Remove
-                </button>
-            </div>
-        ))}
-    </div>
-    <button type="button" onClick={addResponsibleField} className="add-button">
-        Add Another
-    </button>
-</div>
-
-                        <div className="tc-form-group">
-                            <label>Due Date</label>
-                            <input
-                                type="date"
-                                value={dueDate}
-                                onChange={(e) => setDueDate(e.target.value)}
-                                min={new Date().toISOString().split('T')[0]}
-                                required
-                            />
+                            <label>Assign To</label>
+                            <div className="responsible-field-container">
+                                {responsibles.map((responsible, index) => (
+                                    <div key={index} className="responsible-field">
+                                        <select value={responsible.id} onChange={(e) => handleResponsibleChange(index, e.target.value)} required>
+                                            <option value="">Select Team Member</option>
+                                            {employees.map(employee => (
+                                                <option key={employee.id} value={employee.id}>{employee.name}</option>
+                                            ))}
+                                        </select>
+                                        <button type="button" onClick={() => removeResponsibleField(index)} className="remove-button">Remove</button>
+                                    </div>
+                                ))}
+                            </div>
+                            <button type="button" onClick={addResponsibleField} className="add-button">Add Another</button>
+                            
+                            <div className="tc-form-group">
+                                <label>Due Date</label>
+                                <input
+                                    type="date"
+                                    value={dueDate}
+                                    onChange={(e) => setDueDate(e.target.value)}
+                                    min={new Date().toISOString().split('T')[0]}
+                                    required
+                                />
+                            </div>
                         </div>
 
                         <div className="tc-form-group">
@@ -249,6 +231,7 @@ export default function TaskCreation({ onClose, onTaskCreated, managerId, projec
                             >
                                 {isSubmitting ? 'Creating...' : isAssigning ? 'Assigning...' : 'Create Task'}
                             </button>
+
                         </div>
                     </form>
                 </div>
