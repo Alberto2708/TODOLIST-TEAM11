@@ -1,22 +1,32 @@
 import React, { useState } from "react";
 import "../styles/ToDoItem.css";
 
-const ToDoItem = ({ name, timestamp, statusColor, taskStatus, subTasks = [], onClick }) => {
+const ToDoItem = ({ name, timestamp, statusColor, taskStatus, subTasks = [], onClick, subTaskOnClick }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isClicked, setIsClicked] = useState(false);
 
-  const handleTaskClick = () => {
-    onClick(); // Open modal with task details
-  };
-
-  const handleButtonClick = (e) => {
-    e.stopPropagation(); // Prevent click from bubbling up
-    setIsClicked(!isClicked);
+  const handleTaskClick = (e) => {
+    e.stopPropagation(); // Prevent click from bubbling up to parent
+    if (onClick) {
+      onClick(); // Open modal with task details (only if onClick is defined)
+    }
   };
 
   const toggleSubtasks = (e) => {
     e.stopPropagation(); // Prevent click from opening modal
     setIsExpanded(!isExpanded);
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "PENDING":
+        return "orange";
+      case "COMPLETED":
+        return "green";
+      case "OVERDUE":
+        return "red";
+      default:
+        return "black";
+    }
   };
 
   return (
@@ -29,13 +39,9 @@ const ToDoItem = ({ name, timestamp, statusColor, taskStatus, subTasks = [], onC
         )}
         <span className="task-name">{name}</span>
         <span className="task-timestamp">{timestamp}</span>
-        <span className="task-status" style={{ color: statusColor }}>{taskStatus}</span>
-        <button
-          className={`task-button ${isClicked ? "clicked" : ""}`}
-          onClick={handleButtonClick}
-        >
-          ➕
-        </button>
+        <span className="task-status" style={{ color: statusColor }}>
+          {taskStatus}
+        </span>
       </div>
 
       {isExpanded && (
@@ -44,11 +50,16 @@ const ToDoItem = ({ name, timestamp, statusColor, taskStatus, subTasks = [], onC
             <ToDoItem
               key={index}
               name={subTask.name}
-              timestamp={subTask.timestamp}
-              statusColor={subTask.statusColor}
-              taskStatus={subTask.taskStatus}
+              timestamp={subTask.deadline}
+              statusColor={getStatusColor(subTask.status)}
+              taskStatus={subTask.status}
               subTasks={subTask.subTasks || []} // Recursively pass subtasks
-              onClick={onClick} // Pass the same onClick function
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent parent task click
+                if (subTaskOnClick) {
+                  subTaskOnClick(subTask); // Pass the subtask to the handler (only if subTaskOnClick is defined)
+                }
+              }}
             />
           ))}
         </div>
