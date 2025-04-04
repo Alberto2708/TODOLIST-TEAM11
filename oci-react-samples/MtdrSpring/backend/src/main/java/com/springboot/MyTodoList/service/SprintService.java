@@ -38,7 +38,9 @@ public class SprintService {
         try {
             List<Sprint> sprints = findSprintsByProjectId(projectId);
             for (Sprint sprint : sprints) {
-                if (sprint.getStartDate().isBefore(OffsetDateTime.now()) && sprint.getEndDate().isAfter(OffsetDateTime.now())) {
+                OffsetDateTime startDate = sprint.getStartDate();
+                OffsetDateTime endDate = sprint.getEndDate().plusDays(1);
+                if (startDate.isBefore(OffsetDateTime.now()) && (endDate.isAfter(OffsetDateTime.now()) || endDate.isEqual(OffsetDateTime.now()))) {
                     return new ResponseEntity<> (sprint, HttpStatus.OK);
                 }
             }
