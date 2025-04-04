@@ -19,6 +19,7 @@ export default function ManagerTaskVis() {
     const [tasks, setTasks] = useState({});
     const [subTasks, setSubTasks] = useState({});
     const [kpis, setKpis] = useState({});
+    const [percentageKpis, setPercentageKpis] = useState({});
     const [actualSprint, setActualSprint] = useState({});
     const [selectedTask, setSelectedTask] = useState(null);
     const [isScreenLoading, setScreenLoading] = useState(true); // State to track loading status
@@ -42,6 +43,28 @@ export default function ManagerTaskVis() {
         setScreenLoading(true); // Start loading when refreshing
         fetchActualSprint(projectId, managerId);
     }
+
+    const fetchCompletedPercentage = async (employeeId, sprintId) => {
+        try {
+            const response = await fetch(`/assignedDev/${employeeId}/sprint/${sprintId}/kpi`);
+            if (response.ok) {
+                const text = await response.text();
+                const data = text ? JSON.parse(text) : null;
+                if (data !== null && !isNaN(data)) {
+                    setPercentageKpis((prevKpis) => ({ ...prevKpis, [employeeId]: data }));
+                } else {
+                    console.warn(`Invalid KPI data for employeeId ${employeeId}:`, data);
+                    setPercentageKpis((prevKpis) => ({ ...prevKpis, [employeeId]: null }));
+                }
+            } else {
+                console.error("Error fetching KPI:", response.statusText);
+                setPercentageKpis((prevKpis) => ({ ...prevKpis, [employeeId]: null }));
+            }
+        } catch (error) {
+            console.error("Error fetching KPIs:", error);
+            setPercentageKpis((prevKpis) => ({ ...prevKpis, [employeeId]: null }));
+        }
+    };
 
     const fetchActualSprint = async (projectId, managerId) => {
         try {
@@ -67,6 +90,7 @@ export default function ManagerTaskVis() {
             setEmployees(data);
             const taskPromises = data.map(employee => fetchTasks(employee.id, sprintId));
             const kpiPromises = data.map(employee => fetchKpi(employee.id));
+            const percentageKpiPromises = data.map(employee => fetchCompletedPercentage(employee.id, sprintId)); // Fetch completed percentage for each employee
             await Promise.all([...taskPromises, ...kpiPromises]); // Wait for all tasks and KPIs to load
             setScreenLoading(false); // Stop loading after all data is fetched
         } catch (error) {
@@ -161,12 +185,19 @@ export default function ManagerTaskVis() {
             if (response.ok) {
                 const text = await response.text();
                 const data = text ? JSON.parse(text) : null;
-                setKpis(prevKpis => ({ ...prevKpis, [assignedDevId]: data }));
+                if (data !== null && !isNaN(data)) {
+                    setKpis((prevKpis) => ({ ...prevKpis, [assignedDevId]: data }));
+                } else {
+                    console.warn(`Invalid KPI data for assignedDevId ${assignedDevId}:`, data);
+                    setKpis((prevKpis) => ({ ...prevKpis, [assignedDevId]: null }));
+                }
             } else {
                 console.error("Error fetching KPI:", response.statusText);
+                setKpis((prevKpis) => ({ ...prevKpis, [assignedDevId]: null }));
             }
         } catch (error) {
             console.error("Error fetching KPIs:", error);
+            setKpis((prevKpis) => ({ ...prevKpis, [assignedDevId]: null }));
         }
     };
 
@@ -202,6 +233,15 @@ export default function ManagerTaskVis() {
         } 
         else{
             return kpis[employeeId];
+        }
+    };
+    
+    const calculatePercentageKpi = (employeeId) => {
+        if(percentageKpis[employeeId] === null) {
+            return "more information needed";
+        }
+        else{
+            return percentageKpis[employeeId];
         }
     };
 
@@ -296,6 +336,7 @@ export default function ManagerTaskVis() {
                 />
             ))}
                                 <h3>Average hours of completion before deadline: {calculateKpi(employee.id)}</h3>
+                                <h3>Percentage of tasks completed: {calculatePercentageKpi(employee.id)}%</h3>
                             </div>
                         )
                     ))}
