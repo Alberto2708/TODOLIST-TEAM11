@@ -59,7 +59,7 @@ const fetchTasks = async (employeeId, sprintId) => {
 
       const parseTasks = await Promise.all(
           data.map(async (task) => {
-              const subTasks = await fetchSubTasks(task.body.id);
+              const subTasks = await fetchSubTasks(task.body.id, employeeId);
               console.log(`Fetched subtasks for task ID ${task.body.id}:`, subTasks);
 
               return {
@@ -81,31 +81,47 @@ const fetchTasks = async (employeeId, sprintId) => {
   }
 };
 
-const fetchSubTasks = async (taskId) => {
+const fetchSubTasks = async (taskId, employeeId) => {
   try {
-      const response = await fetch(`subToDoItems/toDoItem/${taskId}`);
-      if (!response.ok) {
-          console.error("Error fetching subtasks:", response.statusText);
-          return [];
-      }
-      const data = await response.json();
+    console.log("Fetching subtasks for task ID:", taskId, "and employee ID:", employeeId);
+    const response = await fetch(`subToDoItems/toDoItem/${taskId}/employee/${employeeId}`);
+    if (!response.ok) {
+      console.error("Error fetching subtasks:", response.statusText);
+      return [];
+    }
+
+    const text = await response.text();
+    if (!text) {
+      // Handle empty response
+      console.warn(`Empty response for task ID ${taskId}`);
+      return [];
+    }
+
+    try {
+      const data = JSON.parse(text); // Parse the JSON response
       console.log(`Fetched subtasks data for toDoItemId ${taskId}:`, data);
 
+      // Adjust parsing logic based on the actual structure of the response
       const parsedSubTasks = await Promise.all(
-          data.map(async (item) => ({
-              id: item.body.id,
-              name: item.body.name,
-              deadline: new Date(item.body.deadline).toLocaleDateString(),
-              description: item.body.description,
-              status: item.body.status,
-              subTasks: await fetchSubTasks(item.body.id), // Fetch subtasks recursively
-          }))
+        data.map(async (item) => ({
+          id: item.id, // Adjusted to match the structure of your response
+          name: item.name,
+          deadline: new Date(item.deadline).toLocaleDateString(),
+          description: item.description,
+          status: item.status,
+          subTasks: await fetchSubTasks(item.id, employeeId), // Fetch subtasks recursively
+        }))
       );
+
       setSubTasks((prevSubTasks) => ({ ...prevSubTasks, [taskId]: parsedSubTasks }));
       return parsedSubTasks;
+    } catch (error) {
+      console.error("Invalid JSON response:", text);
+      return [];
+    }
   } catch (error) {
-      console.error("Error fetching subtasks:", error);
-      return []; // Return an empty array in case of an error
+    console.error("Error fetching subtasks:", error);
+    return [];
   }
 };
 
