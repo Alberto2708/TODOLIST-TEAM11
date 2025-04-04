@@ -8,17 +8,21 @@ import TaskCreation from "../components/TaskCreation";
 import SubTaskCreation from "../components/SubTaskCreation.js";
 
 export default function ManagerTaskVis() {
+    // Actions
     const [isTaskCreationModalOpen, setIsTaskCreationModalOpen] = useState(false); 
     const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState(false);
     const [isSubTaskCreationModalOpen, setIsSubTaskCreationModalOpen] = useState(false);
     const [selectedTaskIndex, setSelectedTaskIndex] = useState(null); 
     const [modalAction, setModalAction] = useState(null); 
+    //Information
     const [employeeId, setEmployeeId] = useState(null);
     const [passedProjectId, setPassedProjectId] = useState(null);
     const [employees, setEmployees] = useState([]);
     const [tasks, setTasks] = useState({});
     const [subTasks, setSubTasks] = useState({});
+    //KPIS
     const [kpis, setKpis] = useState({});
+    const [totalCompletedTasks, setTotalCompletedTasks] = useState(null);
     const [percentageKpis, setPercentageKpis] = useState({});
     const [sumOverdueTasks, setSumOverdueTasks] = useState({});
     const [actualSprint, setActualSprint] = useState({});
@@ -93,6 +97,7 @@ export default function ManagerTaskVis() {
             const kpiPromises = data.map(employee => fetchKpi(employee.id));
             const percentageKpiPromises = data.map(employee => fetchCompletedPercentage(employee.id, sprintId));
             const sumOverdueTasksPromises = data.map(employee => fetchSumOverdueTasks(employee.id)) // Fetch completed percentage for each employee
+            const totalCompletedTasksPromise = fetchTotalCompletedTasksbySprint(sprintId); // Fetch total completed tasks for the sprint
             await Promise.all([...taskPromises, ...kpiPromises, ...percentageKpiPromises, ...sumOverdueTasksPromises]); // Wait for all tasks and KPIs to load
             setScreenLoading(false); // Stop loading after all data is fetched
         } catch (error) {
@@ -203,6 +208,27 @@ export default function ManagerTaskVis() {
         }
     };
 
+    const fetchTotalCompletedTasksbySprint = async (sprintId) => {
+        try{
+            const response = await fetch(`sprint/${sprintId}/kpi`);
+            if(response.ok){ 
+                const text = await response.text();
+                const data = text ? JSON.parse(text) : null;
+                if(data !== null && !isNaN(data)){
+                    setTotalCompletedTasks(data);
+                    console.log("Total completed tasks:", data);
+                } else {
+                    console.warn(`Invalid KPI data for sprintId ${sprintId}:`, data);
+                    setTotalCompletedTasks(null);
+                }
+
+            }
+
+        } catch (error) {
+            console.error("Error fetching total completed tasks by sprint:", error);
+        }
+    }
+
 
     
     const fetchKpi = async (assignedDevId) => {
@@ -271,6 +297,16 @@ export default function ManagerTaskVis() {
         }
     };
 
+    const calculateTotalCompletedTasks = () => {
+        if (totalCompletedTasks === null) {
+            return "No data available";
+        } else if (isNaN(totalCompletedTasks)) {    
+            return "Invalid data";
+        } else {
+            return totalCompletedTasks;
+        }
+    };
+
     const calculateSumOverdueTasks = (employeeId) => {
         const overdueTasks = sumOverdueTasks[employeeId];
         if (overdueTasks === null || overdueTasks === undefined || isNaN(overdueTasks)) {
@@ -331,12 +367,13 @@ export default function ManagerTaskVis() {
             ) : (
                 <>
                     <div className="taskContainer">
-                        <h1>TO DO LIST se actualizó?</h1>
+                        <h1>TO DO LIST</h1>
                         <h2>{actualSprint.name}</h2>
                         <div className="dateContainer">
                             <h3>Start Date: {new Date(actualSprint.startDate).toLocaleDateString()}</h3>
                             <h3>End Date: {new Date(actualSprint.endDate).toLocaleDateString()}</h3>
                             <h3>Days Left: {Math.floor((new Date(actualSprint.endDate) - new Date()) / (1000 * 60 * 60 * 24))}</h3>
+                            <h3>Percentage of completed tasks: {calculateTotalCompletedTasks()}</h3>
                         </div>
                         <button className="addButton" onClick={openTaskCreationModal}>
                             Create Task
