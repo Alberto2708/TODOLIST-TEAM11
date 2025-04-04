@@ -18,8 +18,20 @@ done
 
 
 # Wait for Order DB OCID
+# Wait for Order DB OCID
 while ! state_done MTDR_DB_OCID; do
   echo "`date`: Waiting for MTDR_DB_OCID"
+  MTDR_DB_OCID=$(oci db autonomous-database list \
+    --compartment-id "$(state_get COMPARTMENT_OCID)" \
+    --query "data[?\"display-name\"=='MTDRDB'].id | [0]" --raw-output)
+
+  if [[ "$MTDR_DB_OCID" =~ ^ocid1\.autonomousdatabase\. ]]; then
+    state_set MTDR_DB_OCID "$MTDR_DB_OCID"
+    echo "MTDR_DB_OCID retrieved: $MTDR_DB_OCID"
+  else
+    echo "ERROR: Failed to retrieve a valid MTDR_DB_OCID: $MTDR_DB_OCID"
+    exit 1
+  fi
   sleep 2
 done
 
