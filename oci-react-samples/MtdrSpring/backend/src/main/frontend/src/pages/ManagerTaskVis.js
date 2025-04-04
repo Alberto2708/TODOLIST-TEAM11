@@ -181,27 +181,28 @@ export default function ManagerTaskVis() {
         }
     };
 
-    const fetchSumOverdueTasks = async (assignedDevId) => {
+    const fetchSumOverdueTasks = async (employeeId) => {
         try {
-            const response = await fetch(`/assignedDev/kpi/${assignedDevId}/overdue`);
+            const response = await fetch(`/assignedDev/kpi/${employeeId}/overdue`);
             if (response.ok) {
                 const text = await response.text();
                 const data = text ? JSON.parse(text) : null;
                 if (data !== null && !isNaN(data)) {
-                    setSumOverdueTasks((prevTasks) => ({ ...prevTasks, [assignedDevId]: data }));
+                    setSumOverdueTasks((prevKpis) => ({ ...prevKpis, [employeeId]: data }));
                 } else {
-                    console.warn(`Invalid overdue tasks data for assignedDevId ${assignedDevId}:`, data);
-                    setSumOverdueTasks((prevTasks) => ({ ...prevTasks, [assignedDevId]: 0 })); // Default to 0 if invalid
+                    console.warn(`Invalid KPI data for employeeId ${employeeId}:`, data);
+                    setSumOverdueTasks((prevKpis) => ({ ...prevKpis, [employeeId]: null }));
                 }
             } else {
-                console.error(`Error fetching overdue tasks for assignedDevId ${assignedDevId}:`, response.statusText);
-                setSumOverdueTasks((prevTasks) => ({ ...prevTasks, [assignedDevId]: 0 })); // Default to 0 on error
+                console.error("Error fetching KPI:", response.statusText);
+                setSumOverdueTasks((prevKpis) => ({ ...prevKpis, [employeeId]: null }));
             }
         } catch (error) {
-            console.error(`Error fetching overdue tasks for assignedDevId ${assignedDevId}:`, error);
-            setSumOverdueTasks((prevTasks) => ({ ...prevTasks, [assignedDevId]: 0 })); // Default to 0 on exception
+            console.error("Error fetching KPIs:", error);
+            setSumOverdueTasks((prevKpis) => ({ ...prevKpis, [employeeId]: null }));
         }
     };
+
 
     
     const fetchKpi = async (assignedDevId) => {
@@ -330,7 +331,7 @@ export default function ManagerTaskVis() {
             ) : (
                 <>
                     <div className="taskContainer">
-                        <h1>TO DO LIST QUE PEDO </h1>
+                        <h1>TO DO LIST se actualizó?</h1>
                         <h2>{actualSprint.name}</h2>
                         <div className="dateContainer">
                             <h3>Start Date: {new Date(actualSprint.startDate).toLocaleDateString()}</h3>
