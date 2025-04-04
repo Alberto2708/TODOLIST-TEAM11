@@ -20,6 +20,7 @@ export default function ManagerTaskVis() {
     const [subTasks, setSubTasks] = useState({});
     const [kpis, setKpis] = useState({});
     const [percentageKpis, setPercentageKpis] = useState({});
+    const [sumOverdueTasks, setSumOverdueTasks] = useState({});
     const [actualSprint, setActualSprint] = useState({});
     const [selectedTask, setSelectedTask] = useState(null);
     const [isScreenLoading, setScreenLoading] = useState(true); // State to track loading status
@@ -90,8 +91,9 @@ export default function ManagerTaskVis() {
             setEmployees(data);
             const taskPromises = data.map(employee => fetchTasks(employee.id, sprintId));
             const kpiPromises = data.map(employee => fetchKpi(employee.id));
-            const percentageKpiPromises = data.map(employee => fetchCompletedPercentage(employee.id, sprintId)); // Fetch completed percentage for each employee
-            await Promise.all([...taskPromises, ...kpiPromises]); // Wait for all tasks and KPIs to load
+            const percentageKpiPromises = data.map(employee => fetchCompletedPercentage(employee.id, sprintId));
+            const sumOverdueTasksPromises = data.map(employee => fetchSumOverdueTasks(employee.id)) // Fetch completed percentage for each employee
+            await Promise.all([...taskPromises, ...kpiPromises, ...percentageKpiPromises, ...sumOverdueTasksPromises]); // Wait for all tasks and KPIs to load
             setScreenLoading(false); // Stop loading after all data is fetched
         } catch (error) {
             console.error("Error fetching employees:", error);
@@ -179,6 +181,29 @@ export default function ManagerTaskVis() {
         }
     };
 
+    const fetchSumOverdueTasks = async (assignedDevId) => {
+        try {
+            const response = await fetch(`/assignedDev/kpi/${assignedDevId}/overdue`);
+            if (response.ok) {
+                const text = await response.text();
+                const data = text ? JSON.parse(text) : null;
+                if (data !== null && !isNaN(data)) {
+                    setSumOverdueTasks((prevTasks) => ({ ...prevTasks, [assignedDevId]: data }));
+                } else {
+                    console.warn(`Invalid overdue tasks data for assignedDevId ${assignedDevId}:`, data);
+                    setSumOverdueTasks((prevTasks) => ({ ...prevTasks, [assignedDevId]: 0 })); // Default to 0 if invalid
+                }
+            } else {
+                console.error(`Error fetching overdue tasks for assignedDevId ${assignedDevId}:`, response.statusText);
+                setSumOverdueTasks((prevTasks) => ({ ...prevTasks, [assignedDevId]: 0 })); // Default to 0 on error
+            }
+        } catch (error) {
+            console.error(`Error fetching overdue tasks for assignedDevId ${assignedDevId}:`, error);
+            setSumOverdueTasks((prevTasks) => ({ ...prevTasks, [assignedDevId]: 0 })); // Default to 0 on exception
+        }
+    };
+
+    
     const fetchKpi = async (assignedDevId) => {
         try {
             const response = await fetch(`/assignedDev/kpi/${assignedDevId}`);
@@ -245,6 +270,14 @@ export default function ManagerTaskVis() {
         }
     };
 
+    const calculateSumOverdueTasks = (employeeId) => {
+        const overdueTasks = sumOverdueTasks[employeeId];
+        if (overdueTasks === null || overdueTasks === undefined || isNaN(overdueTasks)) {
+            return "No overdue tasks data available";
+        }
+        return overdueTasks; // Return the valid overdue tasks count
+    };
+
     const closeTaskDetailsModal = () => {
         setIsTaskDetailsModalOpen(false); 
     };
@@ -297,7 +330,7 @@ export default function ManagerTaskVis() {
             ) : (
                 <>
                     <div className="taskContainer">
-                        <h1>TO DO LIST</h1>
+                        <h1>TO DO LIST QUE PEDO </h1>
                         <h2>{actualSprint.name}</h2>
                         <div className="dateContainer">
                             <h3>Start Date: {new Date(actualSprint.startDate).toLocaleDateString()}</h3>
@@ -336,7 +369,8 @@ export default function ManagerTaskVis() {
                 />
             ))}
                                 <h3>Average hours of completion before deadline: {calculateKpi(employee.id)}</h3>
-                                <h3>Percentage of tasks completed: {calculatePercentageKpi(employee.id)}%</h3>
+                                <h3>Percentage of tasks completed: {calculatePercentageKpi(employee.id)}</h3>
+                                <h3>Sum of overdue tasks: {calculateSumOverdueTasks(employee.id)}</h3>
                             </div>
                         )
                     ))}
