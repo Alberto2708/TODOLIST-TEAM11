@@ -11,6 +11,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 50px;
     margin-top: 20px;
     color: #000000;
     font-size: 12px; /* Set the font size to make it smaller */
