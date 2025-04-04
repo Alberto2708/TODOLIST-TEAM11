@@ -36,7 +36,7 @@ public class SubToDoItemController {
     private AssignedDevService assignedDevService;
 
     //Get Mapping to get all subToDoItems by ToDoItemId
-    @GetMapping(value="subToDoItems/{toDoItemId}")
+    @GetMapping(value="/subToDoItems/{toDoItemId}")
     public List<Integer> getSubToDoItemsIdsByToDoItemId(@PathVariable Integer toDoItemId) {
         try{
             List<Integer> subToDoItems = subToDoItemService.findAllSubToDoItemsIdsByToDoItemId(toDoItemId);
@@ -46,7 +46,7 @@ public class SubToDoItemController {
         }
     }
 
-    @GetMapping(value="subToDoItems/toDoItem/{toDoItemId}")
+    @GetMapping(value="/subToDoItems/toDoItem/{toDoItemId}")
     public List<ResponseEntity<ToDoItem>> getSubToDoItemsBytoDoItemId(@PathVariable Integer toDoItemId) {
         try{
             List<SubToDoItem> subToDoItems = subToDoItemService.findAllSubToDoItemsByToDoItemId(toDoItemId);
@@ -60,7 +60,7 @@ public class SubToDoItemController {
         }
     }
 
-    @GetMapping(value="subToDoItems/toDoItem/{toDoItemId}/employee/{employeeId}")
+    @GetMapping(value="/subToDoItems/toDoItem/{toDoItemId}/employee/{employeeId}")
     public List<ToDoItem> getSubToDoItemsByToDoItemIdAndEmployeeId(@PathVariable Integer toDoItemId, @PathVariable Integer employeeId) {
         try{
             List<SubToDoItem> subToDoItems = subToDoItemService.findAllSubToDoItemsByToDoItemId(toDoItemId);
@@ -83,7 +83,7 @@ public class SubToDoItemController {
 
     //POSTS
 
-    @PostMapping(value="subToDoItems")
+    @PostMapping(value="/subToDoItems")
     public ResponseEntity addSubToDoItem(@RequestBody SubToDoItem subToDoItem) {
         try{
             SubToDoItem subToDoItemResponse = subToDoItemService.addSubToDoItem(subToDoItem);

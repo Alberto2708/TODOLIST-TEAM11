@@ -116,7 +116,7 @@ public class EmployeeController {
                 .headers(responseHeaders).build();
     }
 
-    @PutMapping(value = "employees/{id}")
+    @PutMapping(value = "/employees/{id}")
     public ResponseEntity updateEmployee(@RequestBody Employee employee, @PathVariable Integer id) {
         try{
             Employee emp = employeeService.updateEmployee(id, employee);
@@ -126,7 +126,7 @@ public class EmployeeController {
         }
     }
 
-    @DeleteMapping(value = "employees/{id}")
+    @DeleteMapping(value = "/employees/{id}")
     public ResponseEntity<Boolean> deleteEmployee(@PathVariable("id") Integer id){
         Boolean flag = false; 
         try{

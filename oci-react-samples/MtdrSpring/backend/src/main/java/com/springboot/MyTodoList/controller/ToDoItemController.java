@@ -78,7 +78,7 @@ public class ToDoItemController {
     }
 
     // @CrossOrigin
-    @PutMapping(value = "todolist/{id}")
+    @PutMapping(value = "/todolist/{id}")
     public ResponseEntity updateToDoItem(@RequestBody ToDoItem toDoItem, @PathVariable Integer id) {
         try {
             ToDoItem toDoItem1 = toDoItemService.updateToDoItem(id, toDoItem);
@@ -88,7 +88,7 @@ public class ToDoItemController {
         }
     }
 
-    @PutMapping(value="todolist/complete/{id}")
+    @PutMapping(value="/todolist/complete/{id}")
     public ResponseEntity completeTask(@PathVariable Integer id) {
         try {
             ToDoItem toDoItem = toDoItemService.completeTask(id);
@@ -98,7 +98,7 @@ public class ToDoItemController {
         }
     }
 
-    @PutMapping(value="todolist/undoCompletion/{id}")
+    @PutMapping(value="/todolist/undoCompletion/{id}")
     public ResponseEntity undoCompletion(@PathVariable Integer id) {
         try {
             ToDoItem toDoItem = toDoItemService.undoCompletion(id);
@@ -110,7 +110,7 @@ public class ToDoItemController {
 
 
     // @CrossOrigin
-    @DeleteMapping(value = "todolist/{id}")
+    @DeleteMapping(value = "/todolist/{id}")
     public ResponseEntity<Boolean> deleteToDoItem(@PathVariable("id") Integer id) {
         Boolean flag = false;
         try {

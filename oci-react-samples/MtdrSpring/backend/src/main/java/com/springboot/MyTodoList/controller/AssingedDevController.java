@@ -13,6 +13,7 @@ import com.springboot.MyTodoList.service.SubToDoItemService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.Duration;
@@ -50,7 +51,7 @@ public class AssingedDevController {
             System.out.println(assignedDevs.size());
             List<ResponseEntity<ToDoItem>> tasks = new ArrayList<>();
             for(AssignedDev task : assignedDevs){
-                System.out.println(task.getToDoItemId());
+                //System.out.println(task.getToDoItemId());
                 tasks.add(toDoItemService.getItemById(task.getToDoItemId()));
             }
             return tasks;
@@ -65,7 +66,7 @@ public class AssingedDevController {
     public List<ResponseEntity<ToDoItem>> getAssignedTasksByAssignedDevAndSprint(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
         try{
             List<AssignedDev>  assignedDevs = assignedDevService.getAssignedDevsByDevId(assignedDevId);
-            System.out.println(assignedDevs.size());
+            //System.out.println(assignedDevs.size());
             List<ResponseEntity<ToDoItem>> tasks = new ArrayList<>();
             for(AssignedDev task : assignedDevs){
                 if (toDoItemService.getItemById(task.getToDoItemId()).getBody().getSprintId() == sprintId){
@@ -79,12 +80,30 @@ public class AssingedDevController {
         }
     }
 
+    @GetMapping(value="/assignedDev/{assignedDevId}/sprint/{sprintId}/kpi")
+    public Integer getCompletedTasksByEmployeeAndSprint(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
+        try{
+            List<ResponseEntity<ToDoItem>> tasks = getAssignedTasksByAssignedDevAndSprint(assignedDevId, sprintId);
+            Integer sum = 0;
+            for (ResponseEntity<ToDoItem> task : tasks){
+                if (task.getBody().getStatus().matches("COMPLETED")){
+                    sum += 1;
+                }
+            }
+            Integer response = (int) (((double) sum / tasks.size()) * 100);
+            return response;
+        }catch(Exception e){
+            System.out.println(e);
+            return null;
+        }
+    }
+    
+
     //Get father tasks by developer id and sprint id
     @GetMapping(value = "/assignedDev/{assignedDevId}/sprint/{sprintId}/father")
     public List<ResponseEntity<ToDoItem>> getAssignedTasksByAssignedDevAndSprintFather(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
         try{
             List<AssignedDev>  assignedDevs = assignedDevService.getAssignedDevsByDevId(assignedDevId);
-            System.out.println(assignedDevs.size());
             List<ResponseEntity<ToDoItem>> tasks = new ArrayList<>();
             for(AssignedDev task : assignedDevs){
                 //Add logic for subtasks verification
@@ -105,7 +124,7 @@ public class AssingedDevController {
 
 
 
-    //Debe calcular el promedio de horas que le sobra a un desarrollador para terminar sus tareas asignadas
+    //calculates the average number of hours a developer has left to complete their assigned tasks.
     @GetMapping(value = "/assignedDev/kpi/{assignedDevId}")
     public Float getCompletionDaysMean(@PathVariable Integer assignedDevId) {
         try{
@@ -126,6 +145,35 @@ public class AssingedDevController {
             }
             return sum/tasks.size();
             
+        }catch(Exception e){
+            System.out.println(e);
+            return null;
+        }
+    }
+
+    //calculates the sum of overdue tasks completed by employee
+    @GetMapping(value = "/assignedDev/kpi/{assignedDevId}/overdue")
+    public ResponseEntity<Integer> getSumOfOverdueTasksByEmployee(@PathVariable Integer assignedDevId) {
+        try{
+            List<AssignedDev>  assignedDev = assignedDevService.getAssignedDevsByDevId(assignedDevId);
+            //System.out.println(assignedDev.size()); // Return number of tasks assigned to the developer.
+            List<ResponseEntity<ToDoItem>> tasks = new ArrayList<>();
+            for(AssignedDev task : assignedDev){
+                System.out.println(task.toString());
+                //System.out.println(task.getToDoItemId()); //Returns the task id
+                //System.out.println(toDoItemService.getItemById(task.getToDoItemId()).getBody().getStatus()); //Returns the status of the task
+                if (toDoItemService.getItemById(task.getToDoItemId()).getBody().getStatus().matches("COMPLETED")){
+                    tasks.add(toDoItemService.getItemById(task.getToDoItemId()));
+                }
+            }
+            Integer sum = 0;
+            for(ResponseEntity<ToDoItem> task : tasks){
+                System.out.println(task.toString());
+                if(task.getBody().getCompletionTs().isAfter(task.getBody().getDeadline())){
+                    sum += 1;
+                }
+            }
+            return new ResponseEntity<>(sum, HttpStatus.OK);
         }catch(Exception e){
             System.out.println(e);
             return null;

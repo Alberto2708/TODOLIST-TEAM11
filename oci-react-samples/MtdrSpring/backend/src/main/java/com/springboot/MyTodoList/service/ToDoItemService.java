@@ -33,6 +33,11 @@ public class ToDoItemService {
         }
     }
 
+    public List<ToDoItem> getToDoItemsBySprintId(Integer sprintId) {
+        List<ToDoItem> todoData = toDoItemRepository.findBySprintId(sprintId);
+        return todoData;
+    }
+
     public List<ToDoItem> getFatherToDoItemsByManagerIdAndSprintId(Integer managerId, Integer sprintId) {
         List<ToDoItem> todoData = toDoItemRepository.findByManagerIdAndSprintId(managerId, sprintId);
         return todoData;
