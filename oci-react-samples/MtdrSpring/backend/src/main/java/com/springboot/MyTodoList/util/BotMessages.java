@@ -1,25 +1,21 @@
 package com.springboot.MyTodoList.util;
 
 public enum BotMessages {
-	
-	HELLO_MYTODO_BOT(
-	"Hello! I'm MyTodoList Bot!\nType a new todo item below and press the send button (blue arrow), or select an option below:"),
-	BOT_REGISTERED_STARTED("Bot registered and started succesfully!"),
-	ITEM_DONE("Item done! Select /todolist to return to the list of todo items, or /start to go to the main screen."), 
-	ITEM_UNDONE("Item undone! Select /todolist to return to the list of todo items, or /start to go to the main screen."), 
-	ITEM_DELETED("Item deleted! Select /todolist to return to the list of todo items, or /start to go to the main screen."),
-	TYPE_NEW_TODO_ITEM("Type a new todo item below and press the send button (blue arrow) on the rigth-hand side."),
-	NEW_ITEM_ADDED("New item added! Select /todolist to return to the list of todo items, or /start to go to the main screen."),
-	BYE("Bye! Select /start to resume!");
+    HELLO_MYTODO_BOT("Welcome! Authenticate with /auth your_email@example.com"),
+    AUTH_SUCCESS("✅ Authentication successful!"),
+    AUTH_FAILED("❌ Authentication failed. Check your email"),
+    NOT_AUTHENTICATED("🔒 Please authenticate first"),
+    TYPE_NEW_TODO_ITEM("Type your new todo item:"),
+    ITEM_ADDED("Item added successfully!"),
+    DB_ERROR("⚠️ Database error occurred");
 
-	private String message;
+    private final String message;
 
-	BotMessages(String enumMessage) {
-		this.message = enumMessage;
-	}
+    BotMessages(String enumMessage) {
+        this.message = enumMessage;
+    }
 
-	public String getMessage() {
-		return message;
-	}
-
+    public String getMessage() {
+        return message;
+    }
 }
