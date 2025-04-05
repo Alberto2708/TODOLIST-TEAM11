@@ -18,6 +18,6 @@ jobs:
       # Step 2: Perform git pull
       - name: Git Pull
         run: |
-          git config --global user.name "EthicalHacker23"
-          git config --global user.email "A01637667@tec.mx"
+          git config --global user.name "HackForceCoder"
+          git config --global user.email "milanalba@outlook.com"
           git pull origin main
