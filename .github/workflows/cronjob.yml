@@ -1,0 +1,23 @@
+# filepath: .github/workflows/cronjob.yml
+name: Git Pull Cron Job
+
+on:
+  schedule:
+    # Run every 30 minutes
+    - cron: "*/30 * * * *"
+
+jobs:
+  git-pull:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Perform git pull
+      - name: Git Pull
+        run: |
+          git config --global user.name "EthicalHacker23"
+          git config --global user.email "A01637667@tec.mx"
+          git pull origin main
