@@ -105,15 +105,19 @@ public class EmployeeController {
         }
     }
 
+        //CAMBIO//
+        //Cambiar como addToDoItem controller para que regrese el objeto
     @PostMapping(value = "/employees")
     public ResponseEntity addEmployee(@RequestBody Employee employee) throws Exception{
-        //System.out.print(employee.toString());
-        Employee emp = employeeService.addEmployee(employee);
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("location", "" + emp.getID());
-        responseHeaders.set("Access-Control-Expose-Headers", "location");
-        return ResponseEntity.ok()
-                .headers(responseHeaders).build();
+        try{
+            Employee emp = employeeService.addEmployee(employee);
+            Integer responseEntity = emp.getID();
+            return new ResponseEntity<>(responseEntity, HttpStatus.CREATED);
+
+        }catch(Exception e){
+            System.out.println(e);
+            return null;
+        }
     }
 
     @PutMapping(value = "/employees/{id}")

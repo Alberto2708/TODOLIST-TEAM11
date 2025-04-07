@@ -42,6 +42,15 @@ public class Employee {
         this.projectId = projectId;
         this.telegramId = telegramId;
     }
+
+    //Partial Constructor
+    public Employee(String name, Integer managerId, String email, String password, Integer projectId) {
+        this.name = name;
+        this.managerId = managerId;
+        this.email = email;
+        this.password = password;
+        this.projectId = projectId;
+    }
     
     //Getters and setters
     
