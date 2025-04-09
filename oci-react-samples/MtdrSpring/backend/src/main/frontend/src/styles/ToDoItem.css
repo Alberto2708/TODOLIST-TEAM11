@@ -4,14 +4,36 @@
   flex-direction: column;
 }
 
-/* Main Task Item */
+/* Main Task Item - Asegura alineación horizontal */
 .task-item {
   background-color: white;
   display: flex;
-  align-items: center;
+  align-items: center; 
   border-bottom: 1px solid #ddd;
   padding: 15px 20px;
   gap: 10px;
+}
+
+
+.task-name {
+  flex: 1; 
+  min-width: 200px; 
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis; 
+}
+
+.task-timestamp {
+  min-width: 120px; 
+  text-align: right; 
+  color: gray;
+  font-size: 14px;
+}
+
+
+.task-status {
+  min-width: 80px;
+  text-align: center; 
 }
 
 /* Expand button */

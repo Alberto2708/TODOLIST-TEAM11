@@ -367,8 +367,8 @@ export default function ManagerTaskVis() {
             ) : (
                 <>
                     <div className="taskContainer">
-                        <h1>TO DO LIST</h1>
-                        <h2>{actualSprint.name}</h2>
+                        <h1>TO DOooooo LIST</h1>
+                        <h2 className="sprintname">{actualSprint.name}</h2>
                         <div className="dateContainer">
                             <h3>Start Date: {new Date(actualSprint.startDate).toLocaleDateString()}</h3>
                             <h3>End Date: {new Date(actualSprint.endDate).toLocaleDateString()}</h3>
@@ -442,7 +442,7 @@ export default function ManagerTaskVis() {
                             setOpen={closeTaskDetailsModal}
                             handleDoneClick={handleSaveClick} 
                             handleCancelClick={handleCancelClick} 
-                            task={selectedTask} // Pass the selected task as a prop
+                            task={selectedTask} 
                         />
                     )}
 

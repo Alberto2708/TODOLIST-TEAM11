@@ -9,6 +9,7 @@ html, body, #root {
     margin: 2rem;
     padding: 2rem;
     position: relative;
+    background-color: #f8f5ee;
 }
 
 .loading-screen {
@@ -51,10 +52,13 @@ h1{
     margin-bottom: 2rem;
     font: 2em sans-serif;
 }
-h2{
+
+.sprintname{
     font-size: 1.5rem;
-    margin-bottom: 1rem;
-    color: #C74634;
+    margin-bottom: 2rem;
+    font: 1.5em sans-serif;
+    color : #C74634;
+
 }
 .employee-task-list {
   margin-bottom: 20px; /* Add space between each employee's task list */
@@ -98,12 +102,4 @@ h2{
     margin-bottom: 2rem;
 
   }
-
-  
-  h2 {
-    font-size: 1rem;
-    margin-bottom: 1rem;
-    color: #C74634;
-  }
-
 

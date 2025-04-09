@@ -172,14 +172,15 @@ const handleDoneClick = () => {
           <div className="spinner"></div>
         </div>
       ) : (
-        <div className="container">
-          <div className="header">MY TO DO LIST
-            <h3>{actualSprint.name}</h3>
-            <div className="dateContainer">
-                            <p>Start Date: {new Date(actualSprint.startDate).toLocaleDateString()}</p>
-                            <p>End Date: {new Date(actualSprint.endDate).toLocaleDateString()}</p>
-                            <p>Days Left: {Math.floor((new Date(actualSprint.endDate) - new Date()) / (1000 * 60 * 60 * 24))}</p>
-          </div>
+      <div className="utv-container">
+          <div className="header">MY TO DO LIST</div>
+          <div className="sprintContainer"> {/* Nombre de clase corregido */}
+              <h3>{actualSprint.name}</h3>
+              <div className="dateContainer">
+                  <p>Start Date: {new Date(actualSprint.startDate).toLocaleDateString()}</p>
+                  <p>End Date: {new Date(actualSprint.endDate).toLocaleDateString()}</p>
+                  <p>Days Left: {Math.floor((new Date(actualSprint.endDate) - new Date()) / (1000 * 60 * 60 * 24))}</p>
+              </div>
           </div>
           <div className="task-list">
             {tasks.map((task, index) => (
