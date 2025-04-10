@@ -2,6 +2,8 @@
 .task-item-container {
   display: flex;
   flex-direction: column;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
 }
 
 /* Main Task Item - Asegura alineación horizontal */
