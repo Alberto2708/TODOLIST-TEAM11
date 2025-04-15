@@ -64,13 +64,11 @@ public class SubToDoItemController {
     public List<ToDoItem> getSubToDoItemsByToDoItemIdAndEmployeeId(@PathVariable Integer toDoItemId, @PathVariable Integer employeeId) {
         try{
             List<SubToDoItem> subToDoItems = subToDoItemService.findAllSubToDoItemsByToDoItemId(toDoItemId);
-            System.out.println(subToDoItems.size());
             if (subToDoItems.isEmpty()) {
                 return null;
             }
             List<ToDoItem> toDoItems = new ArrayList<>();
             for(SubToDoItem subToDoItem : subToDoItems){
-                System.out.println(subToDoItem.toString());
                 if (assignedDevService.checkIfToDoItemIsAssignedToEmployeByIds(subToDoItem.getSubToDoItemId(), employeeId)){
                     toDoItems.add(toDoItemService.getItemById(subToDoItem.getSubToDoItemId()).getBody());
                 }
@@ -80,6 +78,28 @@ public class SubToDoItemController {
             return null;
         }
     }
+
+    @GetMapping(value = "/subToDoItems/toDoItem/{toDoItemId}/employee/{employeeId}/completed")
+    public ResponseEntity<List<ToDoItem>> getCompletedSubToDoItemsByToDoItemIdAndEmployeeId(@PathVariable Integer toDoItemId, @PathVariable Integer employeeId) {
+        try{
+            List<SubToDoItem> subToDoItems = subToDoItemService.findAllSubToDoItemsByToDoItemId(toDoItemId);
+            if (subToDoItems.isEmpty()) {
+                return null;
+            }
+            List<ToDoItem> toDoItems = new ArrayList<>();
+            for(SubToDoItem subToDoItem : subToDoItems){
+                if (assignedDevService.checkIfToDoItemIsAssignedToEmployeByIds(subToDoItem.getSubToDoItemId(), employeeId)){
+                    if (toDoItemService.getItemById(subToDoItem.getSubToDoItemId()).getBody().getStatus().matches("COMPLETED")){
+                        toDoItems.add(toDoItemService.getItemById(subToDoItem.getSubToDoItemId()).getBody());
+                    }
+                }
+            }
+            return new ResponseEntity<>(toDoItems, HttpStatus.OK);
+        } catch(Exception e){
+            return null;
+        }
+    }
+    
 
     //POSTS
 

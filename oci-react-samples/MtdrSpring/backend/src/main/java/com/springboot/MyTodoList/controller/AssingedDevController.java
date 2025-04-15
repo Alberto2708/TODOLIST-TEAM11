@@ -123,6 +123,26 @@ public class AssingedDevController {
         }
     }
 
+    @GetMapping(value = "/assignedDev/{assignedDevId}/sprint/{sprintId}/father/completed")
+    public ResponseEntity<List<ToDoItem>> getCompletedTasksByEmployeeAndSprintFather(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
+        try{
+            List<ResponseEntity<ToDoItem>> tasks = getAssignedTasksByAssignedDevAndSprintFather(assignedDevId, sprintId);
+            if (tasks == null || tasks.isEmpty()){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            List<ToDoItem> completedTasks = new ArrayList<>();
+            for (ResponseEntity<ToDoItem> task : tasks){
+                if (task.getBody().getStatus().matches("COMPLETED")){
+                    completedTasks.add(task.getBody());
+                }
+            }
+            return new ResponseEntity<>(completedTasks, HttpStatus.OK);
+        }catch(Exception e){
+            System.out.println(e);
+            return null;
+        }
+    }
+
 
 
 
