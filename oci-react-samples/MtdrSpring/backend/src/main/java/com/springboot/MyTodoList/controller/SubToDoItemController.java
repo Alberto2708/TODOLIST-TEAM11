@@ -83,19 +83,17 @@ public class SubToDoItemController {
     @GetMapping(value = "/subToDoItems/toDoItem/{toDoItemId}/employee/{employeeId}/completed")
     public ResponseEntity<List<ToDoItem>> getCompletedSubToDoItemsByToDoItemIdAndEmployeeId(@PathVariable Integer toDoItemId, @PathVariable Integer employeeId) {
         try{
-            List<SubToDoItem> subToDoItems = subToDoItemService.findAllSubToDoItemsByToDoItemId(toDoItemId);
-            if (subToDoItems.isEmpty()) {
+            List<ToDoItem> toDoItems = getSubToDoItemsByToDoItemIdAndEmployeeId(toDoItemId, employeeId);
+            if (toDoItems.isEmpty()) {
                 return null;
             }
-            List<ToDoItem> toDoItems = new ArrayList<>();
-            for(SubToDoItem subToDoItem : subToDoItems){
-                if (assignedDevService.checkIfToDoItemIsAssignedToEmployeByIds(subToDoItem.getSubToDoItemId(), employeeId)){
-                    if (toDoItemService.getItemById(subToDoItem.getSubToDoItemId()).getBody().getStatus().matches("COMPLETED")){
-                        toDoItems.add(toDoItemService.getItemById(subToDoItem.getSubToDoItemId()).getBody());
-                    }
+            List<ToDoItem> completedToDoItems = new ArrayList<>();
+            for(ToDoItem toDoItem : toDoItems){
+                if (toDoItem.getStatus().matches("COMPLETED")){
+                    completedToDoItems.add(toDoItem);
                 }
             }
-            return new ResponseEntity<>(toDoItems, HttpStatus.OK);
+            return new ResponseEntity<>(completedToDoItems, HttpStatus.OK);
         } catch(Exception e){
             return null;
         }
