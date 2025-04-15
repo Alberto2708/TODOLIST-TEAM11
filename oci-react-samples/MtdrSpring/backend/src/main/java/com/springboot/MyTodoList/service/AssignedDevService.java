@@ -55,12 +55,14 @@ public class AssignedDevService {
     public AssignedDev addAssignedDev(AssignedDev devAssignedTask) {
         return assignedDevRepository.save(devAssignedTask);
     }
+    
 
     public boolean deleteAssignedDev(Integer toDoItemId, Integer assignedDevId) {
         try {
             assignedDevRepository.deleteByToDoItemIdAndEmployeeId(toDoItemId, assignedDevId);
             return true;
         } catch (Exception e) {
+            System.out.println(e);
             return false;
         }
     }

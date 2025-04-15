@@ -33,11 +33,13 @@ public class EmployeeController {
     private EmployeeService employeeService;
 
 
+    //Get All Employees
     @GetMapping(value = "/employees")
     public List<Employee> getAllEmployees(){
         return employeeService.findAll();
     }
 
+    //Get All Employees by Project ID
     @GetMapping(value = "/employees/projectId/{projectId}")
     public List <Employee> getAllEmployeesByProjectId(@PathVariable Integer projectId) {
         try{
@@ -47,7 +49,7 @@ public class EmployeeController {
         }
     }
     
-
+    //Get Employee by ID
     @GetMapping(value = "/employees/{id}")
     public ResponseEntity<Employee> getEmployeeById(@PathVariable Integer id){
         try{
@@ -58,6 +60,7 @@ public class EmployeeController {
         }
     }
 
+    //Get Employee by Manager ID
     @GetMapping(value = "/employees/managerId/{managerId}")
     public List<Employee> getEmployeesByManagerId(@PathVariable Integer managerId) {
         try{
@@ -105,9 +108,7 @@ public class EmployeeController {
         }
     }
 
-        //CAMBIO//
-        //Cambiar como addToDoItem controller para que regrese el objeto
-        //Falta Documentar
+    //Post request to add a new employee
     @PostMapping(value = "/employees")
     public ResponseEntity addEmployee(@RequestBody Employee employee) throws Exception{
         try{
@@ -121,6 +122,7 @@ public class EmployeeController {
         }
     }
 
+    //Post request to add a telegram Id to an employee
     @PutMapping(value = "/employees/{id}")
     public ResponseEntity updateEmployee(@RequestBody Employee employee, @PathVariable Integer id) {
         try{
@@ -131,14 +133,16 @@ public class EmployeeController {
         }
     }
 
+    //Delete an employee by ID
     @DeleteMapping(value = "/employees/{id}")
     public ResponseEntity<Boolean> deleteEmployee(@PathVariable("id") Integer id){
-        Boolean flag = false; 
         try{
-            flag = employeeService.deleteEmployee(id);
+            Boolean flag = employeeService.deleteEmployee(id);
+            if(flag == null){ return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
+            if (flag == false){ return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);}
             return new ResponseEntity<>(flag, HttpStatus.OK);
         } catch (Exception e){
-            return new ResponseEntity<>(flag, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>( HttpStatus.NOT_FOUND);
         }
     }
 }

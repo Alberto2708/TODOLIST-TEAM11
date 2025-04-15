@@ -10,6 +10,8 @@ import com.springboot.MyTodoList.model.SubToDoItem;
 import com.springboot.MyTodoList.service.AssignedDevService;
 import com.springboot.MyTodoList.service.ToDoItemService;
 import com.springboot.MyTodoList.service.SubToDoItemService;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.http.HttpHeaders;
@@ -65,6 +67,7 @@ public class AssingedDevController {
     @GetMapping(value = "/assignedDev/{assignedDevId}/sprint/{sprintId}")
     public List<ResponseEntity<ToDoItem>> getAssignedTasksByAssignedDevAndSprint(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
         try{
+            //Might be optimizable changing the order of getting the info by getting first the tasks by sprint, then look for them in the assignedDevs table and finally accesing to the ToDoItem by its id Service.
             List<AssignedDev>  assignedDevs = assignedDevService.getAssignedDevsByDevId(assignedDevId);
             //System.out.println(assignedDevs.size());
             List<ResponseEntity<ToDoItem>> tasks = new ArrayList<>();
@@ -190,9 +193,17 @@ public class AssingedDevController {
         responseHeaders.set("Access-Control-Expose-Headers", "location");
         return ResponseEntity.ok().headers(responseHeaders).build();
     }
-    
-    
 
-
-    
+    @DeleteMapping(value = "assignedDev/{toDoItemId}/{assignedDevId}")
+    public ResponseEntity deleteDevAssignedTask(@PathVariable Integer toDoItemId, @PathVariable Integer assignedDevId) {
+        try{
+            Boolean status = assignedDevService.deleteAssignedDev(toDoItemId, assignedDevId);
+            System.out.println(status);
+            if(status == null){ return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
+            if (status == false){ return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);}
+            return new ResponseEntity<>(status, HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }

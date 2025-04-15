@@ -73,9 +73,9 @@ public class ProjectController {
     public ResponseEntity deleteProject(@PathVariable Integer projectId) {
         try{
             Boolean status = projectService.deleteProject(projectId);
-            if (status == null){ return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
-            else if (status == false){ return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);}
-            return new ResponseEntity<>(HttpStatus.OK);
+            if(status == null){ return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
+            if (status == false){ return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);}
+            return new ResponseEntity<>(status, HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

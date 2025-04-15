@@ -29,6 +29,7 @@ public class SprintController {
     @Autowired
     private ToDoItemService toDoItemService;
 
+    //Get Sprint by ID
     @GetMapping(value="/sprint/{sprintId}")
     public ResponseEntity<Sprint> getSprintById(@PathVariable Integer sprintId) {
         try{
@@ -39,6 +40,7 @@ public class SprintController {
         }
     }
 
+    //Get all Sprints by Project ID
     @GetMapping(value = "/sprint/projects/{projectId}")
     public List<Sprint> getSprintsByProjectId(@PathVariable Integer projectId) {
         try{
@@ -60,6 +62,7 @@ public class SprintController {
         }
     }
 
+    //Get how many tasks are completed in a sprint
     @GetMapping(value = "/sprint/{sprintId}/kpi")
     public ResponseEntity<Integer> getCompletedTasksBySprint(@PathVariable Integer sprintId) {
         try{
@@ -80,7 +83,7 @@ public class SprintController {
         }
     }
     
-    
+    //Create a new Sprint
     @PostMapping(value="/sprint")
     public ResponseEntity addSprint(@RequestBody Sprint sprint) throws Exception{
         Sprint spr = sprintService.addSprint(sprint);
