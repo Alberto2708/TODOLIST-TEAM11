@@ -123,6 +123,7 @@ public class AssingedDevController {
         }
     }
 
+    //Get Father Completed tasks by developer id and sprint id
     @GetMapping(value = "/assignedDev/{assignedDevId}/sprint/{sprintId}/father/completed")
     public ResponseEntity<List<ToDoItem>> getCompletedTasksByEmployeeAndSprintFather(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
         try{

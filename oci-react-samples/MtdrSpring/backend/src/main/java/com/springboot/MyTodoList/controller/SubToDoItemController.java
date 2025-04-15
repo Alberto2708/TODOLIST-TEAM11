@@ -79,6 +79,7 @@ public class SubToDoItemController {
         }
     }
 
+    //Get Mapping to get all Completed subToDoItems by ToDoItemId and employeeID
     @GetMapping(value = "/subToDoItems/toDoItem/{toDoItemId}/employee/{employeeId}/completed")
     public ResponseEntity<List<ToDoItem>> getCompletedSubToDoItemsByToDoItemIdAndEmployeeId(@PathVariable Integer toDoItemId, @PathVariable Integer employeeId) {
         try{
