@@ -113,7 +113,7 @@ public class EmployeeService {
         }
     }
 
-    public Boolean isEmployeeTelegramIdExists(Integer id){
+    public Boolean doesEmployeeTelegramIdExists(Integer id){
         try{
             Employee emp = employeeRepository.findById(id).get();
             if (emp.getTelegramId() != null){

@@ -48,5 +48,15 @@ public class SubToDoItemService {
         return subToDoItemRepository.save(subToDoItem);
     }
 
+    public Boolean deleteSubToDoItem(Integer toDoItemId, Integer subToDoItemId){
+        try{
+            subToDoItemRepository.deleteByToDoItemIdAndSubToDoItemId(toDoItemId, subToDoItemId);
+            return true;
+        }catch(Exception e){
+            System.out.println(e);
+            return false;
+        }
+    }
+
 
 }

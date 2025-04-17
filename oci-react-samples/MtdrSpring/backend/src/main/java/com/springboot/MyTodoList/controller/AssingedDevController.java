@@ -9,6 +9,9 @@ import com.springboot.MyTodoList.model.AssignedDevId;
 import com.springboot.MyTodoList.model.SubToDoItem;
 import com.springboot.MyTodoList.service.AssignedDevService;
 import com.springboot.MyTodoList.service.ToDoItemService;
+
+import oracle.jdbc.proxy.annotation.GetProxy;
+
 import com.springboot.MyTodoList.service.SubToDoItemService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -65,31 +68,31 @@ public class AssingedDevController {
 
     //Get assigned tasks by developer id and sprint id
     @GetMapping(value = "/assignedDev/{assignedDevId}/sprint/{sprintId}")
-    public List<ResponseEntity<ToDoItem>> getAssignedTasksByAssignedDevAndSprint(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
+    public ResponseEntity<List<ToDoItem>> getAssignedTasksByAssignedDevAndSprint(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
         try{
-            //Might be optimizable changing the order of getting the info by getting first the tasks by sprint, then look for them in the assignedDevs table and finally accesing to the ToDoItem by its id Service.
             List<AssignedDev>  assignedDevs = assignedDevService.getAssignedDevsByDevId(assignedDevId);
             //System.out.println(assignedDevs.size());
-            List<ResponseEntity<ToDoItem>> tasks = new ArrayList<>();
+            List<ToDoItem> tasks = new ArrayList<>();
             for(AssignedDev task : assignedDevs){
                 if (toDoItemService.getItemById(task.getToDoItemId()).getBody().getSprintId() == sprintId){
-                    tasks.add(toDoItemService.getItemById(task.getToDoItemId()));
+                    tasks.add(toDoItemService.getItemById(task.getToDoItemId()).getBody());
                 }
             }
-            return tasks;
+            return new ResponseEntity<>(tasks, HttpStatus.OK);
         }catch(Exception e){
             System.out.println(e);
             return null;
         }
     }
 
-    @GetMapping(value="/assignedDev/{assignedDevId}/sprint/{sprintId}/kpi")
+    //Get Completed percentage of assigned tasks by developer id and sprint id KPI
+    @GetMapping(value="/assignedDev/{assignedDevId}/sprint/{sprintId}/completedTasks/kpi")
     public Integer getCompletedTasksByEmployeeAndSprint(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
         try{
-            List<ResponseEntity<ToDoItem>> tasks = getAssignedTasksByAssignedDevAndSprint(assignedDevId, sprintId);
+            List<ToDoItem> tasks = getAssignedTasksByAssignedDevAndSprint(assignedDevId, sprintId).getBody();
             Integer sum = 0;
-            for (ResponseEntity<ToDoItem> task : tasks){
-                if (task.getBody().getStatus().matches("COMPLETED")){
+            for (ToDoItem task : tasks){
+                if (task.getStatus().matches("COMPLETED")){
                     sum += 1;
                 }
             }
@@ -100,6 +103,31 @@ public class AssingedDevController {
             return null;
         }
     }
+
+    //Get Worked Hours by developer id and sprint id based on estHours for each task.
+    @GetMapping(value = "/assignedDev/{assignedDevId}/sprint/{sprintId}/workedHours/kpi")
+    public ResponseEntity<Integer> getWorkedHoursByEmployeeAndSprint(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
+        try{
+            List<ToDoItem> tasks = getAssignedTasksByAssignedDevAndSprint(assignedDevId, sprintId).getBody();
+            Integer workedHours = 0;
+            if (tasks.isEmpty()){
+                return new ResponseEntity<> (null, HttpStatus.NOT_FOUND);
+            }
+
+            for (ToDoItem task : tasks) {
+                if (task.getStatus().matches("COMPLETED")){
+                    workedHours += task.getEstHours();
+                }
+            }
+            
+            return new ResponseEntity<>(workedHours, HttpStatus.OK);
+        }catch (Exception e){
+            System.out.println(e);
+            return null;
+        }
+    }
+    
+    
     
 
     //Get father tasks by developer id and sprint id

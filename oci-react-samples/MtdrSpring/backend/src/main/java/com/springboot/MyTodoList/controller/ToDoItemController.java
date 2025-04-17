@@ -68,13 +68,17 @@ public class ToDoItemController {
     
     
     
-    // @CrossOrigin
+    // Post Map for ToDoItem creation
     @PostMapping(value = "/todolist")
     public ResponseEntity addToDoItem(@RequestBody ToDoItem todoItem) throws Exception {
-        ToDoItem td = toDoItemService.addToDoItem(todoItem);
-        Integer responseEntity = td.getID();
-        return new ResponseEntity<>(responseEntity, HttpStatus.CREATED);
-        // URI location = URI.create(""+td.getID())
+        try{
+            ToDoItem td = toDoItemService.addToDoItem(todoItem);
+            Integer responseEntity = td.getID();
+            return new ResponseEntity<>(responseEntity, HttpStatus.CREATED);
+        } catch(Exception e){
+            System.out.println(e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // @CrossOrigin

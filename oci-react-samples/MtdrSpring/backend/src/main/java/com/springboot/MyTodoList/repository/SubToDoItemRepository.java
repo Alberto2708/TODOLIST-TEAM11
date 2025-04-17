@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -28,4 +29,8 @@ public interface SubToDoItemRepository extends JpaRepository<SubToDoItem, SubToD
 
     @Query("SELECT d FROM SubToDoItem d WHERE d.id.toDoItemId = :toDoItemId")
     List<SubToDoItem> findAllSubToDoItemsByToDoItemId(@Param("toDoItemId") Integer toDoItemId);
+
+    @Modifying
+    @Query(value = "DELETE FROM SUBTODOITEM WHERE TODOITEM_ID = :toDoItemId AND SUBTODOITEM_ID = :subToDoItemId", nativeQuery = true)
+    void deleteByToDoItemIdAndSubToDoItemId(@Param("toDoItemId") Integer toDoItemId, @Param("subToDoItemId") Integer subToDoItemId);
 }

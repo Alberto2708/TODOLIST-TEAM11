@@ -9,6 +9,8 @@ import com.springboot.MyTodoList.model.ToDoItem;
 import com.springboot.MyTodoList.model.SubToDoItem;
 import com.springboot.MyTodoList.model.SubToDoItemId;
 import com.springboot.MyTodoList.service.SubToDoItemService;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,7 +37,7 @@ public class SubToDoItemController {
     @Autowired
     private AssignedDevService assignedDevService;
 
-    //Get Mapping to get all subToDoItems by ToDoItemId
+    //Get Mapping to get all subToDoItems Ids by ToDoItemId
     @GetMapping(value="/subToDoItems/{toDoItemId}")
     public List<Integer> getSubToDoItemsIdsByToDoItemId(@PathVariable Integer toDoItemId) {
         try{
@@ -46,6 +48,7 @@ public class SubToDoItemController {
         }
     }
 
+    //Get Mapping to get all subToDoItems Objects by ToDoItemId
     @GetMapping(value="/subToDoItems/toDoItem/{toDoItemId}")
     public List<ResponseEntity<ToDoItem>> getSubToDoItemsBytoDoItemId(@PathVariable Integer toDoItemId) {
         try{
@@ -112,6 +115,22 @@ public class SubToDoItemController {
             return null;
         }
     }
-    
+
+    @DeleteMapping(value = "/subToDoItems/{toDoItemId}/{subToDoItemId}")
+    public ResponseEntity deleteSubToDoItem(@PathVariable Integer toDoItemId, @PathVariable Integer subToDoItemId) {
+        try{
+            Boolean status = subToDoItemService.deleteSubToDoItem(toDoItemId, subToDoItemId);
+            System.out.println(status);
+            if (status == true){
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else if (status == false){
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch(Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
     
 }

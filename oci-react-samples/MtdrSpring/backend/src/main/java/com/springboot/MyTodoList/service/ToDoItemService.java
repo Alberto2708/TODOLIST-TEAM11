@@ -87,6 +87,9 @@ public class ToDoItemService {
             if (td.getDescription() != null){
                 toDoItem.setDescription(td.getDescription());
             }
+            if(td.getEstHours() != null){
+                toDoItem.setEstHours(td.getEstHours());
+            }
             return toDoItemRepository.save(toDoItem);
         } else {
             return null;

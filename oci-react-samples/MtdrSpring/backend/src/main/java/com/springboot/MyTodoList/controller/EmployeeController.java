@@ -93,11 +93,10 @@ public class EmployeeController {
     }
 
     //Post request to validate if employee has telegram Id
-    
     @PostMapping(value = "/employees/telegramId/{employeeId}")
     public ResponseEntity<Boolean> getEmployeeByTelegramId(@PathVariable Integer employeeId){
         try{
-            Boolean res = employeeService.isEmployeeTelegramIdExists(employeeId);
+            Boolean res = employeeService.doesEmployeeTelegramIdExists(employeeId);
             if (res == true){
                 return new ResponseEntity<>(true, HttpStatus.OK);
             } else {
@@ -122,7 +121,7 @@ public class EmployeeController {
         }
     }
 
-    //Post request to add a telegram Id to an employee
+    //Post request to add a telegram Id to an employee or update Info
     @PutMapping(value = "/employees/{id}")
     public ResponseEntity updateEmployee(@RequestBody Employee employee, @PathVariable Integer id) {
         try{
