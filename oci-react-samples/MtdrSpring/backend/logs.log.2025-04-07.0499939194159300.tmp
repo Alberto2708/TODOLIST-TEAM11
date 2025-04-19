@@ -1,0 +1,289 @@
+2025-04-07 11:29:02.762  INFO 9128 --- [main] c.s.MyTodoList.MyTodoListApplication     : Starting MyTodoListApplication using Java 23.0.2 on Betitou with PID 9128 (C:\Users\menta\Documents\TODOLIST-TEAM11\oci-react-samples\MtdrSpring\backend\target\classes started by menta in C:\Users\menta\Documents\TODOLIST-TEAM11\oci-react-samples\MtdrSpring\backend)
+2025-04-07 11:29:02.770  INFO 9128 --- [main] c.s.MyTodoList.MyTodoListApplication     : No active profile set, falling back to 1 default profile: "default"
+2025-04-07 11:29:03.331  INFO 9128 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-04-07 11:29:03.406  INFO 9128 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 69 ms. Found 6 JPA repository interfaces.
+2025-04-07 11:29:03.963  INFO 9128 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8081 (http)
+2025-04-07 11:29:03.971  INFO 9128 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-04-07 11:29:03.971  INFO 9128 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.58]
+2025-04-07 11:29:04.086  INFO 9128 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-04-07 11:29:04.086  INFO 9128 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1256 ms
+2025-04-07 11:29:04.382  INFO 9128 --- [main] c.s.MyTodoList.config.DbSettings         : Using Driver oracle.jdbc.OracleDriver
+2025-04-07 11:29:04.382  INFO 9128 --- [main] c.s.MyTodoList.config.DbSettings         : Using URL: jdbc:oracle:thin:@team11_high?TNS_ADMIN=D:/OracleTasks/TODOLIST-TEAM11/oci-react-samples/MtdrSpring/Wallet_TEAM11
+2025-04-07 11:29:04.382  INFO 9128 --- [main] c.s.MyTodoList.config.DbSettings         : Using Username: TODOUSER
+2025-04-07 11:29:04.489  INFO 9128 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-04-07 11:29:04.546  INFO 9128 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.6.5.Final
+2025-04-07 11:29:04.662  INFO 9128 --- [main] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2025-04-07 11:29:04.861  WARN 9128 --- [main] o.h.e.j.e.i.JdbcEnvironmentInitiator     : HHH000342: Could not obtain connection to query metadata
+
+java.sql.SQLRecoverableException: Error de E/S: The Network Adapter could not establish the connection (CONNECTION_ID=+Xixze6GQp+yglh9e5FV2w==)
+	at oracle.jdbc.driver.T4CConnection.handleLogonNetException(T4CConnection.java:882) ~[ojdbc11-21.3.0.0.jar:21.3.0.0.0]
+	at oracle.jdbc.driver.T4CConnection.logon(T4CConnection.java:687) ~[ojdbc11-21.3.0.0.jar:21.3.0.0.0]
+	at oracle.jdbc.driver.PhysicalConnection.connect(PhysicalConnection.java:1086) ~[ojdbc11-21.3.0.0.jar:21.3.0.0.0]
+	at oracle.jdbc.driver.T4CDriverExtension.getConnection(T4CDriverExtension.java:90) ~[ojdbc11-21.3.0.0.jar:21.3.0.0.0]
+	at oracle.jdbc.driver.OracleDriver.connect(OracleDriver.java:728) ~[ojdbc11-21.3.0.0.jar:21.3.0.0.0]
+	at oracle.jdbc.datasource.impl.OracleDataSource.getPhysicalConnection(OracleDataSource.java:569) ~[ojdbc11-21.3.0.0.jar:21.3.0.0.0]
+	at oracle.jdbc.datasource.impl.OracleDataSource.getConnection(OracleDataSource.java:355) ~[ojdbc11-21.3.0.0.jar:21.3.0.0.0]
+	at oracle.jdbc.datasource.impl.OracleDataSource.getConnectionInternal(OracleDataSource.java:2014) ~[ojdbc11-21.3.0.0.jar:21.3.0.0.0]
+	at oracle.jdbc.datasource.impl.OracleDataSource.getConnection(OracleDataSource.java:330) ~[ojdbc11-21.3.0.0.jar:21.3.0.0.0]
+	at oracle.jdbc.datasource.impl.OracleDataSource.getConnection(OracleDataSource.java:291) ~[ojdbc11-21.3.0.0.jar:21.3.0.0.0]
+	at org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl.getConnection(DatasourceConnectionProviderImpl.java:122) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:181) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:68) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:35) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:101) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:263) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:237) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:214) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.id.factory.internal.DefaultIdentifierGeneratorFactory.injectServices(DefaultIdentifierGeneratorFactory.java:175) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.injectDependencies(AbstractServiceRegistryImpl.java:286) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:243) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:214) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:173) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:127) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1460) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1494) ~[hibernate-core-5.6.5.Final.jar:5.6.5.Final]
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:58) ~[spring-orm-5.3.16.jar:5.3.16]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:365) ~[spring-orm-5.3.16.jar:5.3.16]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409) ~[spring-orm-5.3.16.jar:5.3.16]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396) ~[spring-orm-5.3.16.jar:5.3.16]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:341) ~[spring-orm-5.3.16.jar:5.3.16]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1863) ~[spring-beans-5.3.16.jar:5.3.16]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1800) ~[spring-beans-5.3.16.jar:5.3.16]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:620) ~[spring-beans-5.3.16.jar:5.3.16]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542) ~[spring-beans-5.3.16.jar:5.3.16]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335) ~[spring-beans-5.3.16.jar:5.3.16]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-5.3.16.jar:5.3.16]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333) ~[spring-beans-5.3.16.jar:5.3.16]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208) ~[spring-beans-5.3.16.jar:5.3.16]
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1154) ~[spring-context-5.3.16.jar:5.3.16]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:908) ~[spring-context-5.3.16.jar:5.3.16]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:583) ~[spring-context-5.3.16.jar:5.3.16]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:145) ~[spring-boot-2.6.4.jar:2.6.4]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:740) ~[spring-boot-2.6.4.jar:2.6.4]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:415) ~[spring-boot-2.6.4.jar:2.6.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:303) ~[spring-boot-2.6.4.jar:2.6.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1312) ~[spring-boot-2.6.4.jar:2.6.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1301) ~[spring-boot-2.6.4.jar:2.6.4]
+	at com.springboot.MyTodoList.MyTodoListApplication.main(MyTodoListApplication.java:16) ~[classes/:na]
+Caused by: oracle.net.ns.NetException: The Network Adapter could not establish the connection (CONNECTION_ID=+Xixze6GQp+yglh9e5FV2w==)
+	at oracle.net.nt.ConnStrategy.execute(ConnStrategy.java:677) ~[ojdbc11-21.3.0.0.jar:21.3.0.0.0]
+	at oracle.net.resolver.AddrResolution.resolveAndExecute(AddrResolution.java:568) ~[ojdbc11-21.3.0.0.jar:21.3.0.0.0]
+	at oracle.net.ns.NSProtocol.establishConnection(NSProtocol.java:953) ~[ojdbc11-21.3.0.0.jar:21.3.0.0.0]
+	at oracle.net.ns.NSProtocol.connect(NSProtocol.java:350) ~[ojdbc11-21.3.0.0.jar:21.3.0.0.0]
+	at oracle.jdbc.driver.T4CConnection.connect(T4CConnection.java:2155) ~[ojdbc11-21.3.0.0.jar:21.3.0.0.0]
+	at oracle.jdbc.driver.T4CConnection.logon(T4CConnection.java:652) ~[ojdbc11-21.3.0.0.jar:21.3.0.0.0]
+	... 47 common frames omitted
+Caused by: java.net.UnknownHostException: El nombre solicitado es válido pero no se encontraron datos del tipo solicitado (team11_high)
+	at java.base/java.net.Inet6AddressImpl.lookupAllHostAddr(Native Method) ~[na:na]
+	at java.base/java.net.Inet6AddressImpl.lookupAllHostAddr(Inet6AddressImpl.java:52) ~[na:na]
+	at java.base/java.net.InetAddress$PlatformResolver.lookupByName(InetAddress.java:1221) ~[na:na]
+	at java.base/java.net.InetAddress.getAddressesFromNameService(InetAddress.java:1817) ~[na:na]
+	at java.base/java.net.InetAddress$NameServiceAddresses.get(InetAddress.java:1149) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName0(InetAddress.java:1807) ~[na:na]
+	at java.base/java.net.InetAddress.getAllByName(InetAddress.java:1676) ~[na:na]
+	at oracle.net.nt.TcpNTAdapter.resolveInetAddresses(TcpNTAdapter.java:571) ~[ojdbc11-21.3.0.0.jar:21.3.0.0.0]
+	at oracle.net.nt.TcpNTAdapter.doLocalDNSLookupConnect(TcpNTAdapter.java:296) ~[ojdbc11-21.3.0.0.jar:21.3.0.0.0]
+	at oracle.net.nt.TcpNTAdapter.connect(TcpNTAdapter.java:265) ~[ojdbc11-21.3.0.0.jar:21.3.0.0.0]
+	at oracle.net.nt.ConnOption.connect(ConnOption.java:238) ~[ojdbc11-21.3.0.0.jar:21.3.0.0.0]
+	at oracle.net.nt.ConnStrategy.executeConnOption(ConnStrategy.java:902) ~[ojdbc11-21.3.0.0.jar:21.3.0.0.0]
+	at oracle.net.nt.ConnStrategy.execute(ConnStrategy.java:638) ~[ojdbc11-21.3.0.0.jar:21.3.0.0.0]
+	... 52 common frames omitted
+
+2025-04-07 11:29:04.869  INFO 9128 --- [main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.Oracle12cDialect
+2025-04-07 11:29:05.352  INFO 9128 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2025-04-07 11:29:05.362  INFO 9128 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-04-07 11:29:05.988  WARN 9128 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-04-07 11:29:06.099  INFO 9128 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will not secure any request
+2025-04-07 11:29:06.265  INFO 9128 --- [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2025-04-07 11:29:06.399  INFO 9128 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8081 (http) with context path ''
+2025-04-07 11:29:06.405  INFO 9128 --- [main] c.s.MyTodoList.MyTodoListApplication     : Started MyTodoListApplication in 4.02 seconds (JVM running for 4.404)
+2025-04-07 11:29:11.192 ERROR 9128 --- [oraclejavabot Telegram Connection] o.t.t.u.DefaultBotSession                : Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+
+org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException: Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseInternal(PartialBotApiMethod.java:54) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseArray(PartialBotApiMethod.java:39) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.updates.GetUpdates.deserializeResponse(GetUpdates.java:83) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.getUpdatesFromServer(DefaultBotSession.java:258) ~[telegrambots-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.run(DefaultBotSession.java:188) ~[telegrambots-6.5.0.jar:na]
+
+2025-04-07 11:29:15.381 ERROR 9128 --- [oraclejavabot Telegram Connection] o.t.t.u.DefaultBotSession                : Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+
+org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException: Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseInternal(PartialBotApiMethod.java:54) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseArray(PartialBotApiMethod.java:39) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.updates.GetUpdates.deserializeResponse(GetUpdates.java:83) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.getUpdatesFromServer(DefaultBotSession.java:258) ~[telegrambots-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.run(DefaultBotSession.java:188) ~[telegrambots-6.5.0.jar:na]
+
+2025-04-07 11:29:19.328 ERROR 9128 --- [oraclejavabot Telegram Connection] o.t.t.u.DefaultBotSession                : Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+
+org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException: Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseInternal(PartialBotApiMethod.java:54) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseArray(PartialBotApiMethod.java:39) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.updates.GetUpdates.deserializeResponse(GetUpdates.java:83) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.getUpdatesFromServer(DefaultBotSession.java:258) ~[telegrambots-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.run(DefaultBotSession.java:188) ~[telegrambots-6.5.0.jar:na]
+
+2025-04-07 11:29:23.579 ERROR 9128 --- [oraclejavabot Telegram Connection] o.t.t.u.DefaultBotSession                : Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+
+org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException: Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseInternal(PartialBotApiMethod.java:54) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseArray(PartialBotApiMethod.java:39) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.updates.GetUpdates.deserializeResponse(GetUpdates.java:83) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.getUpdatesFromServer(DefaultBotSession.java:258) ~[telegrambots-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.run(DefaultBotSession.java:188) ~[telegrambots-6.5.0.jar:na]
+
+2025-04-07 11:29:27.358 ERROR 9128 --- [oraclejavabot Telegram Connection] o.t.t.u.DefaultBotSession                : Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+
+org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException: Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseInternal(PartialBotApiMethod.java:54) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseArray(PartialBotApiMethod.java:39) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.updates.GetUpdates.deserializeResponse(GetUpdates.java:83) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.getUpdatesFromServer(DefaultBotSession.java:258) ~[telegrambots-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.run(DefaultBotSession.java:188) ~[telegrambots-6.5.0.jar:na]
+
+2025-04-07 11:29:31.677 ERROR 9128 --- [oraclejavabot Telegram Connection] o.t.t.u.DefaultBotSession                : Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+
+org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException: Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseInternal(PartialBotApiMethod.java:54) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseArray(PartialBotApiMethod.java:39) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.updates.GetUpdates.deserializeResponse(GetUpdates.java:83) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.getUpdatesFromServer(DefaultBotSession.java:258) ~[telegrambots-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.run(DefaultBotSession.java:188) ~[telegrambots-6.5.0.jar:na]
+
+2025-04-07 11:29:35.423  INFO 9128 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-04-07 11:29:55.802  INFO 7784 --- [main] c.s.MyTodoList.MyTodoListApplication     : Starting MyTodoListApplication using Java 23.0.2 on Betitou with PID 7784 (C:\Users\menta\Documents\TODOLIST-TEAM11\oci-react-samples\MtdrSpring\backend\target\classes started by menta in C:\Users\menta\Documents\TODOLIST-TEAM11\oci-react-samples\MtdrSpring\backend)
+2025-04-07 11:29:55.805  INFO 7784 --- [main] c.s.MyTodoList.MyTodoListApplication     : No active profile set, falling back to 1 default profile: "default"
+2025-04-07 11:29:56.361  INFO 7784 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-04-07 11:29:56.432  INFO 7784 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 65 ms. Found 6 JPA repository interfaces.
+2025-04-07 11:29:56.936  INFO 7784 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8081 (http)
+2025-04-07 11:29:56.948  INFO 7784 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-04-07 11:29:56.949  INFO 7784 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.58]
+2025-04-07 11:29:57.060  INFO 7784 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-04-07 11:29:57.062  INFO 7784 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1200 ms
+2025-04-07 11:29:57.316  INFO 7784 --- [main] c.s.MyTodoList.config.DbSettings         : Using Driver oracle.jdbc.OracleDriver
+2025-04-07 11:29:57.317  INFO 7784 --- [main] c.s.MyTodoList.config.DbSettings         : Using URL: jdbc:oracle:thin:@team11_high?TNS_ADMIN=C:/Users/menta/Documents/TODOLIST-TEAM11/oci-react-samples/MtdrSpring/Wallet_TEAM11
+2025-04-07 11:29:57.318  INFO 7784 --- [main] c.s.MyTodoList.config.DbSettings         : Using Username: TODOUSER
+2025-04-07 11:29:57.422  INFO 7784 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-04-07 11:29:57.464  INFO 7784 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.6.5.Final
+2025-04-07 11:29:57.586  INFO 7784 --- [main] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2025-04-07 11:29:59.004  INFO 7784 --- [main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.Oracle12cDialect
+2025-04-07 11:29:59.703  INFO 7784 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2025-04-07 11:29:59.712  INFO 7784 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-04-07 11:30:00.353  WARN 7784 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-04-07 11:30:00.478  INFO 7784 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will not secure any request
+2025-04-07 11:30:00.656  INFO 7784 --- [main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2025-04-07 11:30:00.757  INFO 7784 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8081 (http) with context path ''
+2025-04-07 11:30:00.763  INFO 7784 --- [main] c.s.MyTodoList.MyTodoListApplication     : Started MyTodoListApplication in 5.318 seconds (JVM running for 5.704)
+2025-04-07 11:30:03.533 ERROR 7784 --- [oraclejavabot Telegram Connection] o.t.t.u.DefaultBotSession                : Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+
+org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException: Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseInternal(PartialBotApiMethod.java:54) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseArray(PartialBotApiMethod.java:39) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.updates.GetUpdates.deserializeResponse(GetUpdates.java:83) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.getUpdatesFromServer(DefaultBotSession.java:258) ~[telegrambots-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.run(DefaultBotSession.java:188) ~[telegrambots-6.5.0.jar:na]
+
+2025-04-07 11:30:08.511 ERROR 7784 --- [oraclejavabot Telegram Connection] o.t.t.u.DefaultBotSession                : Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+
+org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException: Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseInternal(PartialBotApiMethod.java:54) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseArray(PartialBotApiMethod.java:39) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.updates.GetUpdates.deserializeResponse(GetUpdates.java:83) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.getUpdatesFromServer(DefaultBotSession.java:258) ~[telegrambots-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.run(DefaultBotSession.java:188) ~[telegrambots-6.5.0.jar:na]
+
+2025-04-07 11:30:12.429 ERROR 7784 --- [oraclejavabot Telegram Connection] o.t.t.u.DefaultBotSession                : Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+
+org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException: Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseInternal(PartialBotApiMethod.java:54) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseArray(PartialBotApiMethod.java:39) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.updates.GetUpdates.deserializeResponse(GetUpdates.java:83) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.getUpdatesFromServer(DefaultBotSession.java:258) ~[telegrambots-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.run(DefaultBotSession.java:188) ~[telegrambots-6.5.0.jar:na]
+
+2025-04-07 11:30:16.617 ERROR 7784 --- [oraclejavabot Telegram Connection] o.t.t.u.DefaultBotSession                : Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+
+org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException: Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseInternal(PartialBotApiMethod.java:54) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseArray(PartialBotApiMethod.java:39) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.updates.GetUpdates.deserializeResponse(GetUpdates.java:83) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.getUpdatesFromServer(DefaultBotSession.java:258) ~[telegrambots-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.run(DefaultBotSession.java:188) ~[telegrambots-6.5.0.jar:na]
+
+2025-04-07 11:30:20.542 ERROR 7784 --- [oraclejavabot Telegram Connection] o.t.t.u.DefaultBotSession                : Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+
+org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException: Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseInternal(PartialBotApiMethod.java:54) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseArray(PartialBotApiMethod.java:39) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.updates.GetUpdates.deserializeResponse(GetUpdates.java:83) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.getUpdatesFromServer(DefaultBotSession.java:258) ~[telegrambots-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.run(DefaultBotSession.java:188) ~[telegrambots-6.5.0.jar:na]
+
+2025-04-07 11:30:22.285  INFO 7784 --- [http-nio-8081-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-04-07 11:30:22.285  INFO 7784 --- [http-nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-04-07 11:30:22.286  INFO 7784 --- [http-nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
+2025-04-07 11:30:24.821 ERROR 7784 --- [oraclejavabot Telegram Connection] o.t.t.u.DefaultBotSession                : Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+
+org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException: Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseInternal(PartialBotApiMethod.java:54) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseArray(PartialBotApiMethod.java:39) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.updates.GetUpdates.deserializeResponse(GetUpdates.java:83) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.getUpdatesFromServer(DefaultBotSession.java:258) ~[telegrambots-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.run(DefaultBotSession.java:188) ~[telegrambots-6.5.0.jar:na]
+
+2025-04-07 11:30:28.707 ERROR 7784 --- [oraclejavabot Telegram Connection] o.t.t.u.DefaultBotSession                : Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+
+org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException: Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseInternal(PartialBotApiMethod.java:54) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseArray(PartialBotApiMethod.java:39) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.updates.GetUpdates.deserializeResponse(GetUpdates.java:83) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.getUpdatesFromServer(DefaultBotSession.java:258) ~[telegrambots-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.run(DefaultBotSession.java:188) ~[telegrambots-6.5.0.jar:na]
+
+2025-04-07 11:30:32.937 ERROR 7784 --- [oraclejavabot Telegram Connection] o.t.t.u.DefaultBotSession                : Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+
+org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException: Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseInternal(PartialBotApiMethod.java:54) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseArray(PartialBotApiMethod.java:39) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.updates.GetUpdates.deserializeResponse(GetUpdates.java:83) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.getUpdatesFromServer(DefaultBotSession.java:258) ~[telegrambots-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.run(DefaultBotSession.java:188) ~[telegrambots-6.5.0.jar:na]
+
+2025-04-07 11:30:36.809 ERROR 7784 --- [oraclejavabot Telegram Connection] o.t.t.u.DefaultBotSession                : Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+
+org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException: Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseInternal(PartialBotApiMethod.java:54) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseArray(PartialBotApiMethod.java:39) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.updates.GetUpdates.deserializeResponse(GetUpdates.java:83) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.getUpdatesFromServer(DefaultBotSession.java:258) ~[telegrambots-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.run(DefaultBotSession.java:188) ~[telegrambots-6.5.0.jar:na]
+
+2025-04-07 11:30:41.095 ERROR 7784 --- [oraclejavabot Telegram Connection] o.t.t.u.DefaultBotSession                : Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+
+org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException: Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseInternal(PartialBotApiMethod.java:54) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseArray(PartialBotApiMethod.java:39) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.updates.GetUpdates.deserializeResponse(GetUpdates.java:83) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.getUpdatesFromServer(DefaultBotSession.java:258) ~[telegrambots-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.run(DefaultBotSession.java:188) ~[telegrambots-6.5.0.jar:na]
+
+2025-04-07 11:30:44.988 ERROR 7784 --- [oraclejavabot Telegram Connection] o.t.t.u.DefaultBotSession                : Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+
+org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException: Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseInternal(PartialBotApiMethod.java:54) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseArray(PartialBotApiMethod.java:39) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.updates.GetUpdates.deserializeResponse(GetUpdates.java:83) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.getUpdatesFromServer(DefaultBotSession.java:258) ~[telegrambots-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.run(DefaultBotSession.java:188) ~[telegrambots-6.5.0.jar:na]
+
+2025-04-07 11:30:49.121 ERROR 7784 --- [oraclejavabot Telegram Connection] o.t.t.u.DefaultBotSession                : Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+
+org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException: Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseInternal(PartialBotApiMethod.java:54) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseArray(PartialBotApiMethod.java:39) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.meta.api.methods.updates.GetUpdates.deserializeResponse(GetUpdates.java:83) ~[telegrambots-meta-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.getUpdatesFromServer(DefaultBotSession.java:258) ~[telegrambots-6.5.0.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.run(DefaultBotSession.java:188) ~[telegrambots-6.5.0.jar:na]
+
+2025-04-07 11:30:51.359  INFO 7784 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'

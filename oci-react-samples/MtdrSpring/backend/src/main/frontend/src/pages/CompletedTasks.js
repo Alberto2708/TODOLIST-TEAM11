@@ -200,7 +200,11 @@ export default function CompletedTasks() {
                                 <select
                                     id="developer-filter"
                                     value={selectedDeveloper}
-                                    onChange={(e) => setSelectedDeveloper(e.target.value)}
+                                    onChange={(e) => {
+                                        const value = e.target.value === "all" ? "all" : parseInt(e.target.value);
+                                        setSelectedDeveloper(value);
+                                    }}
+                                    
                                     className="filter-select"
                                 >
                                     <option value="all">All Developers</option>
@@ -211,7 +215,7 @@ export default function CompletedTasks() {
                                     ))}
                                 </select>
                             </div>
-                            <button className="returnButton" onClick={() => navigate('/ManagerTaskVis')}>
+                            <button className="returnButton" onClick={() => navigate('/managertasks')}>
                                 Return to Tasks
                             </button>
                         </div>
