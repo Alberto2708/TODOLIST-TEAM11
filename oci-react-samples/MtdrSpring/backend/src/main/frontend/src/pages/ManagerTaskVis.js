@@ -43,16 +43,19 @@ export default function ManagerTaskVis() {
     }, []);
 
     useEffect(() => {
-        // Actualizar tareas filtradas cuando cambian las tareas o el filtro
-        const newFilteredTasks = {};
-        
+        console.log("Selected Developer:", selectedDeveloper);
+        console.log("Tasks before filtering:", tasks);
+    
         if (selectedDeveloper === "all") {
             setFilteredTasks(tasks);
+            console.log("Filtered Tasks (All Developers):", tasks);
         } else {
+            const newFilteredTasks = {};
             if (tasks[selectedDeveloper]) {
                 newFilteredTasks[selectedDeveloper] = tasks[selectedDeveloper];
             }
             setFilteredTasks(newFilteredTasks);
+            console.log(`Filtered Tasks (Developer ${selectedDeveloper}):`, newFilteredTasks);
         }
     }, [selectedDeveloper, tasks]);
 
@@ -351,18 +354,22 @@ export default function ManagerTaskVis() {
                             <div className="filter-container">
                                 <label htmlFor="developer-filter">Filter by Developer:</label>
                                 <select
-                                    id="developer-filter"
-                                    value={selectedDeveloper}
-                                    onChange={(e) => setSelectedDeveloper(e.target.value)}
-                                    className="filter-select"
-                                >
-                                    <option value="all">All Developers</option>
-                                    {employees.map((employee) => (
-                                        <option key={employee.id} value={employee.id}>
-                                            {employee.name}
-                                        </option>
-                                    ))}
-                                </select>
+                                id="developer-filter"
+                                value={selectedDeveloper}
+                                onChange={(e) => {
+                                    const value = e.target.value === "all" ? "all" : parseInt(e.target.value);
+                                    setSelectedDeveloper(value);
+                                }}
+                                
+                                className="filter-select"
+                            >
+                                <option value="all">All Developers</option>
+                                {employees.map((employee) => (
+                                    <option key={employee.id} value={employee.id}>
+                                        {employee.name}
+                                    </option>
+                                ))}
+                            </select>
                             </div>
                             <div className="button-group">
                                 <button className="addButton" onClick={openTaskCreationModal}>
