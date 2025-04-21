@@ -381,6 +381,9 @@ export default function ManagerTaskVis() {
                                 <button className="completedTasksButton" onClick={() => navigate('/CompletedTasks')}>
                                     Completed Tasks
                                 </button>
+                                <button className="viewStatsButton" onClick={() => navigate('/Stats')}>
+                                    View Statistics
+                                </button>
                             </div>
                         </div>
                     </div>
