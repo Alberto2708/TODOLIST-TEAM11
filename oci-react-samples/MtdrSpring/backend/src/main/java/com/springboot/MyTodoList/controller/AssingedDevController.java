@@ -29,12 +29,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 //Get assigned tasks by developer id and sprint id
 
 
 
 @RestController
 public class AssingedDevController {
+    private static final Logger logger = LoggerFactory.getLogger(AssingedDevController.class);
+
     @Autowired
     private AssignedDevService assignedDevService;
     @Autowired
@@ -84,7 +89,7 @@ public class AssingedDevController {
             return null;
         }
     }
-
+    //KPI
     //Get Completed percentage of assigned tasks by developer id and sprint id KPI
     @GetMapping(value="/assignedDev/{assignedDevId}/sprint/{sprintId}/completedTasks/kpi")
     public Integer getCompletedTasksByEmployeeAndSprint(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
@@ -92,6 +97,7 @@ public class AssingedDevController {
             List<ToDoItem> tasks = getAssignedTasksByAssignedDevAndSprint(assignedDevId, sprintId).getBody();
             Integer sum = 0;
             for (ToDoItem task : tasks){
+                logger.info("Task ID: " + task.getID() + ", Status: " + task.getStatus());
                 if (task.getStatus().matches("COMPLETED")){
                     sum += 1;
                 }
@@ -104,7 +110,8 @@ public class AssingedDevController {
         }
     }
 
-    //Get Worked Hours by developer id and sprint id based on estHours for each task.
+    //KPI
+    //Get Worked Hours by developer id and sprint id based on estHours for each task KPI.
     @GetMapping(value = "/assignedDev/{assignedDevId}/sprint/{sprintId}/workedHours/kpi")
     public ResponseEntity<Integer> getWorkedHoursByEmployeeAndSprint(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
         try{
@@ -115,6 +122,7 @@ public class AssingedDevController {
             }
 
             for (ToDoItem task : tasks) {
+                logger.info("Task ID: " + task.getID() + ", Status: " + task.getStatus() + ", EstHours: " + task.getEstHours());
                 if (task.getStatus().matches("COMPLETED")){
                     workedHours += task.getEstHours();
                 }
@@ -175,9 +183,11 @@ public class AssingedDevController {
 
 
 
-
+    //KPI
+    //Modify it for average days.
+    //Return responseEntity
     //calculates the average number of hours a developer has left to complete their assigned tasks.
-    @GetMapping(value = "/assignedDev/kpi/{assignedDevId}")
+    @GetMapping(value = "/assignedDev/{assignedDevId}/averageDaysDif/kpi")
     public Float getCompletionDaysMean(@PathVariable Integer assignedDevId) {
         try{
             List<AssignedDev>  assignedDev = assignedDevService.getAssignedDevsByDevId(assignedDevId);
@@ -187,6 +197,8 @@ public class AssingedDevController {
                 //System.out.println(task.getToDoItemId()); //Returns the task id
                 //System.out.println(toDoItemService.getItemById(task.getToDoItemId()).getBody().getStatus()); //Returns the status of the task
                 if (toDoItemService.getItemById(task.getToDoItemId()).getBody().getStatus().matches("COMPLETED")){
+                    ToDoItem toDoItem = toDoItemService.getItemById(task.getToDoItemId()).getBody();
+                    logger.info("Task ID: " + toDoItem.getID() + ", Status: " + toDoItem.getStatus() + ", CompletionTs: " + toDoItem.getCompletionTs() + ", Deadline: " + toDoItem.getDeadline());
                     tasks.add(toDoItemService.getItemById(task.getToDoItemId()));
                     //System.out.println("Hello World from adding task!!!");
                 }
@@ -203,8 +215,9 @@ public class AssingedDevController {
         }
     }
 
-    //calculates the sum of overdue tasks completed by employee
-    @GetMapping(value = "/assignedDev/kpi/{assignedDevId}/overdue")
+    //KPI
+    //calculates the sum of overdue tasks completed by employee 
+    @GetMapping(value = "/assignedDev/{assignedDevId}/overdue/kpi")
     public ResponseEntity<Integer> getSumOfOverdueTasksByEmployee(@PathVariable Integer assignedDevId) {
         try{
             List<AssignedDev>  assignedDev = assignedDevService.getAssignedDevsByDevId(assignedDevId);
@@ -215,6 +228,8 @@ public class AssingedDevController {
                 //System.out.println(task.getToDoItemId()); //Returns the task id
                 //System.out.println(toDoItemService.getItemById(task.getToDoItemId()).getBody().getStatus()); //Returns the status of the task
                 if (toDoItemService.getItemById(task.getToDoItemId()).getBody().getStatus().matches("COMPLETED")){
+                    ToDoItem toDoItem = toDoItemService.getItemById(task.getToDoItemId()).getBody();
+                    logger.info("Task ID: " + toDoItem.getID() + ", Status: " + toDoItem.getStatus() + ", CompletionTs: " + toDoItem.getCompletionTs() + ", Deadline: " + toDoItem.getDeadline());
                     tasks.add(toDoItemService.getItemById(task.getToDoItemId()));
                 }
             }
