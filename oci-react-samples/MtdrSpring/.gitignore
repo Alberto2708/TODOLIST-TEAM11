@@ -2,7 +2,7 @@
 **/build/**
 **/target/**
 
-Wallet/
+Wallet_TEAM11/
 
 backend/src/main/resources/application.properties
 **/resources/**

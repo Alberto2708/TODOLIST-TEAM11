@@ -1,19 +1,18 @@
+//This model is the representation of the EMPLOYEE table that exists already in the autonomous database.
 package com.springboot.MyTodoList.model;
 
 import javax.persistence.*;
 
-/*
-    representation of the EMPLOYEE table that exists already
-    in the autonomous database
- */
 @Entity
 @Table(name = "EMPLOYEE")
 public class Employee {
 
     //Attributes
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int ID;
+    @Column(name = "EMPLOYEE_ID")
+    Integer ID;
     @Column(name = "NAME")
     String name;
     @Column(name = "MANAGER_ID")
@@ -23,7 +22,9 @@ public class Employee {
     @Column(name = "PASSWORD")
     String password;
     @Column(name = "PROJECT_ID")
-    int projectId;
+    Integer projectId;
+    @Column(name = "TELEGRAM_ID")
+    Long telegramId;
 
 
     //Empty Constructor
@@ -32,8 +33,18 @@ public class Employee {
     }
 
     //Full Constructor
-    public Employee(int ID, String name, Integer managerId, String email, String password, int projectId) {
-        this.ID = ID;
+    public Employee(Integer id, String name, Integer managerId, String email, String password, Integer projectId, Long telegramId) {
+        this.ID = id;
+        this.name = name;
+        this.managerId = managerId;
+        this.email = email;
+        this.password = password;
+        this.projectId = projectId;
+        this.telegramId = telegramId;
+    }
+
+    //Partial Constructor
+    public Employee(String name, Integer managerId, String email, String password, Integer projectId) {
         this.name = name;
         this.managerId = managerId;
         this.email = email;
@@ -43,11 +54,11 @@ public class Employee {
     
     //Getters and setters
     
-    public int getID() {
+    public Integer getID() {
         return ID;
     }
 
-    public void setID(int ID) {
+    public void setID(Integer ID) {
         this.ID = ID;
     }
 
@@ -83,14 +94,21 @@ public class Employee {
         this.password = password;
     }
 
-    public int getProjectId() {
+    public Integer getProjectId() {
         return projectId;
     }
 
-    public void setProjectId(int projectId) {
+    public void setProjectId(Integer projectId) {
         this.projectId = projectId;
     }
 
+    public Long getTelegramId() {
+        return telegramId;
+    }
+
+    public void setTelegramId(Long telegramId) {
+        this.telegramId = telegramId;
+    }
 
     //toString method override
     @Override
@@ -101,7 +119,8 @@ public class Employee {
                 ", managerId=" + managerId +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", projectId=" + projectId +
+                ", projectId='" + projectId + '\'' +
+                ", telegramId=" + telegramId + 
                 '}';
     }
 

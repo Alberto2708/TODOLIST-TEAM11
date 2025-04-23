@@ -1,58 +1,56 @@
 package com.springboot.MyTodoList.service;
 
-import com.springboot.MyTodoList.model.Project;
-import com.springboot.MyTodoList.repository.ProjectRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 import java.util.Optional;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+
+import com.springboot.MyTodoList.repository.ProjectRepository;
+import com.springboot.MyTodoList.model.Project;
 
 @Service
 public class ProjectService {
-
     @Autowired
-    private ProjectRepository ProjectRepository;
+    private ProjectRepository projectRepository;
 
-    public List<Project> findAll() {
-        List<Project> Projects = ProjectRepository.findAll();
-        return Projects;
+    public List<Project> findAll(){
+        List<Project> projects = projectRepository.findAll();
+        return projects;
     }
 
-    public ResponseEntity<Project> getProjectById(int id) {
-        Optional<Project> ProjectData = ProjectRepository.findById(id);
-        if (ProjectData.isPresent()) {
-            return new ResponseEntity<>(ProjectData.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public Project findProjectById(Integer id) {
+        Optional<Project> projectData = projectRepository.findById(id);
+        if (projectData.isPresent()){
+            return projectData.get();
+        }else{
+            return null;
         }
     }
 
-    public Project addProject(Project Project) {
-        return ProjectRepository.save(Project);
+    public Project addProject(Project project) {
+        return projectRepository.save(project);
     }
 
-    public boolean deleteProject(int id) {
+    public Project updateProject (Integer id, Project newProject){
+        Optional<Project> projectData = projectRepository.findById(id);
+        if (projectData.isPresent()){
+            Project project = projectData.get();
+            project.setID(id);
+            project.setName(newProject.getName());
+            return projectRepository.save(project);
+        }else{
+            return null;
+        }
+    }
+
+    public Boolean deleteProject(Integer projectId){
         try {
-            ProjectRepository.deleteById(id);
+            projectRepository.deleteById(projectId);
             return true;
         } catch (Exception e) {
             return false;
         }
     }
-
-    public Project updateProject(int id, Project p) {
-        Optional<Project> ProjectData = ProjectRepository.findById(id);
-        if (ProjectData.isPresent()) {
-            Project Project = ProjectData.get();
-            Project.setID(id);
-            Project.setName(p.getName());
-            return ProjectRepository.save(Project);
-        } else {
-            return null;
-        }
-    }
-
 }

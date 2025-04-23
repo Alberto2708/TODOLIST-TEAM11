@@ -1,3 +1,5 @@
+//This model is the representation of the ToDoItem table that exists already in the autonomous database.
+
 package com.springboot.MyTodoList.model;
 
 import javax.persistence.*;
@@ -6,9 +8,12 @@ import java.time.OffsetDateTime;
 @Entity
 @Table(name = "TODOITEM")
 public class ToDoItem {
+
+    //Attributes
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int ID;
+    @Column(name = "TODOITEM_ID")
+    Integer ID;
     
     @Column(name = "NAME")
     String name;
@@ -17,7 +22,7 @@ public class ToDoItem {
     String status;
     
     @Column(name = "MANAGER_ID")
-    int managerId;
+    Integer managerId;
     
     @Column(name = "COMPLETION_TS")
     OffsetDateTime completionTs;
@@ -28,25 +33,20 @@ public class ToDoItem {
     @Column(name = "DEADLINE")
     OffsetDateTime deadline;
     
-    @Column(name = "PROJECT_ID")
-    int projectId;
+    @Column(name = "SPRINT_ID")
+    Integer sprintId;
     
     @Column(name = "DESCRIPTION")
     String description;
+    
+    @Column(name = "EST_HOURS")
+    Integer estHours;
 
+    //Empty Constructor
     public ToDoItem(){}
 
-    public ToDoItem(
-        int ID,
-        String name,
-        String status,
-        int managerId,
-        OffsetDateTime completionTs,
-        OffsetDateTime startDate,
-        OffsetDateTime deadline,
-        int projectId,
-        String description
-        ) {
+    //Full Constructor
+    public ToDoItem(Integer ID, String name, String status, Integer managerId, OffsetDateTime completionTs, OffsetDateTime startDate, OffsetDateTime deadline, Integer sprintId, String description, Integer estHours) {
         this.ID = ID;
         this.name = name;
         this.status = status;
@@ -54,15 +54,18 @@ public class ToDoItem {
         this.completionTs = completionTs;
         this.startDate = startDate;
         this.deadline = deadline;
-        this.projectId = projectId;
+        this.sprintId = sprintId;
         this.description = description;
+        this.estHours = estHours;
     }
 
-    public int getID() {
+    //Getters and setters
+
+    public Integer getID() {
         return ID;
     }
 
-    public void setID(int ID) {
+    public void setID(Integer ID) {
         this.ID = ID;
     }
 
@@ -82,11 +85,11 @@ public class ToDoItem {
         this.status = status;
     }
 
-    public int getManagerId() {
+    public Integer getManagerId() {
         return managerId;
     }
 
-    public void setManagerId(int managerId) {
+    public void setManagerId(Integer managerId) {
         this.managerId = managerId;
     }
 
@@ -114,12 +117,12 @@ public class ToDoItem {
         this.deadline = deadline;
     }
 
-    public int getProjectId() {
-        return projectId;
+    public Integer getSprintId() {
+        return sprintId;
     }
 
-    public void setProjectId(int projectId) {
-        this.projectId = projectId;
+    public void setSprintId(Integer sprintId) {
+        this.sprintId = sprintId;
     }
 
     public String getDescription() {
@@ -130,6 +133,16 @@ public class ToDoItem {
         this.description = description;
     }
 
+    public Integer getEstHours() {
+        return estHours;
+    }
+
+    public void setEstHours(Integer estHours) {
+        this.estHours = estHours;
+    }
+
+
+    //toString method override
     @Override
     public String toString() {
         return "ToDoItem{" +
@@ -140,8 +153,9 @@ public class ToDoItem {
                 ", completionTs=" + completionTs + '\n' +
                 ", startDate=" + startDate + '\n' +
                 ", deadline=" + deadline + '\n' +
-                ", projectId=" + projectId + '\n' +
+                ", sprintId=" + sprintId + '\n' +
                 ", description='" + description + '\n' +
+                ", estHours=" + estHours + '\n' +
                 '}';
     }
 }

@@ -1,11 +1,41 @@
-/* Container */
-.container {
-    min-height: 100vh;
-    background-color: #f8f5ee;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+.utv-container {
+  min-height: 100vh;
+  background-color: #f8f5ee;
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+}
+
+.sprintContainer {
+  display: flex;
+  align-items: center; 
+  justify-content: flex-start; 
+  width: 75%;
+  padding: 20px 0;
+  margin-top: 20px;
+  gap: 20px; 
+}
+
+h3 {
+  color: #000000;
+  font-size: 16px;
+  margin: 0;
+  line-height: 1.5; 
+}
+
+.dateContainer {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  font-size: 12px;
+  color: #000000;
+  transform: translateY(15px); 
+}
+
+.dateContainer p {
+  margin: 0; 
+  line-height: 1.5; 
+}
   
   /* Header */
   .header {
@@ -64,4 +94,39 @@
   
   .task-button:hover {
     background-color: #d9534f;
+  }
+
+  .loading-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Center the content vertically and horizontally */
+    height: 100vh;
+    background-color: #f8f5ee;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+  }
+  
+  
+  .spinner {
+    border: 8px solid #f3f3f3; /* Light gray border */
+    border-top: 8px solid #ff0000;
+    border-left: 8px solid #000000;
+    border-bottom: 8px solid #7f7f7f;
+    border-radius: 50%; /* Make it circular */
+    width: 150px; 
+    height: 150px; 
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
   }

@@ -31,5 +31,3 @@ public class BotHelper {
 	}
 
 }
-
-// check this code

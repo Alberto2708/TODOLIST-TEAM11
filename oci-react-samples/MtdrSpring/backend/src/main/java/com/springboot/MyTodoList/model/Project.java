@@ -5,28 +5,31 @@ import javax.persistence.*;
 @Entity
 @Table(name = "PROJECT")
 public class Project {
+    //Attributes
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int ID;
-
+    @Column(name = "PROJECT_ID")
+    Integer ID;
     @Column(name = "NAME")
     String name;
 
+    //Empty Constructor
     public Project(){}
 
-    public Project(
-        int ID,
-        String name
-        ) {
-        this.ID = ID;
+    //Full Constructor
+    public Project(Integer id, String name) {
+        this.ID = id;
         this.name = name;
     }
 
-    public int getID() {
+    //Getters and setters
+
+    public Integer getID() {
         return ID;
     }
 
-    public void setID(int ID) {
+    public void setID(Integer ID) {
         this.ID = ID;
     }
 
@@ -41,8 +44,9 @@ public class Project {
     @Override
     public String toString() {
         return "Project{" +
-                "ID=" + ID + '\n' +
-                ", name='" + name + '\n' +
+                "ID=" + ID +
+                ", name='" + name + '\'' +
                 '}';
     }
+
 }

@@ -3,57 +3,60 @@ package com.springboot.MyTodoList.service;
 import com.springboot.MyTodoList.model.SubToDoItem;
 import com.springboot.MyTodoList.repository.SubToDoItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class SubToDoItemService {
-
     @Autowired
-    private SubToDoItemRepository SubToDoItemRepository;
-
-    public List<SubToDoItem> findAll() {
-        List<SubToDoItem> SubToDoItems = SubToDoItemRepository.findAll();
-        return SubToDoItems;
-    }
-
-    public ResponseEntity<SubToDoItem> getItemById(int id) {
-        Optional<SubToDoItem> todoData = SubToDoItemRepository.findById(id);
-        if (todoData.isPresent()) {
-            return new ResponseEntity<>(todoData.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    private SubToDoItemRepository subToDoItemRepository;
+    
+    public Boolean checkIfIdIsntSubToDoItem(Integer subToDoItemId){
+        try{
+            if(subToDoItemRepository.findBySubToDoItemId(subToDoItemId).isEmpty()){
+                //Returns true if the id is a Father ToDo Item id
+                return true;
+            }else{
+                //Returns false if the id is a Sub ToDo Item id
+                return false;
+            }
+        }catch(Exception e){
+            return null;
         }
     }
 
-    public SubToDoItem addSubToDoItem(SubToDoItem SubToDoItem) {
-        return SubToDoItemRepository.save(SubToDoItem);
+    public List<Integer> findAllSubToDoItemsIdsByToDoItemId(Integer toDoItemId){
+        try{
+            return subToDoItemRepository.findAllSubToDoItemIdsByToDoItemId(toDoItemId);
+        }catch(Exception e){
+            return null;
+        }
+    }
+    
+    public List<SubToDoItem> findAllSubToDoItemsByToDoItemId(Integer toDoItemId){
+        try{
+            return subToDoItemRepository.findAllSubToDoItemsByToDoItemId(toDoItemId);
+        }catch(Exception e){
+            return null;
+        }
     }
 
-    public boolean deleteSubToDoItem(int id) {
-        try {
-            SubToDoItemRepository.deleteById(id);
+
+    public SubToDoItem addSubToDoItem(SubToDoItem subToDoItem) {
+        return subToDoItemRepository.save(subToDoItem);
+    }
+
+    public Boolean deleteSubToDoItem(Integer toDoItemId, Integer subToDoItemId){
+        try{
+            subToDoItemRepository.deleteByToDoItemIdAndSubToDoItemId(toDoItemId, subToDoItemId);
             return true;
-        } catch (Exception e) {
+        }catch(Exception e){
+            System.out.println(e);
             return false;
         }
     }
 
-    public SubToDoItem updateSubToDoItem(int id, SubToDoItem std) {
-        Optional<SubToDoItem> SubToDoItemData = SubToDoItemRepository.findById(id);
-        if (SubToDoItemData.isPresent()) {
-            SubToDoItem SubToDoItem = SubToDoItemData.get();
-            SubToDoItem.setToDoItemId(id);
-            SubToDoItem.setSubToDoItemId(std.getSubToDoItemId());
-            
-            return SubToDoItemRepository.save(SubToDoItem);
-        } else {
-            return null;
-        }
-    }
 
 }

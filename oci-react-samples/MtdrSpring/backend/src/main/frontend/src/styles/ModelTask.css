@@ -66,6 +66,7 @@
 }
 
 .modal-description {
+  padding: 10px 0;
   font-size: 14px;
   color: #666;
 }
@@ -98,11 +99,21 @@
 
 .btn-cancel {
   background-color: #d9534f;
-  color: #333;
+  color: #fff;
+  margin-right: 10px;
 }
 
 .btn-cancel:hover {
   background-color: #c9302c;
+}
+
+.btn-done{
+  background-color: #5cb85c;
+  color: #fff;
+}
+
+.btn-done:hover {
+  background-color: #4cae4c;
 }
 
 .modal-description {

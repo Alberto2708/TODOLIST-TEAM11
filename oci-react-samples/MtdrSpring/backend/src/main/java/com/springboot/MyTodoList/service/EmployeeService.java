@@ -25,18 +25,31 @@ public class EmployeeService {
         return employees;
     }
 
-    public List<Employee> findByProjectId(int projectId){
+    public List<Employee> findByProjectId(Integer projectId){
         List<Employee> employees = employeeRepository.findByProjectId(projectId);
         return employees;
     }
 
-    public List<Employee> findByManagerId(int managerId){
-        List<Employee> employees = employeeRepository.findByManagerId(managerId);
-        return employees;
-
+    public List<Employee> findByManagerId(Integer managerId){
+        try{
+            List<Employee> employees = employeeRepository.findByManagerId(managerId);
+            return employees;
+        }catch(Exception e){
+            return null;
+        } 
     }
 
-    public ResponseEntity<Employee> getEmployeeById(int id){
+    public ResponseEntity<Employee> findEmployeeByEmail(String email){
+        try{
+            Employee emp = employeeRepository.findByEmail(email);
+        return new ResponseEntity<> (emp, HttpStatus.OK);
+        }catch(Exception e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
+    public ResponseEntity<Employee> findEmployeeById(Integer id){
         Optional<Employee> employeeData = employeeRepository.findById(id);
         if (employeeData.isPresent()){
             return new ResponseEntity<>(employeeData.get(), HttpStatus.OK);
@@ -44,11 +57,24 @@ public class EmployeeService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    public List<Employee> findEmployeeByProjectId(Integer projectId){
+        try{
+            List<Employee> employees = employeeRepository.findByProjectId(projectId);
+            return employees;
+        }catch(Exception e){
+            return null;
+        }
+    }
+
     public Employee addEmployee(Employee employee){
         return employeeRepository.save(employee);
     }
 
-    public boolean deleteEmployee(int id){
+
+
+        //It must not delete the Employee, just change the status
+    public boolean deleteEmployee(Integer id){
         try{
             employeeRepository.deleteById(id);
             return true;
@@ -57,19 +83,47 @@ public class EmployeeService {
         }
     }
 
-    public Employee updateEmployee(int id, Employee emp){
+    public Employee updateEmployee(Integer id, Employee emp){
         Optional<Employee> employeeData = employeeRepository.findById(id);
         if(employeeData.isPresent()){
             Employee employee = employeeData.get();
             employee.setID(id);
-            employee.setName(emp.getName());
-            employee.setManagerId(emp.getManagerId());
-            employee.setEmail(emp.getEmail());
-            employee.setPassword(emp.getPassword());
-            employee.setProjectId(emp.getProjectId());
+
+            if (emp.getName() != null){
+                employee.setName(emp.getName());
+            }
+            if (emp.getManagerId() != null){
+                employee.setManagerId(emp.getManagerId());
+            }
+            if (emp.getEmail() != null){
+                employee.setEmail(emp.getEmail());
+            }
+            if (emp.getPassword() != null){
+                employee.setPassword(emp.getPassword());
+            }
+            if (emp.getProjectId() != null){
+                employee.setProjectId(emp.getProjectId());
+            }
+            if (emp.getTelegramId() != null){
+                employee.setTelegramId(emp.getTelegramId());
+            }
             return employeeRepository.save(employee);
         }else{
             return null;
         }
     }
+
+    public Boolean doesEmployeeTelegramIdExists(Integer id){
+        try{
+            Employee emp = employeeRepository.findById(id).get();
+            if (emp.getTelegramId() != null){
+                return true;
+            } else {
+                return false;
+            }
+        }catch(Exception e){
+            return false;
+        }
+    }
+
 }
