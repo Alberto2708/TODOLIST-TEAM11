@@ -88,4 +88,14 @@ public class AssignedDevService {
             return false;
         }
     }
+
+    public Boolean deleteAssignedDevByAssignedDevId(Integer assignedDevId) {
+        try {
+            assignedDevRepository.deleteByEmployeeId(assignedDevId);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+    }
 }

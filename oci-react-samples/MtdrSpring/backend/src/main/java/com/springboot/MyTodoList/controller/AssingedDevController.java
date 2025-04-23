@@ -284,5 +284,18 @@ public class AssingedDevController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    
+
+    @DeleteMapping(value = "assignedDev/dev/{assignedDevId}")
+    public ResponseEntity deleteDevAssignedTaskByAssignedDevId(@PathVariable Integer assignedDevId) {
+        try{
+            Boolean status = assignedDevService.deleteAssignedDevByAssignedDevId(assignedDevId);
+            System.out.println(status);
+            if(status == null){ return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
+            if (status == false){ return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);}
+            return new ResponseEntity<>(status, HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
 }

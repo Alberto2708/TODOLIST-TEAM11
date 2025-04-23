@@ -34,4 +34,8 @@ public interface AssignedDevRepository extends JpaRepository<AssignedDev, Assign
     @Modifying
     @Query(value = "DELETE FROM ASSIGNEDDEV WHERE TODOITEM_ID = :toDoItemId", nativeQuery = true)
     void deleteByToDoItemId(@Param("toDoItemId") Integer id);
+
+    @Modifying
+    @Query(value = "DELETE FROM ASSIGNEDDEV WHERE EMPLOYEE_ID = :employeeId", nativeQuery = true)
+    void deleteByEmployeeId(@Param("employeeId") Integer id);
 }
