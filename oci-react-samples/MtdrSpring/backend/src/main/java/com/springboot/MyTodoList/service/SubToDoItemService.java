@@ -12,6 +12,14 @@ import java.util.List;
 public class SubToDoItemService {
     @Autowired
     private SubToDoItemRepository subToDoItemRepository;
+
+    public List<SubToDoItem> findAllSubToDoItems() {
+        try{
+            return subToDoItemRepository.findAll();
+        }catch(Exception e){
+            return null;
+        }
+    }
     
     public Boolean checkIfIdIsntSubToDoItem(Integer subToDoItemId){
         try{
@@ -51,6 +59,16 @@ public class SubToDoItemService {
     public Boolean deleteSubToDoItem(Integer toDoItemId, Integer subToDoItemId){
         try{
             subToDoItemRepository.deleteByToDoItemIdAndSubToDoItemId(toDoItemId, subToDoItemId);
+            return true;
+        }catch(Exception e){
+            System.out.println(e);
+            return false;
+        }
+    }
+
+    public Boolean deleteBySubToDoItemById(Integer subToDoItemId){
+        try{
+            subToDoItemRepository.deleteBySubToDoItemId(subToDoItemId);
             return true;
         }catch(Exception e){
             System.out.println(e);

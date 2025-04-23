@@ -33,4 +33,8 @@ public interface SubToDoItemRepository extends JpaRepository<SubToDoItem, SubToD
     @Modifying
     @Query(value = "DELETE FROM SUBTODOITEM WHERE TODOITEM_ID = :toDoItemId AND SUBTODOITEM_ID = :subToDoItemId", nativeQuery = true)
     void deleteByToDoItemIdAndSubToDoItemId(@Param("toDoItemId") Integer toDoItemId, @Param("subToDoItemId") Integer subToDoItemId);
+
+    @Modifying
+    @Query(value = "DELETE FROM SUBTODOITEM WHERE SUBTODOITEM_ID = :subToDoItemId", nativeQuery = true)
+    void deleteBySubToDoItemId(@Param("subToDoItemId") Integer id);
 }

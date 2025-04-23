@@ -37,6 +37,16 @@ public class SubToDoItemController {
     @Autowired
     private AssignedDevService assignedDevService;
 
+    @GetMapping(value="/subToDoItems")
+    public List<SubToDoItem> getAllSubToDoItems() {
+        try{
+            List<SubToDoItem> subToDoItems = subToDoItemService.findAllSubToDoItems();
+            return subToDoItems;
+        } catch(Exception e){
+            return null;
+        }
+    }
+
     //Get Mapping to get all subToDoItems Ids by ToDoItemId
     @GetMapping(value="/subToDoItems/{toDoItemId}")
     public List<Integer> getSubToDoItemsIdsByToDoItemId(@PathVariable Integer toDoItemId) {
@@ -116,11 +126,29 @@ public class SubToDoItemController {
         }
     }
 
+    //Delete by subToDoItemId and toDoItemId
     @DeleteMapping(value = "/subToDoItems/{toDoItemId}/{subToDoItemId}")
     public ResponseEntity deleteSubToDoItem(@PathVariable Integer toDoItemId, @PathVariable Integer subToDoItemId) {
         try{
             Boolean status = subToDoItemService.deleteSubToDoItem(toDoItemId, subToDoItemId);
             System.out.println(status);
+            if (status == true){
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else if (status == false){
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch(Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    //Delete by subToDoItemId
+    @DeleteMapping(value = "/subToDoItems/childs/{subToDoItemId}")
+    public ResponseEntity deleteSubToDoItemById(@PathVariable Integer subToDoItemId) {
+        try{
+            Boolean status = subToDoItemService.deleteBySubToDoItemById(subToDoItemId);
             if (status == true){
                 return new ResponseEntity<>(HttpStatus.OK);
             } else if (status == false){
