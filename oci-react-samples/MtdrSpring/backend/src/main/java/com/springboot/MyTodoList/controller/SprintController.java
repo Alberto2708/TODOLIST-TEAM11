@@ -62,7 +62,7 @@ public class SprintController {
         }
     }
 
-    //Get how many tasks are completed in a sprint
+    //Get percentage of completed tasks by a sprint
     @GetMapping(value = "/sprint/{sprintId}/kpi")
     public ResponseEntity<Integer> getCompletedTasksBySprint(@PathVariable Integer sprintId) {
         try{

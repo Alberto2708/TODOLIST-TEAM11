@@ -184,11 +184,11 @@ public class AssingedDevController {
 
 
     //KPI
-    //Modify it for average days.
-    //Return responseEntity
-    //calculates the average number of hours a developer has left to complete their assigned tasks.
+    //calculates the average number of days a developer takes to complete their assigned tasks.
+    //Positive values means developer is completing tasks faster than the deadline.
+    //Negative values means developer is completing tasks slower than the deadline.
     @GetMapping(value = "/assignedDev/{assignedDevId}/averageDaysDif/kpi")
-    public Float getCompletionDaysMean(@PathVariable Integer assignedDevId) {
+    public ResponseEntity<Float> getCompletionDaysMean(@PathVariable Integer assignedDevId) {
         try{
             List<AssignedDev>  assignedDev = assignedDevService.getAssignedDevsByDevId(assignedDevId);
             //System.out.println(assignedDev.size()); // Return number of tasks assigned to the developer.
@@ -205,9 +205,10 @@ public class AssingedDevController {
             }
             Float sum = 0.0f;
             for(ResponseEntity<ToDoItem> task : tasks){
-                sum += Duration.between(task.getBody().getCompletionTs(), task.getBody().getDeadline()).toHours();
+                logger.info("Sum" + sum.toString());
+                sum += task.getBody().getDeadline().getYear()*365 + task.getBody().getDeadline().getDayOfYear() - task.getBody().getCompletionTs().getYear()*365 - task.getBody().getCompletionTs().getDayOfYear();
             }
-            return sum/tasks.size();
+            return new ResponseEntity<>(sum/tasks.size(), HttpStatus.OK);
             
         }catch(Exception e){
             System.out.println(e);
@@ -236,7 +237,7 @@ public class AssingedDevController {
             Integer sum = 0;
             for(ResponseEntity<ToDoItem> task : tasks){
                 System.out.println(task.toString());
-                if(task.getBody().getCompletionTs().isAfter(task.getBody().getDeadline())){
+                if(task.getBody().getCompletionTs().getYear()*365 + task.getBody().getCompletionTs().getDayOfYear() > task.getBody().getDeadline().getYear()*365 + task.getBody().getDeadline().getDayOfYear()){
                     sum += 1;
                 }
             }
