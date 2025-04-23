@@ -132,13 +132,9 @@ public class SubToDoItemController {
         try{
             Boolean status = subToDoItemService.deleteSubToDoItem(toDoItemId, subToDoItemId);
             System.out.println(status);
-            if (status == true){
-                return new ResponseEntity<>(HttpStatus.OK);
-            } else if (status == false){
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
+            if(status == null){ return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
+            if (status == false){ return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);}
+            return new ResponseEntity<>(status, HttpStatus.OK);
         } catch(Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -149,13 +145,10 @@ public class SubToDoItemController {
     public ResponseEntity deleteSubToDoItemBySubToDoItemId(@PathVariable Integer subToDoItemId) {
         try{
             Boolean status = subToDoItemService.deleteBySubToDoItemById(subToDoItemId);
-            if (status == true){
-                return new ResponseEntity<>(HttpStatus.OK);
-            } else if (status == false){
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
+            System.out.println(status);
+            if(status == null){ return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
+            if (status == false){ return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);}
+            return new ResponseEntity<>(status, HttpStatus.OK);
         } catch(Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -166,13 +159,10 @@ public class SubToDoItemController {
     public ResponseEntity deleteSubToDoItemByToDoItemId(@PathVariable Integer toDoItemId) {
         try{
             Boolean status = subToDoItemService.deleteByToDoItemId(toDoItemId);
-            if (status == true){
-                return new ResponseEntity<>(HttpStatus.OK);
-            } else if (status == false){
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
+            System.out.println(status);
+            if(status == null){ return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
+            if (status == false){ return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);}
+            return new ResponseEntity<>(status, HttpStatus.OK);
         } catch(Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

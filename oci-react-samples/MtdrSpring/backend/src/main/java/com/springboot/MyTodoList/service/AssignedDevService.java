@@ -78,4 +78,14 @@ public class AssignedDevService {
             return null;
         }
     }
+
+    public Boolean deleteAssignedDevByToDoItemId(Integer assignedDevId) {
+        try {
+            assignedDevRepository.deleteByToDoItemId(assignedDevId);
+            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+    }
 }
