@@ -76,5 +76,15 @@ public class SubToDoItemService {
         }
     }
 
+    public Boolean deleteByToDoItemId(Integer toDoItemId){
+        try{
+            subToDoItemRepository.deleteByToDoItemId(toDoItemId);
+            return true;
+        }catch(Exception e){
+            System.out.println(e);
+            return false;
+        }
+    }
+
 
 }

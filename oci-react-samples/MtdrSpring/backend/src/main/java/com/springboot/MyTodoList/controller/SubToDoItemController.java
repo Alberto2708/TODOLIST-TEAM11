@@ -146,7 +146,7 @@ public class SubToDoItemController {
 
     //Delete by subToDoItemId
     @DeleteMapping(value = "/subToDoItems/childs/{subToDoItemId}")
-    public ResponseEntity deleteSubToDoItemById(@PathVariable Integer subToDoItemId) {
+    public ResponseEntity deleteSubToDoItemBySubToDoItemId(@PathVariable Integer subToDoItemId) {
         try{
             Boolean status = subToDoItemService.deleteBySubToDoItemById(subToDoItemId);
             if (status == true){
@@ -159,6 +159,24 @@ public class SubToDoItemController {
         } catch(Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    //Delete by toDoItemId
+    @DeleteMapping(value = "/subToDoItems/fathers/{toDoItemId}")
+    public ResponseEntity deleteSubToDoItemByToDoItemId(@PathVariable Integer toDoItemId) {
+        try{
+            Boolean status = subToDoItemService.deleteByToDoItemId(toDoItemId);
+            if (status == true){
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else if (status == false){
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch(Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
     
 }
