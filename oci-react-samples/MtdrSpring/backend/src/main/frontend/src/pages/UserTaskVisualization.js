@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../styles/TaskVisualization.css";
 import ToDoItem from "../components/ToDoItem.js";
 import ModalTask from "../components/ModelTask.js";
+import { useNavigate } from "react-router-dom";
 
 function UserTaskVisualization() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -13,6 +14,7 @@ function UserTaskVisualization() {
   const [passedProjectId, setPassedProjectId] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
   const [isScreenLoading, setIsScreenLoading] = useState(true); // Add loading state
+  const navigate = useNavigate();
 
   useEffect(() => {
     const employeeId = localStorage.getItem("employeeId");
@@ -77,7 +79,7 @@ const fetchTasks = async (employeeId, sprintId) => {
       setIsScreenLoading(false); // Stop loading after tasks are fetched
   } catch (error) {
       console.error("Error fetching tasks:", error);
-      setIsScreenLoading(false); // Stop loading on error
+      setIsScreenLoading(false); 
   }
 };
 
@@ -92,24 +94,24 @@ const fetchSubTasks = async (taskId, employeeId) => {
 
     const text = await response.text();
     if (!text) {
-      // Handle empty response
+  
       console.warn(`Empty response for task ID ${taskId}`);
       return [];
     }
 
     try {
-      const data = JSON.parse(text); // Parse the JSON response
+      const data = JSON.parse(text); 
       console.log(`Fetched subtasks data for toDoItemId ${taskId}:`, data);
 
-      // Adjust parsing logic based on the actual structure of the response
+      
       const parsedSubTasks = await Promise.all(
         data.map(async (item) => ({
-          id: item.id, // Adjusted to match the structure of your response
+          id: item.id, 
           name: item.name,
           deadline: new Date(item.deadline).toLocaleDateString(),
           description: item.description,
           status: item.status,
-          subTasks: await fetchSubTasks(item.id, employeeId), // Fetch subtasks recursively
+          subTasks: await fetchSubTasks(item.id, employeeId),
         }))
       );
 
@@ -126,7 +128,7 @@ const fetchSubTasks = async (taskId, employeeId) => {
 };
 
 const handleRefresh = (projectId, employeeId) => {
-  setIsScreenLoading(true); // Start loading when refreshing
+  setIsScreenLoading(true);
   fetchActualSprint(projectId, employeeId);
 }
 
@@ -161,7 +163,7 @@ const handleDoneClick = () => {
     console.log("Done button clicked in modal");
     setTriggerClickIndex(null);
     closeModal();
-    handleRefresh(passedProjectId, employeeId); // Refresh the task list after marking as done
+    handleRefresh(passedProjectId, employeeId); 
 };
 
   console.log("employeeId: ", employeeId);
@@ -174,13 +176,18 @@ const handleDoneClick = () => {
       ) : (
       <div className="utv-container">
           <div className="header">MY TO DO LIST</div>
-          <div className="sprintContainer"> {/* Nombre de clase corregido */}
+          <div className="sprint-header-container"> 
+            <div className="sprintContainer">
               <h3>{actualSprint.name}</h3>
               <div className="dateContainer">
-                  <p>Start Date: {new Date(actualSprint.startDate).toLocaleDateString()}</p>
-                  <p>End Date: {new Date(actualSprint.endDate).toLocaleDateString()}</p>
-                  <p>Days Left: {Math.floor((new Date(actualSprint.endDate) - new Date()) / (1000 * 60 * 60 * 24))}</p>
+                <p>Start Date: {new Date(actualSprint.startDate).toLocaleDateString()}</p>
+                <p>End Date: {new Date(actualSprint.endDate).toLocaleDateString()}</p>
+                <p>Days Left: {Math.floor((new Date(actualSprint.endDate) - new Date()) / (1000 * 60 * 60 * 24))}</p>
               </div>
+            </div>
+            <button className="completed-tasks-button" onClick={() => navigate('/usercompletedtasks')}>
+              Completed Tasks
+            </button>
           </div>
           <div className="task-list">
             {tasks.map((task, index) => (
@@ -203,7 +210,7 @@ const handleDoneClick = () => {
         <ModalTask
           setOpen={closeModal}
           handleDoneClick={handleDoneClick}
-          task={selectedTask} // Pass the selected task as a prop
+          task={selectedTask} 
         />
       )}
     </div>

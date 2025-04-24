@@ -6,13 +6,90 @@
   align-items: center; 
 }
 
+.sprint-header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 75%;
+  margin-top: 20px;
+}
+
+.completed-tasks-button {
+  background-color: #c74634;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  height: fit-content;
+  
+  /* Button */
+  .task-button {
+    background-color: #a84932;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  
+  .task-button:hover {
+    background-color: #d9534f;
+  }
+
+  .loading-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; 
+    height: 100vh;
+    background-color: #f8f5ee;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+  }
+  
+  
+  .spinner {
+    border: 8px solid #f3f3f3; 
+    border-top: 8px solid #ff0000;
+    border-left: 8px solid #000000;
+    border-bottom: 8px solid #7f7f7f;
+    border-radius: 50%; 
+    width: 150px; 
+    height: 150px; 
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+
+.completed-tasks-button:hover {
+  background-color: #d9534f;
+}
+
+
 .sprintContainer {
   display: flex;
   align-items: center; 
   justify-content: flex-start; 
-  width: 75%;
+  width: auto; 
   padding: 20px 0;
-  margin-top: 20px;
   gap: 20px; 
 }
 
@@ -80,53 +157,4 @@ h3 {
   .task-timestamp {
     color: gray;
     font-size: 14px;
-  }
-  
-  /* Button */
-  .task-button {
-    background-color: #a84932;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
-    cursor: pointer;
-  }
-  
-  .task-button:hover {
-    background-color: #d9534f;
-  }
-
-  .loading-screen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center; /* Center the content vertically and horizontally */
-    height: 100vh;
-    background-color: #f8f5ee;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1000;
-  }
-  
-  
-  .spinner {
-    border: 8px solid #f3f3f3; /* Light gray border */
-    border-top: 8px solid #ff0000;
-    border-left: 8px solid #000000;
-    border-bottom: 8px solid #7f7f7f;
-    border-radius: 50%; /* Make it circular */
-    width: 150px; 
-    height: 150px; 
-    animation: spin 1s linear infinite;
-  }
-  
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
   }

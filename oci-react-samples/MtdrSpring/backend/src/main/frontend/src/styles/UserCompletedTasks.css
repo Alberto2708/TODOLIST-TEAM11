@@ -1,0 +1,106 @@
+.uct-container {
+    min-height: 100vh;
+    background-color: #f8f5ee;
+    padding: 20px;
+}
+
+.loading-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f8f5ee;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #ff0000;
+    border-left: 8px solid #000000;
+    border-bottom: 8px solid #7f7f7f;
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.header-container {
+    background-color: #c74634;
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    position: relative; 
+  }
+
+.header-container h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+.sprint-info {
+    margin: 20px 0;
+}
+
+.sprint-info h2 {
+    margin: 10px 0;
+    font-size: 1.5rem;
+}
+
+.date-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-size: 1rem;
+}
+
+.date-container p {
+    margin: 0;
+}
+
+.return-button {
+    background-color: #f8f5ee; 
+    color: #333;
+    border: 1px solid #ccc;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin: 10px 0 20px;
+    transition: all 0.3s;
+    display: inline-block;
+  }
+
+.return-button:hover {
+    background-color: #e8e5de;
+    border-color: #999;
+}
+  
+.completed-tasks-list {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.no-tasks-message {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #666;
+    padding: 20px;
+}
+
+.uct-container {
+    position: relative;
+  }
