@@ -7,9 +7,9 @@ import com.springboot.MyTodoList.model.ToDoItem;
 import com.springboot.MyTodoList.model.AssignedDev;
 import com.springboot.MyTodoList.model.AssignedDevId;
 import com.springboot.MyTodoList.model.SubToDoItem;
+import com.springboot.MyTodoList.model.WorkedHoursKpiResponse;
 import com.springboot.MyTodoList.service.AssignedDevService;
 import com.springboot.MyTodoList.service.ToDoItemService;
-
 import oracle.jdbc.proxy.annotation.GetProxy;
 
 import com.springboot.MyTodoList.service.SubToDoItemService;
@@ -27,8 +27,7 @@ import java.util.List;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-
-
+import org.hibernate.boot.registry.classloading.spi.ClassLoaderService.Work;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,22 +112,24 @@ public class AssingedDevController {
     //KPI
     //Get Worked Hours by developer id and sprint id based on estHours for each task KPI.
     @GetMapping(value = "/assignedDev/{assignedDevId}/sprint/{sprintId}/workedHours/kpi")
-    public ResponseEntity<Integer> getWorkedHoursByEmployeeAndSprint(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
+    public ResponseEntity<WorkedHoursKpiResponse> getWorkedHoursByEmployeeAndSprint(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
         try{
             List<ToDoItem> tasks = getAssignedTasksByAssignedDevAndSprint(assignedDevId, sprintId).getBody();
             Integer workedHours = 0;
+            Integer workedHoursTotal = 0;
             if (tasks.isEmpty()){
                 return new ResponseEntity<> (null, HttpStatus.NOT_FOUND);
             }
 
             for (ToDoItem task : tasks) {
                 logger.info("Task ID: " + task.getID() + ", Status: " + task.getStatus() + ", EstHours: " + task.getEstHours());
+                workedHoursTotal += task.getEstHours();
                 if (task.getStatus().matches("COMPLETED")){
                     workedHours += task.getEstHours();
                 }
             }
             
-            return new ResponseEntity<>(workedHours, HttpStatus.OK);
+            return new ResponseEntity<>(new WorkedHoursKpiResponse(workedHours, workedHoursTotal), HttpStatus.OK);
         }catch (Exception e){
             System.out.println(e);
             return null;
