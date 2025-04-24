@@ -137,8 +137,8 @@ public class EmployeeController {
     public ResponseEntity<Boolean> deleteEmployee(@PathVariable("id") Integer id){
         try{
             Boolean flag = employeeService.deleteEmployee(id);
-            if(flag == null){ return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
-            if (flag == false){ return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);}
+            if(flag == null){ return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);}
+            if (flag == false){ return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);}
             return new ResponseEntity<>(flag, HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<>( HttpStatus.NOT_FOUND);
