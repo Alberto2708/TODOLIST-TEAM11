@@ -73,6 +73,7 @@ public class SubToDoItemController {
         }
     }
 
+    //Get Mapping to get all subToDoItems by ToDoItemId and employeeID
     @GetMapping(value="/subToDoItems/toDoItem/{toDoItemId}/employee/{employeeId}")
     public List<ToDoItem> getSubToDoItemsByToDoItemIdAndEmployeeId(@PathVariable Integer toDoItemId, @PathVariable Integer employeeId) {
         try{
@@ -112,6 +113,26 @@ public class SubToDoItemController {
         }
     }
     
+
+    //Get Mapping to get all Pending subToDoItems by ToDoItemId and employeeID
+    @GetMapping(value = "/subToDoItems/toDoItem/{toDoItemId}/employee/{employeeId}/pending")
+    public ResponseEntity<List<ToDoItem>> getPendingSubToDoItemsByToDoItemIdAndEmployeeId(@PathVariable Integer toDoItemId, @PathVariable Integer employeeId) {
+        try{
+            List<ToDoItem> toDoItems = getSubToDoItemsByToDoItemIdAndEmployeeId(toDoItemId, employeeId);
+            if (toDoItems.isEmpty()) {
+                return null;
+            }
+            List<ToDoItem> pendingToDoItems = new ArrayList<>();
+            for(ToDoItem toDoItem : toDoItems){
+                if (toDoItem.getStatus().matches("PENDING")){
+                    pendingToDoItems.add(toDoItem);
+                }
+            }
+            return new ResponseEntity<>(pendingToDoItems, HttpStatus.OK);
+        } catch(Exception e){
+            return null;
+        }
+    }
 
     //POSTS
 

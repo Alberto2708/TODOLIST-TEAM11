@@ -181,6 +181,27 @@ public class AssingedDevController {
         }
     }
 
+    //Get Father Pending tasks by developer id and sprint id
+    @GetMapping(value = "/assignedDev/{assignedDevId}/sprint/{sprintId}/father/pending")
+    public ResponseEntity<List<ToDoItem>> getPendingTasksByEmployeeAndSprintFather(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
+        try{
+            List<ResponseEntity<ToDoItem>> tasks = getAssignedTasksByAssignedDevAndSprintFather(assignedDevId, sprintId);
+            if (tasks == null || tasks.isEmpty()){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            List<ToDoItem> pendingTasks = new ArrayList<>();
+            for (ResponseEntity<ToDoItem> task : tasks){
+                if (task.getBody().getStatus().matches("PENDING")){
+                    pendingTasks.add(task.getBody());
+                }
+            }
+            return new ResponseEntity<>(pendingTasks, HttpStatus.OK);
+        }catch(Exception e){
+            System.out.println(e);
+            return null;
+        }
+    }
+
 
 
 
