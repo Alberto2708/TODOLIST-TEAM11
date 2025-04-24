@@ -48,9 +48,9 @@ const fetchActualSprint = async (projectId, employeeId) => {
   }
 };
 
-const fetchTasks = async (employeeId, sprintId) => {
+const fetchTasks = async (assignedDevId, sprintId) => {
   try {
-      const response = await fetch(`/assignedDev/${employeeId}/sprint/${sprintId}/father`);
+      const response = await fetch(`/assignedDev/${assignedDevId}/sprint/${sprintId}/father/pending`);
       if (!response.ok) {
           console.error("Error fetching tasks:", response.statusText);
           setIsScreenLoading(false); // Stop loading on error
@@ -61,14 +61,14 @@ const fetchTasks = async (employeeId, sprintId) => {
 
       const parseTasks = await Promise.all(
           data.map(async (task) => {
-              const subTasks = await fetchSubTasks(task.body.id, employeeId);
-              console.log(`Fetched subtasks for task ID ${task.body.id}:`, subTasks);
+              const subTasks = await fetchSubTasks(task.id, employeeId);
+              console.log(`Fetched subtasks for task ID ${task.id}:`, subTasks);
 
               return {
-                  id: task.body.id,
-                  name: task.body.name,
-                  deadline: task.body.deadline,
-                  status: task.body.status,
+                  id: task.id,
+                  name: task.name,
+                  deadline: task.deadline,
+                  status: task.status,
                   subTasks: subTasks, // Include the fetched subtasks
               };
           })
@@ -86,7 +86,7 @@ const fetchTasks = async (employeeId, sprintId) => {
 const fetchSubTasks = async (taskId, employeeId) => {
   try {
     console.log("Fetching subtasks for task ID:", taskId, "and employee ID:", employeeId);
-    const response = await fetch(`subToDoItems/toDoItem/${taskId}/employee/${employeeId}`);
+    const response = await fetch(`subToDoItems/toDoItem/${taskId}/employee/${employeeId}/pending`);
     if (!response.ok) {
       console.error("Error fetching subtasks:", response.statusText);
       return [];
