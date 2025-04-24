@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 import java.util.ArrayList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.springboot.MyTodoList.model.SubToDoItem;
 import com.springboot.MyTodoList.service.ToDoItemService;
@@ -36,6 +38,8 @@ public class SubToDoItemController {
 
     @Autowired
     private AssignedDevService assignedDevService;
+
+    private static final Logger logger = LoggerFactory.getLogger(AssingedDevController.class);
 
     @GetMapping(value="/subToDoItems")
     public List<SubToDoItem> getAllSubToDoItems() {
@@ -99,16 +103,19 @@ public class SubToDoItemController {
         try{
             List<ToDoItem> toDoItems = getSubToDoItemsByToDoItemIdAndEmployeeId(toDoItemId, employeeId);
             if (toDoItems.isEmpty()) {
+                logger.info("IS EMPTY");
                 return null;
             }
             List<ToDoItem> completedToDoItems = new ArrayList<>();
             for(ToDoItem toDoItem : toDoItems){
+                logger.info("ToDoItem: " + toDoItem.getID() + " - Status: " + toDoItem.getStatus());
                 if (toDoItem.getStatus().matches("COMPLETED")){
                     completedToDoItems.add(toDoItem);
                 }
             }
             return new ResponseEntity<>(completedToDoItems, HttpStatus.OK);
         } catch(Exception e){
+            System.out.println("Error: " + e.getMessage());
             return null;
         }
     }
@@ -119,18 +126,21 @@ public class SubToDoItemController {
     public ResponseEntity<List<ToDoItem>> getPendingSubToDoItemsByToDoItemIdAndEmployeeId(@PathVariable Integer toDoItemId, @PathVariable Integer employeeId) {
         try{
             List<ToDoItem> toDoItems = getSubToDoItemsByToDoItemIdAndEmployeeId(toDoItemId, employeeId);
-            if (toDoItems.isEmpty()) {
+            if (toDoItems == null) {
+                logger.info("IS EMPTY");
                 return null;
             }
             List<ToDoItem> pendingToDoItems = new ArrayList<>();
             for(ToDoItem toDoItem : toDoItems){
+                logger.info("ToDoItem: " + toDoItem.getID() + " - Status: " + toDoItem.getStatus());
                 if (toDoItem.getStatus().matches("PENDING")){
                     pendingToDoItems.add(toDoItem);
                 }
             }
             return new ResponseEntity<>(pendingToDoItems, HttpStatus.OK);
         } catch(Exception e){
-            return null;
+            System.out.println("Error: " + e.getMessage());
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
 
