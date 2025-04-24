@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import '../styles/ManagerTaskVis.css';
 import React from 'react';
-import CompletedItem from "../components/CompletedItem";
+import ToDoItem from "../components/ToDoItem.js";
 import ManagerModalTask from "../components/ManagerModalTask.js";
 
 export default function CompletedTasks() {
@@ -56,7 +56,7 @@ export default function CompletedTasks() {
     const fetchSubTasks = async (taskId, employeeId) => {
         try {
             console.log("Fetching subtasks for task ID:", taskId, "and employee ID:", employeeId);
-            const response = await fetch(`subToDoItems/toDoItem/${taskId}/employee/${employeeId}`);
+            const response = await fetch(`/subToDoItems/toDoItem/${taskId}/employee/${employeeId}/completed`);
             if (!response.ok) {
                 console.error("Error fetching subtasks:", response.statusText);
                 return [];
@@ -112,7 +112,7 @@ export default function CompletedTasks() {
     const fetchTasks = async (assignedDevId, sprintId) => {
         try {
             console.log(`Fetching tasks for assignedDevId: ${assignedDevId}, sprintId: ${sprintId}`);
-            const response = await fetch(`/assignedDev/${assignedDevId}/sprint/${sprintId}/father`);
+            const response = await fetch(`/assignedDev/${assignedDevId}/sprint/${sprintId}/father/completed`);
             if (!response.ok) {
                 console.error(`Error fetching tasks: ${response.status} - ${response.statusText}`);
                 return;
@@ -122,16 +122,16 @@ export default function CompletedTasks() {
     
             const parsedTasks = await Promise.all(
                 data.map(async (item) => {
-                    console.log(`Fetching subtasks for task ID: ${item.body.id}`);
-                    const subTasks = await fetchSubTasks(item.body.id, assignedDevId);
-                    console.log(`Fetched subtasks for task ID ${item.body.id}:`, subTasks);
+                    console.log(`Fetching subtasks for task ID: ${item.id}`);
+                    const subTasks = await fetchSubTasks(item.id, assignedDevId);
+                    console.log(`Fetched subtasks for task ID ${item.id}:`, subTasks);
     
                     return {
-                        id: item.body.id,
-                        name: item.body.name,
-                        deadline: new Date(item.body.deadline).toLocaleDateString(),
-                        description: item.body.description,
-                        status: item.body.status,
+                        id: item.id,
+                        name: item.name,
+                        deadline: new Date(item.deadline).toLocaleDateString(),
+                        description: item.description,
+                        status: item.status,
                         subTasks: subTasks,
                     };
                 })
@@ -228,7 +228,7 @@ export default function CompletedTasks() {
                                 <div key={employee.id} className="employee-task-list">
                                     <h2>{employee.name}'s completed tasks:</h2>
                                     {tasks[employee.id].map((task, index) => (
-                                        <CompletedItem
+                                        <ToDoItem
                                             key={index}
                                             name={task.name}
                                             timestamp={task.deadline}
