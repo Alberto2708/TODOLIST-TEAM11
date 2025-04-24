@@ -70,6 +70,7 @@ export default function ManagerTaskVis() {
             if (response.ok) {
                 const data = await response.json();
                 setActualSprint(data);
+                localStorage.setItem("sprintId", data.id);
                 fetchEmployees(managerId, data.id);
             } else {
                 console.error("Error fetching actual sprint:", response.statusText);
