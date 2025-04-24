@@ -5,6 +5,7 @@ import ManagerTaskVis from "./ManagerTaskVis";
 import LoadingScreen from "./LoadingScreen";
 import CompletedTasks from "./CompletedTasks";
 import Stats from "./Stats";
+import UserCompletedTasks from "./UserCompletedTasks";
 
 
 const App = () => {
@@ -17,6 +18,7 @@ const App = () => {
         <Route path="/loading" element={<LoadingScreen/>} />
         <Route path="/completedtasks" element={<CompletedTasks/>} />
         <Route path="/stats" element={<Stats/>} />
+        <Route path="/usercompletedtasks" element={<UserCompletedTasks/>} />
       </Routes>
     </Router>
   );

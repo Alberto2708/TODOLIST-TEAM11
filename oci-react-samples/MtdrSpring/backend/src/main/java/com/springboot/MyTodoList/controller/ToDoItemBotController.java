@@ -45,12 +45,12 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                 if (messageText.startsWith("/auth ")) {
                     handleAuthCommand(conn, chatId, user.getId(), messageText.substring(6).trim());
                 } else if (!isUserAuthenticated(conn, user.getId())) {
-                    sendMessage(chatId, "ðŸ”’ Please authenticate with:\n/auth your_email@example.com");
+                    sendMessage(chatId, "🔒 Please authenticate with:\n/auth your_email@example.com");
                 } else {
                     handleTaskCommands(conn, chatId, user, messageText);
                 }
             } catch (SQLException e) {
-                sendMessage(chatId, "âš ï¸ Database error. Try again later.");
+                sendMessage(chatId, "⚠️ Database error. Try again later.");
                 logger.error("DB Error", e);
             }
         }
@@ -68,7 +68,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                 if (args.length >= 3) {
                     assignTask(conn, chatId, user.getId(), Long.parseLong(args[1]), args[2]);
                 } else {
-                    sendMessage(chatId, "âŒ Format: /assigntask [taskId] employee@example.com");
+                    sendMessage(chatId, "❌ Format: /assigntask [taskId] employee@example.com");
                 }
                 break;
             case "/starttask":
@@ -88,7 +88,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                 showDeveloperKPIs(conn, chatId, user.getId());
                 break;
             default:
-                sendMessage(chatId, "ðŸ› ï¸ Available commands:\n" +
+                sendMessage(chatId, "🛠️ Available commands:\n" +
                     "/newtask \"Task name\" -s [sprintId] -h [hours]\n" +
                     "/assigntask [taskId] employee@example.com\n" +
                     "/starttask [taskId]\n" +
@@ -104,21 +104,21 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
             // 1. Get employee ID from Telegram ID
             Integer employeeId = getEmployeeIdByTelegramId(conn, telegramId);
             if (employeeId == null) {
-                sendMessage(chatId, "âŒ Your account is not properly registered");
+                sendMessage(chatId, "❌ Your account is not properly registered");
                 return;
             }
 
             // 2. Check if user is a manager (MANAGER_ID IS NULL)
             if (!isManager(conn, employeeId)) {
                 String debugInfo = getEmployeeDebugInfo(conn, employeeId);
-                sendMessage(chatId, "â›” Only managers can create tasks\n" + debugInfo);
+                sendMessage(chatId, "⛔ Only managers can create tasks\n" + debugInfo);
                 return;
             }
 
             // 3. Parse command
             String[] parts = command.split(" -");
             if (parts.length < 3) {
-                sendMessage(chatId, "âŒ Format: /newtask \"Task name\" -s [sprintId] -h [hours]");
+                sendMessage(chatId, "❌ Format: /newtask \"Task name\" -s [sprintId] -h [hours]");
                 return;
             }
             
@@ -128,7 +128,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
 
             // 4. Verify sprint exists
             if (!sprintExists(conn, sprintId)) {
-                sendMessage(chatId, "âŒ Invalid sprint ID");
+                sendMessage(chatId, "❌ Invalid sprint ID");
                 return;
             }
 
@@ -146,14 +146,14 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                 
                 try (ResultSet rs = stmt.getGeneratedKeys()) {
                     if (rs.next()) {
-                        sendMessage(chatId, "âœ… Task #" + rs.getLong(1) + " created!");
+                        sendMessage(chatId, "✅ Task #" + rs.getLong(1) + " created!");
                     }
                 }
             }
         } catch (NumberFormatException e) {
-            sendMessage(chatId, "âŒ Sprint ID and hours must be numbers");
+            sendMessage(chatId, "❌ Sprint ID and hours must be numbers");
         } catch (SQLException e) {
-            sendMessage(chatId, "âš ï¸ Database error creating task");
+            sendMessage(chatId, "⚠️ Database error creating task");
             logger.error("Task creation failed", e);
         }
     }
@@ -164,26 +164,26 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
             // Get assigner's employee ID (must be a manager)
             Integer assignerId = getEmployeeIdByTelegramId(conn, assignerTelegramId);
             if (assignerId == null || !isManager(conn, assignerId)) {
-                sendMessage(chatId, "â›” Only managers can assign tasks");
+                sendMessage(chatId, "⛔ Only managers can assign tasks");
                 return;
             }
 
             // Find assignee's employee record by email
             Integer assigneeId = findEmployeeByEmail(conn, email);
             if (assigneeId == null) {
-                sendMessage(chatId, "âŒ Employee with email " + email + " not found");
+                sendMessage(chatId, "❌ Employee with email " + email + " not found");
                 return;
             }
 
             // Verify task exists and belongs to assigner's project
             if (!isTaskValidForAssignment(conn, taskId, assignerId)) {
-                sendMessage(chatId, "âŒ You can only assign tasks from your own projects");
+                sendMessage(chatId, "❌ You can only assign tasks from your own projects");
                 return;
             }
 
             // Check if task is already assigned to this employee
             if (isTaskAlreadyAssigned(conn, taskId, assigneeId)) {
-                sendMessage(chatId, "â„¹ï¸ Task is already assigned to this employee");
+                sendMessage(chatId, "ℹ️ Task is already assigned to this employee");
                 return;
             }
 
@@ -194,8 +194,8 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                 stmt.setInt(2, assigneeId);
                 int updated = stmt.executeUpdate();
                 sendMessage(chatId, updated > 0 
-                    ? "âœ… Task #" + taskId + " assigned to " + email 
-                    : "âŒ Failed to assign task");
+                    ? "✅ Task #" + taskId + " assigned to " + email 
+                    : "❌ Failed to assign task");
                 
                 // Notify assignee if they have a Telegram ID
                 notifyAssigneeIfAvailable(conn, assigneeId, taskId);
@@ -212,7 +212,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
             stmt.setString(1, status);
             stmt.setLong(2, taskId);
             int updated = stmt.executeUpdate();
-            sendMessage(chatId, updated > 0 ? "âœ… Task updated!" : "âŒ Task not found");
+            sendMessage(chatId, updated > 0 ? "✅ Task updated!" : "❌ Task not found");
         }
     }
 
@@ -228,7 +228,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
             stmt.setLong(1, telegramId);
             ResultSet rs = stmt.executeQuery();
             
-            StringBuilder tasks = new StringBuilder("ðŸ“‹ Your Tasks:\n");
+            StringBuilder tasks = new StringBuilder("📋 Your Tasks:\n");
             while (rs.next()) {
                 tasks.append(String.format(
                     "#%d - %s (%s, %dh)\n",
@@ -255,9 +255,9 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                 Integer employeeId = getEmployeeIdByTelegramId(conn, telegramId);
                 boolean isManager = isManager(conn, employeeId);
                 String role = isManager ? "manager" : "developer";
-                sendMessage(chatId, "âœ… Authentication successful! (Logged in as " + role + ")");
+                sendMessage(chatId, "✅ Authentication successful! (Logged in as " + role + ")");
             } else {
-                sendMessage(chatId, "âŒ Failed: Email not found/already linked");
+                sendMessage(chatId, "❌ Failed: Email not found/already linked");
             }
         }
     }
@@ -347,13 +347,13 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 long telegramId = rs.getLong(1);
-                sendMessage(telegramId, "ðŸ“¬ You've been assigned to task #" + taskId);
+                sendMessage(telegramId, "📬 You've been assigned to task #" + taskId);
             }
         }
     }
 
     private void handleDatabaseError(long chatId, SQLException e, String operation) {
-        sendMessage(chatId, "âš ï¸ Database error while " + operation + ". Please try again.");
+        sendMessage(chatId, "⚠️ Database error while " + operation + ". Please try again.");
         logger.error("DB Error during " + operation, e);
     }
 
@@ -369,14 +369,14 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         try {
             Integer employeeId = getEmployeeIdByTelegramId(conn, telegramId);
             if (employeeId == null) {
-                sendMessage(chatId, "âŒ Your account is not properly registered");
+                sendMessage(chatId, "❌ Your account is not properly registered");
                 return;
             }
     
             // Get current sprint ID (using date range)
             Integer sprintId = getCurrentSprintId(conn);
             if (sprintId == null) {
-                sendMessage(chatId, "âš ï¸ No active sprint found");
+                sendMessage(chatId, "⚠️ No active sprint found");
                 return;
             }
     
@@ -393,13 +393,13 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
     
             // Format the response
             String response = String.format(
-                "ðŸ‘¨â€ðŸ’» Developer KPIs\n\n" +
+                "👨‍💻 Developer KPIs\n\n" +
                 "%s\n\n" +
-                "ðŸ“Š \n" +
-                "â€¢ Completed Tasks: %d/%d (%d%%)\n" +
-                "â€¢ Worked Hours: %d\n" +
-                "â€¢ Avg Days Difference: %.1f\n" +
-                "â€¢ Overdue Tasks: %d\n\n",
+                "📊 \n" +
+                "• Completed Tasks: %d/%d (%d%%)\n" +
+                "• Worked Hours: %d\n" +
+                "• Avg Days Difference: %.1f\n" +
+                "• Overdue Tasks: %d\n\n",
                 developerInfo,
                 completedTasks, totalTasks, completionPercentage,
                 workedHours,
@@ -410,7 +410,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
             sendMessage(chatId, response);
         } catch (SQLException e) {
             logger.error("Failed to calculate KPIs", e);
-            sendMessage(chatId, "âš ï¸ Failed to calculate KPIs. Please try again later.");
+            sendMessage(chatId, "⚠️ Failed to calculate KPIs. Please try again later.");
         }
     }
     
@@ -491,7 +491,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
             stmt.setInt(1, employeeId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return String.format("ðŸ‘¤ Name: %s\nâœ‰ï¸ Email: %s",
+                return String.format("👤 Name: %s\n✉️ Email: %s",
                     rs.getString("NAME"),
                     rs.getString("EMAIL"));
             }
