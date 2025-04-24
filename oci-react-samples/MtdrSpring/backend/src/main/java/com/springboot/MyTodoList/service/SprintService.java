@@ -16,6 +16,15 @@ public class SprintService {
     @Autowired
     private SprintRepository sprintRepository;
 
+    public List<Sprint> findAllSprints(){
+        try{
+            List<Sprint> sprints = sprintRepository.findAll();
+            return sprints;
+        }catch (Exception e) {
+            return null;
+        }
+    }
+
     public ResponseEntity<Sprint> findSprintById(Integer sprintId) {
         try {
             Optional <Sprint> sprint = sprintRepository.findById(sprintId);
@@ -55,6 +64,15 @@ public class SprintService {
             return sprintRepository.save(sprint);
         } catch (Exception e) {
             throw new Exception("Error adding sprint: " + e.getMessage());
+        }
+    }
+
+    public Boolean deleteSprint(Integer sprintId) {
+        try {
+            sprintRepository.deleteById(sprintId);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 

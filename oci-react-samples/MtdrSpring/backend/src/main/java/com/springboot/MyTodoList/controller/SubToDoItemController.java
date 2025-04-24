@@ -73,6 +73,7 @@ public class SubToDoItemController {
         }
     }
 
+    //Get Mapping to get all subToDoItems by ToDoItemId and employeeID
     @GetMapping(value="/subToDoItems/toDoItem/{toDoItemId}/employee/{employeeId}")
     public List<ToDoItem> getSubToDoItemsByToDoItemIdAndEmployeeId(@PathVariable Integer toDoItemId, @PathVariable Integer employeeId) {
         try{
@@ -113,6 +114,26 @@ public class SubToDoItemController {
     }
     
 
+    //Get Mapping to get all Pending subToDoItems by ToDoItemId and employeeID
+    @GetMapping(value = "/subToDoItems/toDoItem/{toDoItemId}/employee/{employeeId}/pending")
+    public ResponseEntity<List<ToDoItem>> getPendingSubToDoItemsByToDoItemIdAndEmployeeId(@PathVariable Integer toDoItemId, @PathVariable Integer employeeId) {
+        try{
+            List<ToDoItem> toDoItems = getSubToDoItemsByToDoItemIdAndEmployeeId(toDoItemId, employeeId);
+            if (toDoItems.isEmpty()) {
+                return null;
+            }
+            List<ToDoItem> pendingToDoItems = new ArrayList<>();
+            for(ToDoItem toDoItem : toDoItems){
+                if (toDoItem.getStatus().matches("PENDING")){
+                    pendingToDoItems.add(toDoItem);
+                }
+            }
+            return new ResponseEntity<>(pendingToDoItems, HttpStatus.OK);
+        } catch(Exception e){
+            return null;
+        }
+    }
+
     //POSTS
 
     @PostMapping(value="/subToDoItems")
@@ -132,13 +153,9 @@ public class SubToDoItemController {
         try{
             Boolean status = subToDoItemService.deleteSubToDoItem(toDoItemId, subToDoItemId);
             System.out.println(status);
-            if (status == true){
-                return new ResponseEntity<>(HttpStatus.OK);
-            } else if (status == false){
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
+            if(status == null){ return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
+            if (status == false){ return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);}
+            return new ResponseEntity<>(status, HttpStatus.OK);
         } catch(Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -149,13 +166,10 @@ public class SubToDoItemController {
     public ResponseEntity deleteSubToDoItemBySubToDoItemId(@PathVariable Integer subToDoItemId) {
         try{
             Boolean status = subToDoItemService.deleteBySubToDoItemById(subToDoItemId);
-            if (status == true){
-                return new ResponseEntity<>(HttpStatus.OK);
-            } else if (status == false){
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
+            System.out.println(status);
+            if(status == null){ return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
+            if (status == false){ return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);}
+            return new ResponseEntity<>(status, HttpStatus.OK);
         } catch(Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -166,17 +180,15 @@ public class SubToDoItemController {
     public ResponseEntity deleteSubToDoItemByToDoItemId(@PathVariable Integer toDoItemId) {
         try{
             Boolean status = subToDoItemService.deleteByToDoItemId(toDoItemId);
-            if (status == true){
-                return new ResponseEntity<>(HttpStatus.OK);
-            } else if (status == false){
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
+            System.out.println(status);
+            if(status == null){ return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
+            if (status == false){ return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);}
+            return new ResponseEntity<>(status, HttpStatus.OK);
         } catch(Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
+
     
 }

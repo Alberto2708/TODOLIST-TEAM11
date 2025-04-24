@@ -3,6 +3,8 @@ package com.springboot.MyTodoList.controller;
 import com.springboot.MyTodoList.model.ToDoItem;
 import com.springboot.MyTodoList.service.ToDoItemService;
 import com.springboot.MyTodoList.service.SubToDoItemService;
+import com.springboot.MyTodoList.controller.SubToDoItemController;
+import com.springboot.MyTodoList.controller.AssingedDevController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,12 @@ public class ToDoItemController {
 
     @Autowired
     private SubToDoItemService subToDoItemService;
+
+    @Autowired
+    private SubToDoItemController subToDoItemController;
+
+    @Autowired
+    private AssingedDevController assignedDevController;
 
     // @CrossOrigin
     @GetMapping(value = "/todolist")
@@ -112,13 +120,53 @@ public class ToDoItemController {
         }
     }
 
-
-    // @CrossOrigin
+    //Delete Mapping for ToDoItem by ID
     @DeleteMapping(value = "/todolist/{id}")
     public ResponseEntity<Boolean> deleteToDoItem(@PathVariable("id") Integer id) {
         Boolean flag = false;
         try {
-            flag = toDoItemService.deleteToDoItem(id);
+            List<Boolean> flags = new ArrayList<>();
+            flags.add((Boolean) subToDoItemController.deleteSubToDoItemBySubToDoItemId(id).getBody());
+            flags.add((Boolean) subToDoItemController.deleteSubToDoItemByToDoItemId(id).getBody());
+            flags.add((Boolean) assignedDevController.deleteDevAssignedTaskByToDoItemId(id).getBody());
+            flags.add(toDoItemService.deleteToDoItem(id));
+            for(Boolean f : flags) {
+                if (f == null) {
+                    return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+                }
+                if (f == false) {
+                    return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            }
+            flag = true;
+            return new ResponseEntity<>(flag, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(flag, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    //Delete by Sprint ID
+    @DeleteMapping(value = "/todolist/sprint/{sprintId}")
+    public ResponseEntity<Boolean> deleteToDoItemBySprintId(@PathVariable("sprintId") Integer sprintId) {
+        Boolean flag = false;
+        try {
+            List<Boolean> flags = new ArrayList<>();
+            List<ToDoItem> toDoItems = toDoItemService.getToDoItemsBySprintId(sprintId);
+            for (ToDoItem toDoItem : toDoItems) {
+                flags.add((Boolean) subToDoItemController.deleteSubToDoItemBySubToDoItemId(toDoItem.getID()).getBody());
+                flags.add((Boolean) subToDoItemController.deleteSubToDoItemByToDoItemId(toDoItem.getID()).getBody());
+                flags.add((Boolean) assignedDevController.deleteDevAssignedTaskByToDoItemId(toDoItem.getID()).getBody());
+                flags.add(toDoItemService.deleteToDoItem(toDoItem.getID()));
+            }
+            for(Boolean f : flags) {
+                if (f == null) {
+                    return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+                }
+                if (f == false) {
+                    return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            }
+            flag = true;
             return new ResponseEntity<>(flag, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(flag, HttpStatus.NOT_FOUND);

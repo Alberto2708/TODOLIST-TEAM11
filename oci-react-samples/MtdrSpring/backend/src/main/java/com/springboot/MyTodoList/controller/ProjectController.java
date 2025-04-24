@@ -68,7 +68,8 @@ public class ProjectController {
         }
     }
 
-
+    //MODIFY
+    //Add Employee deletion of ToDoItems by ProjectId
     @DeleteMapping(value = "/projects/{projectId}")
     public ResponseEntity deleteProject(@PathVariable Integer projectId) {
         try{

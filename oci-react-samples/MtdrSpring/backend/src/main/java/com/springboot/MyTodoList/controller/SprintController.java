@@ -8,10 +8,13 @@ import com.springboot.MyTodoList.model.Sprint;
 import com.springboot.MyTodoList.service.SprintService;
 import com.springboot.MyTodoList.service.ToDoItemService;
 import com.springboot.MyTodoList.model.ToDoItem;
+import com.springboot.MyTodoList.controller.ToDoItemController;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.http.HttpStatus;
+
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +22,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 @RestController
@@ -28,6 +33,24 @@ public class SprintController {
     
     @Autowired
     private ToDoItemService toDoItemService;
+
+    @Autowired
+    private ToDoItemController toDoItemController;
+
+    private static final Logger logger = LoggerFactory.getLogger(SprintController.class);
+
+    @GetMapping(value = "/sprint")
+    public ResponseEntity<List<Sprint>> getAllSprints() {
+        try{
+            
+            List<Sprint> sprints = sprintService.findAllSprints();
+            logger.info("Sprints found: " + sprints.size());
+            return new ResponseEntity<>(sprints, HttpStatus.OK);
+        }catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+    
 
     //Get Sprint by ID
     @GetMapping(value="/sprint/{sprintId}")
@@ -80,6 +103,29 @@ public class SprintController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e) {
             return null;
+        }
+    }
+
+    //Delete Mapping for Sprint by ID
+    @DeleteMapping(value="/sprint/{sprintId}")
+    public ResponseEntity<Boolean> deleteSprint(@PathVariable Integer sprintId){
+        Boolean flag = false;
+        try{
+            List<Boolean> flags = new ArrayList<>();
+            flags.add((Boolean) toDoItemController.deleteToDoItemBySprintId(sprintId).getBody());
+            flags.add(sprintService.deleteSprint(sprintId));
+            for(Boolean f : flags) {
+                if (f == null) {
+                    return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+                }
+                if (f == false) {
+                    return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            }
+            flag = true;
+            return new ResponseEntity<>(flag, HttpStatus.OK);
+        }catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
     
