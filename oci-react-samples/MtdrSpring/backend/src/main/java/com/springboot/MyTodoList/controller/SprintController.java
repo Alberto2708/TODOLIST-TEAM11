@@ -109,12 +109,15 @@ public class SprintController {
     //Create a new Sprint
     @PostMapping(value="/sprint")
     public ResponseEntity addSprint(@RequestBody Sprint sprint) throws Exception{
-        Sprint spr = sprintService.addSprint(sprint);
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("location", "" + spr.getID());
-        responseHeaders.set("Access-Control-Expose-Headers", "location");
-        return ResponseEntity.ok()
-                .headers(responseHeaders).build();
+        try{
+            Sprint spr = sprintService.addSprint(sprint);
+            Integer responseEntity = spr.getID();
+            return new ResponseEntity<>(responseEntity, HttpStatus.CREATED);
+
+        }catch(Exception e){
+            System.out.println(e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PutMapping(value = "/sprint/{id}")

@@ -124,7 +124,7 @@ public class EmployeeController {
 
         }catch(Exception e){
             System.out.println(e);
-            return null;
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
     }
 
