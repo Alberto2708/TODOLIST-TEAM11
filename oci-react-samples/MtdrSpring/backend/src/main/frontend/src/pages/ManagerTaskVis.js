@@ -70,6 +70,7 @@ export default function ManagerTaskVis() {
             if (response.ok) {
                 const data = await response.json();
                 setActualSprint(data);
+                localStorage.setItem("sprintId", data.id);
                 fetchEmployees(managerId, data.id);
             } else {
                 console.error("Error fetching actual sprint:", response.statusText);
@@ -99,7 +100,7 @@ export default function ManagerTaskVis() {
 
     const fetchTasks = async (assignedDevId, sprintId) => {
         try {
-            const response = await fetch(`/assignedDev/${assignedDevId}/sprint/${sprintId}/father`);
+            const response = await fetch(`/assignedDev/${assignedDevId}/sprint/${sprintId}/father/pending`);
             if (!response.ok) {
                 console.error(`Error fetching tasks: ${response.status} - ${response.statusText}`);
                 return;
@@ -108,13 +109,13 @@ export default function ManagerTaskVis() {
             
             const parsedTasks = await Promise.all(
                 data.map(async (item) => {
-                    const subTasks = await fetchSubTasks(item.body.id, assignedDevId);
+                    const subTasks = await fetchSubTasks(item.id, assignedDevId); // Use item.id, not item.body.id
                     return {
-                        id: item.body.id,
-                        name: item.body.name,
-                        deadline: new Date(item.body.deadline).toLocaleDateString(),
-                        description: item.body.description,
-                        status: item.body.status,
+                        id: item.id,          
+                        name: item.name,      
+                        deadline: new Date(item.deadline).toLocaleDateString(),
+                        description: item.description,
+                        status: item.status,
                         subTasks: subTasks,
                     };
                 })
@@ -128,7 +129,7 @@ export default function ManagerTaskVis() {
 
     const fetchSubTasks = async (taskId, employeeId) => {
         try {
-            const response = await fetch(`subToDoItems/toDoItem/${taskId}/employee/${employeeId}`);
+            const response = await fetch(`subToDoItems/toDoItem/${taskId}/employee/${employeeId}/pending`);
             if (!response.ok) {
                 console.error("Error fetching subtasks:", response.statusText);
                 return [];
