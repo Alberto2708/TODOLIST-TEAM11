@@ -1,5 +1,6 @@
 package com.springboot.MyTodoList.service;
 
+import com.springboot.MyTodoList.model.Employee;
 import com.springboot.MyTodoList.model.Sprint;
 import com.springboot.MyTodoList.repository.SprintRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,30 @@ public class SprintService {
             return sprintRepository.save(sprint);
         } catch (Exception e) {
             throw new Exception("Error adding sprint: " + e.getMessage());
+        }
+    }
+
+    public Sprint updateSprint(Integer sprintId, Sprint spr) {
+        Optional<Sprint> sprintData = sprintRepository.findById(sprintId);
+        if(sprintData.isPresent()){
+            Sprint sprint = sprintData.get();
+            sprint.setID(sprintId);
+
+            if (spr.getName() != null){
+                sprint.setName(spr.getName());
+            }
+            if (spr.getProjectId() != null){
+                sprint.setProjectId(spr.getProjectId());
+            }
+            if (spr.getStartDate() != null){
+                sprint.setStartDate(spr.getStartDate());
+            }
+            if (spr.getEndDate() != null){
+                sprint.setEndDate(spr.getEndDate());
+            }
+            return sprintRepository.save(sprint);
+        }else{
+            return null;
         }
     }
 

@@ -106,6 +106,27 @@ public class SprintController {
         }
     }
 
+    //Create a new Sprint
+    @PostMapping(value="/sprint")
+    public ResponseEntity addSprint(@RequestBody Sprint sprint) throws Exception{
+        Sprint spr = sprintService.addSprint(sprint);
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("location", "" + spr.getID());
+        responseHeaders.set("Access-Control-Expose-Headers", "location");
+        return ResponseEntity.ok()
+                .headers(responseHeaders).build();
+    }
+
+    @PutMapping(value = "/sprint/{id}")
+    public ResponseEntity updateSprint(@RequestBody Sprint sprint, @PathVariable Integer id) {
+        try{
+            Sprint spr = sprintService.updateSprint(id, sprint);
+            return new ResponseEntity<>(spr, HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+    }
+
     //Delete Mapping for Sprint by ID
     @DeleteMapping(value="/sprint/{sprintId}")
     public ResponseEntity<Boolean> deleteSprint(@PathVariable Integer sprintId){
@@ -127,18 +148,6 @@ public class SprintController {
         }catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-    }
-
-    
-    //Create a new Sprint
-    @PostMapping(value="/sprint")
-    public ResponseEntity addSprint(@RequestBody Sprint sprint) throws Exception{
-        Sprint spr = sprintService.addSprint(sprint);
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("location", "" + spr.getID());
-        responseHeaders.set("Access-Control-Expose-Headers", "location");
-        return ResponseEntity.ok()
-                .headers(responseHeaders).build();
     }
     
     

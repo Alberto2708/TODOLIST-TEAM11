@@ -1,11 +1,15 @@
 package com.springboot.MyTodoList.controller;
 
 
+import com.springboot.MyTodoList.model.Employee;
+import com.springboot.MyTodoList.service.EmployeeService;
+import com.springboot.MyTodoList.controller.EmployeeController;
 import com.springboot.MyTodoList.model.Project;
 import com.springboot.MyTodoList.service.ProjectService;
 import com.springboot.MyTodoList.controller.SprintController;
 import com.springboot.MyTodoList.service.SprintService;
 import com.springboot.MyTodoList.model.Sprint;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,6 +39,12 @@ public class ProjectController {
 
     @Autowired
     private SprintService sprintService;
+
+    @Autowired
+    private EmployeeService employeeService;
+
+    @Autowired
+    private EmployeeController employeeController;
 
     @GetMapping(value = "/projects")
     public ResponseEntity <List<Project>> getAllProjects(@RequestParam(required = false) String name) {
@@ -86,8 +96,12 @@ public class ProjectController {
         try{
             List<Boolean> flags = new ArrayList<>();
             List<Sprint> sprints = sprintService.findSprintsByProjectId(projectId);
+            List<Employee> employees = employeeService.findByProjectId(projectId);
             for (Sprint sprint : sprints) {
                 flags.add((Boolean) sprintController.deleteSprint(sprint.getID()).getBody());
+            }
+            for (Employee employee : employees) {
+                flags.add((Boolean) employeeController.deleteEmployee(employee.getID()).getBody());
             }
             flags.add(projectService.deleteProject(projectId));
             for(Boolean f : flags) {
