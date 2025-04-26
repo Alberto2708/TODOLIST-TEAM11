@@ -23,6 +23,11 @@ public class Project {
         this.name = name;
     }
 
+    //Partial Constructor
+    public Project(String name) {
+        this.name = name;
+    }
+
     //Getters and setters
 
     public Integer getID() {

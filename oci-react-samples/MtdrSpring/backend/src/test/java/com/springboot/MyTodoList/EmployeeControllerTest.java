@@ -25,7 +25,7 @@ public class EmployeeControllerTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private static Integer employeeId; // Assuming you have an employee with ID 1 in your database
+    private static Integer employeeId; 
 
     //Test Creation endpoint for Employee
     @Test
@@ -48,7 +48,7 @@ public class EmployeeControllerTest {
     //Test get endpoint for Employee by ID
     @Test
     @Order(2)
-    void getEmployeeById() {
+    void getEmployee() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -57,10 +57,33 @@ public class EmployeeControllerTest {
         ResponseEntity<Employee> response = restTemplate.exchange("/employees/" + employeeId, HttpMethod.GET, request, Employee.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(employeeId, response.getBody().getID());
-        System.out.println("Employee retrieved: " + response.getBody().getName());
+        System.out.println("Employee retrieved: " + response.getBody().getName() + " with ID: " + response.getBody().getID());
     }
 
-    //Test deletion endpoint for Employee by ID
+    //Test update endpoint for Employee
+    @Test
+    @Order(2)
+    void updateEmployee(){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Employee updatedEmployee = new Employee();
+        updatedEmployee.setName("UpdatedName");
+        updatedEmployee.setEmail("updated10001@gmail.com");
+        updatedEmployee.setPassword("updatedPassword");
+        updatedEmployee.setTelegramId(-5L);
+
+        HttpEntity<Employee> request = new HttpEntity<>(updatedEmployee, headers);
+        ResponseEntity<Employee> response = restTemplate.exchange("/employees/" + employeeId, HttpMethod.PUT, request, Employee.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("UpdatedName", response.getBody().getName());
+        assertEquals("updated10001@gmail.com", response.getBody().getEmail());
+        assertEquals("updatedPassword", response.getBody().getPassword());
+        assertEquals(-5, response.getBody().getTelegramId());
+        System.out.println("Employee name updated: " + response.getBody().getName() + " with ID: " + response.getBody().getID());
+    }
+
+    //Test deletion endpoint for Employee
     @Test
     @Order(3)
     void deleteEmployee() {

@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.MyTodoList.model.ToDoItem;
+import com.springboot.MyTodoList.model.AssignedDev;
+import com.springboot.MyTodoList.model.AssignedDevId;
 import com.springboot.MyTodoList.model.SubToDoItem;
 import com.springboot.MyTodoList.model.SubToDoItemId;
 import com.springboot.MyTodoList.service.SubToDoItemService;
@@ -22,6 +24,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.springboot.MyTodoList.model.SubToDoItem;
 import com.springboot.MyTodoList.service.ToDoItemService;
+
+import net.bytebuddy.implementation.bytecode.Subtraction;
+
 import com.springboot.MyTodoList.model.ToDoItem;
 import com.springboot.MyTodoList.service.AssignedDevService;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,7 +44,7 @@ public class SubToDoItemController {
     @Autowired
     private AssignedDevService assignedDevService;
 
-    private static final Logger logger = LoggerFactory.getLogger(AssingedDevController.class);
+    private static final Logger logger = LoggerFactory.getLogger(AssignedDevController.class);
 
     @GetMapping(value="/subToDoItems")
     public List<SubToDoItem> getAllSubToDoItems() {
@@ -47,6 +52,19 @@ public class SubToDoItemController {
             List<SubToDoItem> subToDoItems = subToDoItemService.findAllSubToDoItems();
             return subToDoItems;
         } catch(Exception e){
+            return null;
+        }
+    }
+
+    //Get Mapping to get a subToDoItems by ToDoItemId and employeeID
+    @GetMapping(value="/subToDoItems/{toDoItemId}/{subToDoItemId}")
+    public ResponseEntity<SubToDoItem> getSubToDoItemByToDoItemIdAndEmployeeId(@PathVariable Integer toDoItemId, @PathVariable Integer subToDoItemId) {
+        try{
+            SubToDoItemId subToDoItemIdObj = new SubToDoItemId(toDoItemId, subToDoItemId);
+            SubToDoItem subToDoItem = subToDoItemService.findSubToDoItemById(subToDoItemIdObj);
+            return new ResponseEntity<>(subToDoItem, HttpStatus.OK);
+        }catch(Exception e){
+            System.out.println(e);
             return null;
         }
     }

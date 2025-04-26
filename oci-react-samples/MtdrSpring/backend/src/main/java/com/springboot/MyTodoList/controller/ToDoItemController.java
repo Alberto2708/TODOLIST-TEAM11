@@ -4,7 +4,7 @@ import com.springboot.MyTodoList.model.ToDoItem;
 import com.springboot.MyTodoList.service.ToDoItemService;
 import com.springboot.MyTodoList.service.SubToDoItemService;
 import com.springboot.MyTodoList.controller.SubToDoItemController;
-import com.springboot.MyTodoList.controller.AssingedDevController;
+import com.springboot.MyTodoList.controller.AssignedDevController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -33,7 +33,7 @@ public class ToDoItemController {
     private SubToDoItemController subToDoItemController;
 
     @Autowired
-    private AssingedDevController assignedDevController;
+    private AssignedDevController assignedDevController;
 
     // @CrossOrigin
     @GetMapping(value = "/todolist")

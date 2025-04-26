@@ -71,7 +71,7 @@ public class ProjectController {
         try{
             Project pro = projectService.addProject(project);
             Integer projectId = pro.getID();
-            return new ResponseEntity<>(projectId, HttpStatus.OK);
+            return new ResponseEntity<>(projectId, HttpStatus.CREATED);
 
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

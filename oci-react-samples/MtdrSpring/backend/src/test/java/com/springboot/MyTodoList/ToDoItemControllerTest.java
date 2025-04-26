@@ -50,7 +50,7 @@ public class ToDoItemControllerTest {
     //Test get endpoint for Employee by ID
     @Test
     @Order(2)
-    void getToDoItemById() {
+    void getToDoItem() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -59,10 +59,43 @@ public class ToDoItemControllerTest {
         ResponseEntity<Employee> response = restTemplate.exchange("/todolist/" + toDoItemID, HttpMethod.GET, request, Employee.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(toDoItemID, response.getBody().getID());
-        System.out.println("ToDoItem retrieved: " + response.getBody().getName());
+        System.out.println("ToDoItem retrieved: " + response.getBody().getName() + " with ID: " + response.getBody().getID());
     }
 
-    //Test deletion endpoint for ToDoItem by ID
+    //Test update endpoint for ToDoItem
+    @Test
+    @Order(2)
+    void updateToDoItem(){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        ToDoItem updatedToDoItem = new ToDoItem();
+        updatedToDoItem.setName("UpdatedName");
+        updatedToDoItem.setStatus("COMPLETED");
+        updatedToDoItem.setStartDate(OffsetDateTime.parse("2025-04-25T12:34:56+02:00"));
+        updatedToDoItem.setDeadline(OffsetDateTime.parse("2025-04-25T15:34:56+02:00"));
+        updatedToDoItem.setCompletionTs(OffsetDateTime.parse("2025-04-25T15:34:56+02:00"));
+        updatedToDoItem.setDescription("Updated description using Springboot tests");
+        updatedToDoItem.setEstHours(5);
+
+
+        HttpEntity<ToDoItem> request = new HttpEntity<>(updatedToDoItem, headers);
+        ResponseEntity<ToDoItem> response = restTemplate.exchange("/todolist/" + toDoItemID, HttpMethod.PUT, request, ToDoItem.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("UpdatedName", response.getBody().getName());
+        assertEquals("COMPLETED", response.getBody().getStatus());
+        System.out.println(response.getBody().getStartDate());
+        System.out.println(response.getBody().getDeadline());
+        System.out.println(response.getBody().getCompletionTs());
+        assertEquals(OffsetDateTime.parse("2025-04-25T10:34:56Z") , response.getBody().getStartDate());
+        assertEquals(OffsetDateTime.parse("2025-04-25T13:34:56Z"), response.getBody().getDeadline());
+        assertEquals(OffsetDateTime.parse("2025-04-25T13:34:56Z"), response.getBody().getCompletionTs());
+        assertEquals("Updated description using Springboot tests", response.getBody().getDescription());
+        assertEquals(5, response.getBody().getEstHours());
+        System.out.println("ToDoItem name updated: " + response.getBody().getName() + " with ID: " + response.getBody().getID());
+    }
+
+    //Test deletion endpoint for ToDoItem
     @Test
     @Order(3)
     void deleteToDoItem() {
