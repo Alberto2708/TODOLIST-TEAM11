@@ -1,0 +1,40 @@
+
+name: CRUD Springboot Testing
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    - uses: browser-actions/setup-chrome@v1
+      with:
+        chrome-version: 120
+        install-dependencies: true
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: maven
+    - name: Set up node 20 
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    - name: Build with Maven
+      run: |
+          cd .\oci-react-samples\MtdrSpring\backend\
+           mvn clean test
+           echo "Endpoints tested"
+    
