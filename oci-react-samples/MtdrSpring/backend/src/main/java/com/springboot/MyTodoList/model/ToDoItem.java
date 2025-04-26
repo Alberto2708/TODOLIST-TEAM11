@@ -59,6 +59,18 @@ public class ToDoItem {
         this.estHours = estHours;
     }
 
+    //Partial Constructor
+    public ToDoItem(String name, String status, Integer managerId, OffsetDateTime startDate, OffsetDateTime deadline, Integer sprintId, String description, Integer estHours) {
+        this.name = name;
+        this.status = status;
+        this.managerId = managerId;
+        this.startDate = startDate;
+        this.deadline = deadline;
+        this.sprintId = sprintId;
+        this.description = description;
+        this.estHours = estHours;
+    }
+
     //Getters and setters
 
     public Integer getID() {

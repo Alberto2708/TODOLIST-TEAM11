@@ -1,8 +1,15 @@
 package com.springboot.MyTodoList.controller;
 
 
+import com.springboot.MyTodoList.model.Employee;
+import com.springboot.MyTodoList.service.EmployeeService;
+import com.springboot.MyTodoList.controller.EmployeeController;
 import com.springboot.MyTodoList.model.Project;
 import com.springboot.MyTodoList.service.ProjectService;
+import com.springboot.MyTodoList.controller.SprintController;
+import com.springboot.MyTodoList.service.SprintService;
+import com.springboot.MyTodoList.model.Sprint;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -24,6 +33,18 @@ public class ProjectController {
     
     @Autowired
     private ProjectService projectService;
+
+    @Autowired
+    private SprintController sprintController;
+
+    @Autowired
+    private SprintService sprintService;
+
+    @Autowired
+    private EmployeeService employeeService;
+
+    @Autowired
+    private EmployeeController employeeController;
 
     @GetMapping(value = "/projects")
     public ResponseEntity <List<Project>> getAllProjects(@RequestParam(required = false) String name) {
@@ -50,7 +71,7 @@ public class ProjectController {
         try{
             Project pro = projectService.addProject(project);
             Integer projectId = pro.getID();
-            return new ResponseEntity<>(projectId, HttpStatus.OK);
+            return new ResponseEntity<>(projectId, HttpStatus.CREATED);
 
         }catch (Exception e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -68,15 +89,31 @@ public class ProjectController {
         }
     }
 
-    //MODIFY
-    //Add Employee deletion of ToDoItems by ProjectId
+    //Delete Project by ID and all Sprints by Project ID in cascade
     @DeleteMapping(value = "/projects/{projectId}")
     public ResponseEntity deleteProject(@PathVariable Integer projectId) {
+        Boolean flag = false;
         try{
-            Boolean status = projectService.deleteProject(projectId);
-            if(status == null){ return new ResponseEntity<>(HttpStatus.NOT_FOUND);}
-            if (status == false){ return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);}
-            return new ResponseEntity<>(status, HttpStatus.OK);
+            List<Boolean> flags = new ArrayList<>();
+            List<Sprint> sprints = sprintService.findSprintsByProjectId(projectId);
+            List<Employee> employees = employeeService.findByProjectId(projectId);
+            for (Sprint sprint : sprints) {
+                flags.add((Boolean) sprintController.deleteSprint(sprint.getID()).getBody());
+            }
+            for (Employee employee : employees) {
+                flags.add((Boolean) employeeController.deleteEmployee(employee.getID()).getBody());
+            }
+            flags.add(projectService.deleteProject(projectId));
+            for(Boolean f : flags) {
+                if (f == null) {
+                    return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+                }
+                if (f == false) {
+                    return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            }
+            flag = true;
+            return new ResponseEntity<>(flag, HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

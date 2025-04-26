@@ -38,6 +38,14 @@ public class Sprint {
         this.endDate = endDate;
     }
 
+    //Partial Constructor
+    public Sprint(Integer projectId, String name, OffsetDateTime startDate, OffsetDateTime endDate) {
+        this.projectId = projectId;
+        this.name = name;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
     //Getters and setters
     public Integer getID() {
         return ID;

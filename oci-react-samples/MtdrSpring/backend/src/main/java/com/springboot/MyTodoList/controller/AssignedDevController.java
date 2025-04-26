@@ -6,6 +6,7 @@ import com.springboot.MyTodoList.model.ToDoItem;
 
 import com.springboot.MyTodoList.model.AssignedDev;
 import com.springboot.MyTodoList.model.AssignedDevId;
+import com.springboot.MyTodoList.model.Employee;
 import com.springboot.MyTodoList.model.SubToDoItem;
 import com.springboot.MyTodoList.model.WorkedHoursKpiResponse;
 import com.springboot.MyTodoList.service.AssignedDevService;
@@ -36,8 +37,8 @@ import org.slf4j.LoggerFactory;
 
 
 @RestController
-public class AssingedDevController {
-    private static final Logger logger = LoggerFactory.getLogger(AssingedDevController.class);
+public class AssignedDevController {
+    private static final Logger logger = LoggerFactory.getLogger(AssignedDevController.class);
 
     @Autowired
     private AssignedDevService assignedDevService;
@@ -52,6 +53,19 @@ public class AssingedDevController {
         return assignedDevService.findAll();
     }
     
+
+    //Get Mapping to get AssifnedDev by ToDoItemId and AssignedDevId
+    @GetMapping(value = "/assignedDev/{toDoItemId}/{assignedDevId}")
+    public ResponseEntity<AssignedDev> getDevAssignedTaskByToDoItemId(@PathVariable Integer toDoItemId, @PathVariable Integer assignedDevId) {
+        try{
+            AssignedDevId assignedDevIdObj = new AssignedDevId(toDoItemId, assignedDevId);
+            AssignedDev assignedDev = assignedDevService.findAssignedDevById(assignedDevIdObj);
+            return new ResponseEntity<>(assignedDev, HttpStatus.OK);
+        }catch(Exception e){
+            System.out.println(e);
+            return null;
+        }
+    }
 
     @GetMapping(value = "/assignedDev/{assignedDevId}")
     public List<ResponseEntity<ToDoItem>> getDevAssignedTasksByAssignedDevId(@PathVariable Integer assignedDevId) {
@@ -272,13 +286,15 @@ public class AssingedDevController {
 
     @PostMapping(value = "/assignedDev")
     public ResponseEntity addDevAssignedTask(@RequestBody AssignedDev devAssignedTask) throws Exception{
-        //System.out.println(devAssignedTask);
-        //System.out.println(devAssignedTask.getToDoItemId());
-        assignedDevService.addAssignedDev(devAssignedTask);
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("location", "" );
-        responseHeaders.set("Access-Control-Expose-Headers", "location");
-        return ResponseEntity.ok().headers(responseHeaders).build();
+        try{
+            AssignedDev emp = assignedDevService.addAssignedDev(devAssignedTask);
+            AssignedDevId responseEntity = emp.getId();
+            return new ResponseEntity<>(responseEntity, HttpStatus.CREATED);
+
+        }catch(Exception e){
+            System.out.println(e);
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 
     @DeleteMapping(value = "assignedDev/{toDoItemId}/{assignedDevId}")

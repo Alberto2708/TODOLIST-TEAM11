@@ -1,12 +1,15 @@
 package com.springboot.MyTodoList.service;
 
+import com.springboot.MyTodoList.model.AssignedDev;
 import com.springboot.MyTodoList.model.SubToDoItem;
+import com.springboot.MyTodoList.model.SubToDoItemId;
 import com.springboot.MyTodoList.repository.SubToDoItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SubToDoItemService {
@@ -17,6 +20,21 @@ public class SubToDoItemService {
         try{
             return subToDoItemRepository.findAll();
         }catch(Exception e){
+            return null;
+        }
+    }
+
+    public SubToDoItem findSubToDoItemById(SubToDoItemId subToDoItemID) {
+        try {
+            Integer toDoItemId = subToDoItemID.getToDoItemId();
+            Integer subToDoItemId = subToDoItemID.getSubToDoItemId();
+            Optional<SubToDoItem> subToDoItemData = subToDoItemRepository.findByToDoItemIdAndSubToDoItemId(toDoItemId, subToDoItemId);
+            if (subToDoItemData.isPresent()) {
+                return subToDoItemData.get();
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
             return null;
         }
     }

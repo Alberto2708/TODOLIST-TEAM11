@@ -1,6 +1,7 @@
 package com.springboot.MyTodoList.service;
 
 import com.springboot.MyTodoList.model.AssignedDev;
+import com.springboot.MyTodoList.model.AssignedDevId;
 import com.springboot.MyTodoList.repository.AssignedDevRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,21 @@ public class AssignedDevService {
     public List<AssignedDev> findAll() {
         List<AssignedDev> devAssignedTasks = assignedDevRepository.findAll();
         return devAssignedTasks;
+    }
+
+    public AssignedDev findAssignedDevById(AssignedDevId assignedDevId) {
+        try {
+            Integer toDoItemId = assignedDevId.getToDoItemId();
+            Integer employeeId = assignedDevId.getEmployeeId();
+            Optional<AssignedDev> devAssignedTaskData = assignedDevRepository.findByToDoItemIdAndEmployeeId(toDoItemId, employeeId);
+            if (devAssignedTaskData.isPresent()) {
+                return devAssignedTaskData.get();
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public List<AssignedDev> getAssignedDevsByToDoItemId(Integer toDoItemid) {

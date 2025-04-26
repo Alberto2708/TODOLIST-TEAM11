@@ -6,14 +6,18 @@ import org.springframework.web.bind.annotation.RestController;
 import com.springboot.MyTodoList.model.Employee;
 import com.springboot.MyTodoList.model.EmployeeResponse;
 import com.springboot.MyTodoList.service.EmployeeService;
+import com.springboot.MyTodoList.service.AssignedDevService;
 
 import oracle.sql.TRANSDUMP;
 
 import com.springboot.MyTodoList.model.LoginRequest;
+import com.springboot.MyTodoList.model.Sprint;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.http.HttpStatus;
+
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,6 +35,9 @@ public class EmployeeController {
 
     @Autowired
     private EmployeeService employeeService;
+
+    @Autowired
+    private AssignedDevService assignedDevService;
 
 
     //Get All Employees
@@ -117,11 +124,11 @@ public class EmployeeController {
 
         }catch(Exception e){
             System.out.println(e);
-            return null;
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
     }
 
-    //Post request to add a telegram Id to an employee or update Info
+    //Put request to update an employee by ID
     @PutMapping(value = "/employees/{id}")
     public ResponseEntity updateEmployee(@RequestBody Employee employee, @PathVariable Integer id) {
         try{
@@ -135,10 +142,20 @@ public class EmployeeController {
     //Delete an employee by ID
     @DeleteMapping(value = "/employees/{id}")
     public ResponseEntity<Boolean> deleteEmployee(@PathVariable("id") Integer id){
+        Boolean flag = false;
         try{
-            Boolean flag = employeeService.deleteEmployee(id);
-            if(flag == null){ return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);}
-            if (flag == false){ return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);}
+            List<Boolean> flags = new ArrayList<>();
+            flags.add(assignedDevService.deleteAssignedDevByAssignedDevId(id));
+            flags.add(employeeService.deleteEmployee(id));
+            for(Boolean f : flags) {
+                if (f == null) {
+                    return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+                }
+                if (f == false) {
+                    return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            }
+            flag = true;
             return new ResponseEntity<>(flag, HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<>( HttpStatus.NOT_FOUND);

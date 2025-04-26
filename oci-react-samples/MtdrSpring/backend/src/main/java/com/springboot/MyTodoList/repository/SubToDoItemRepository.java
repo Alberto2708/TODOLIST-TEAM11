@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,6 +27,9 @@ public interface SubToDoItemRepository extends JpaRepository<SubToDoItem, SubToD
 
     @Query("SELECT d.id.subToDoItemId FROM SubToDoItem d WHERE d.id.toDoItemId = :toDoItemId")
     List<Integer> findAllSubToDoItemIdsByToDoItemId(@Param("toDoItemId") Integer toDoItemId);
+
+    @Query("SELECT d FROM SubToDoItem d WHERE d.id.toDoItemId = :toDoItemId AND d.id.subToDoItemId = :subToDoItemId")
+    Optional<SubToDoItem> findByToDoItemIdAndSubToDoItemId(@Param("toDoItemId") Integer toDoItemId, @Param("subToDoItemId") Integer subToDoItemId);
 
     @Query("SELECT d FROM SubToDoItem d WHERE d.id.toDoItemId = :toDoItemId")
     List<SubToDoItem> findAllSubToDoItemsByToDoItemId(@Param("toDoItemId") Integer toDoItemId);
