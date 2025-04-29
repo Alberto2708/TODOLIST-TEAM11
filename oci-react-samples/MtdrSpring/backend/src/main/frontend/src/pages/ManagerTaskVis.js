@@ -5,6 +5,7 @@ import ToDoItem from "../components/ToDoItem";
 import ManagerModalTask from "../components/ManagerModalTask";
 import TaskCreation from "../components/TaskCreation";
 import SubTaskCreation from "../components/SubTaskCreation";
+import HeaderMngr from "../components/HeaderMngr";
 
 export default function ManagerTaskVis() {
     // States
@@ -342,52 +343,12 @@ export default function ManagerTaskVis() {
                 </div>
             ) : (
                 <>
-                    <div className="taskContainer">
-                        <h1>TO DO LIST</h1>
-                        <h2 className="sprintname">{actualSprint.name}</h2>
-                        <div className="dateContainer">
-                            <h3>Start Date: {new Date(actualSprint.startDate).toLocaleDateString()}</h3>
-                            <h3>End Date: {new Date(actualSprint.endDate).toLocaleDateString()}</h3>
-                            <h3>Days Left: {Math.floor((new Date(actualSprint.endDate) - new Date()) / (1000 * 60 * 60 * 24))}</h3>
-                            <h3>Percentage of completed tasks: {calculateTotalCompletedTasks()}</h3>
-                        </div>
-                        <div className="action-bar">
-                            <div className="filter-container">
-                                <label htmlFor="developer-filter">Filter by Developer:</label>
-                                <select
-                                id="developer-filter"
-                                value={selectedDeveloper}
-                                onChange={(e) => {
-                                    const value = e.target.value === "all" ? "all" : parseInt(e.target.value);
-                                    setSelectedDeveloper(value);
-                                }}
-                                
-                                className="filter-select"
-                            >
-                                <option value="all">All Developers</option>
-                                {employees.map((employee) => (
-                                    <option key={employee.id} value={employee.id}>
-                                        {employee.name}
-                                    </option>
-                                ))}
-                            </select>
-                            </div>
-                            <div className="button-group">
-                                <button className="addButton" onClick={openTaskCreationModal}>
-                                    Create Task
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                    </svg>
-                                </button>
-                                <button className="completedTasksButton" onClick={() => navigate('/CompletedTasks')}>
-                                    Completed Tasks
-                                </button>
-                                <button className="viewStatsButton" onClick={() => navigate('/Stats')}>
-                                    View Statistics
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    <HeaderMngr
+                        actualSprint={actualSprint}
+                        employees={employees}
+                        selectedDeveloper={selectedDeveloper}
+                        setSelectedDeveloper={setSelectedDeveloper}
+                    />
 
                     {employees.length === 0 ? (
                         <div className="no-employees-message">

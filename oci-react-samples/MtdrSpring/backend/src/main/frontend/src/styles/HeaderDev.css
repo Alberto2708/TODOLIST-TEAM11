@@ -1,0 +1,76 @@
+/* Header Container */
+.header-container {
+    width: 100%;
+  }
+  
+  /* Main Header */
+  .header {
+    background-color: #c74634;
+    color: white;
+    width: 100%;
+    padding: 50px 0;
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+  }
+  
+  /* Sprint Header Container */
+  .sprint-header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 75%;
+    margin: 20px auto 0;
+  }
+  
+  /* Sprint Container */
+  .sprintContainer {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 20px 0;
+    gap: 20px;
+    margin-left: 20px; /* Margen izquierdo agregado */
+  }
+  
+  .sprintContainer h3 {
+    color: #000000;
+    font-size: 16px;
+    margin: 0;
+    line-height: 1.5;
+  }
+  
+  /* Date Container */
+  .dateContainer {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    font-size: 12px;
+    color: #000000;
+    transform: translateY(15px);
+  }
+  
+  .dateContainer p {
+    margin: 0;
+    line-height: 1.5;
+  }
+  
+  /* Completed Tasks Button */
+  .completed-tasks-button {
+    background-color: #c74634;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 14px;
+    margin: 4px 20px 4px 2px; /* Margen derecho agregado */
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+    height: fit-content;
+  }
+  
+  .completed-tasks-button:hover {
+    background-color: #d9534f;
+  }
