@@ -13,6 +13,7 @@ import {
     Pie,
 } from "recharts";
 import "../styles/Stats.css";
+import HeaderMngr from "../components/HeaderMngr";
 
 export default function Stats() {
     const [passedemployeeId, setEmployeeId] = useState(null);
@@ -141,44 +142,12 @@ export default function Stats() {
             ) : (
                 <>
                     <div className="chartContainer">
-                        <h1>KPI Reports</h1>
-                        <h2 className="sprintname">{actualSprint.name}</h2>
-                        <div className="dateContainer">
-                            <h3>Start Date: {new Date(actualSprint.startDate).toLocaleDateString()}</h3>
-                            <h3>End Date: {new Date(actualSprint.endDate).toLocaleDateString()}</h3>
-                            <h3>
-                                Days Left:{" "}
-                                {Math.floor(
-                                    (new Date(actualSprint.endDate) - new Date()) /
-                                        (1000 * 60 * 60 * 24)
-                                )}
-                            </h3>
-                            <button className="returnButton" onClick={() => navigate('/managertasks')}>
-                                Go to tasks
-                            </button>
-                        </div>
-                        <div className="action-bar">
-                            <div className="filter-container">
-                                <label htmlFor="developer-filter">Filter by Developer:</label>
-                                <select
-                                    id="developer-filter"
-                                    value={selectedDeveloper}
-                                    onChange={(e) => {
-                                        const value =
-                                            e.target.value === "all" ? "all" : parseInt(e.target.value);
-                                        setSelectedDeveloper(value);
-                                    }}
-                                    className="filter-select"
-                                >
-                                    <option value="all">All Developers</option>
-                                    {employees.map((employee) => (
-                                        <option key={employee.id} value={employee.id}>
-                                            {employee.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
+                        <HeaderMngr
+                            actualSprint={actualSprint}
+                            employees={employees}
+                            selectedDeveloper={selectedDeveloper}
+                            setSelectedDeveloper={setSelectedDeveloper}
+                        />
                         <div className="chartRow">
     <div className="barChartWrapper">
         <h3 className="chartTitle">Percentage of tasks completed</h3>

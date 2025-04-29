@@ -5,6 +5,7 @@ import '../styles/ManagerTaskVis.css';
 import React from 'react';
 import ToDoItem from "../components/ToDoItem.js";
 import ManagerModalTask from "../components/ManagerModalTask.js";
+import HeaderMngr from "../components/HeaderMngr.js";
 
 export default function CompletedTasks() {
     const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState(false);
@@ -187,39 +188,12 @@ export default function CompletedTasks() {
                 </div>
             ) : (
                 <>
-                    <div className="taskContainer">
-                        <h1>COMPLETED TASKS</h1>
-                        <h2 className="sprintname">{actualSprint.name}</h2>
-                        <div className="dateContainer">
-                            <h3>Start Date: {new Date(actualSprint.startDate).toLocaleDateString()}</h3>
-                            <h3>End Date: {new Date(actualSprint.endDate).toLocaleDateString()}</h3>
-                        </div>
-                        <div className="action-bar">
-                            <div className="filter-container">
-                                <label htmlFor="developer-filter">Filter by Developer:</label>
-                                <select
-                                    id="developer-filter"
-                                    value={selectedDeveloper}
-                                    onChange={(e) => {
-                                        const value = e.target.value === "all" ? "all" : parseInt(e.target.value);
-                                        setSelectedDeveloper(value);
-                                    }}
-                                    
-                                    className="filter-select"
-                                >
-                                    <option value="all">All Developers</option>
-                                    {employees.map((employee) => (
-                                        <option key={employee.id} value={employee.id}>
-                                            {employee.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <button className="returnButton" onClick={() => navigate('/managertasks')}>
-                                Return to Tasks
-                            </button>
-                        </div>
-                    </div>
+                    <HeaderMngr
+                        actualSprint={actualSprint}
+                        employees={employees}
+                        selectedDeveloper={selectedDeveloper}
+                        setSelectedDeveloper={setSelectedDeveloper}
+                    />
                     
                     {employees
                         .filter(employee => selectedDeveloper === "all" || employee.id === selectedDeveloper)

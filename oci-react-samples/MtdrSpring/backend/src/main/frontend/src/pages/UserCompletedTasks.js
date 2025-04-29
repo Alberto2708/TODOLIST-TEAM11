@@ -3,6 +3,7 @@ import "../styles/TaskVisualization.css";
 import ToDoItem from "../components/ToDoItem.js";
 import ModalTask from "../components/ModelTask.js";
 import { useNavigate } from "react-router-dom";
+import HeaderDev from "../components/HeaderDev.js"; 
 
 function UserCompletedTasks() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -175,20 +176,7 @@ const handleDoneClick = () => {
         </div>
       ) : (
       <div className="utv-container">
-          <div className="header">Completed itemsT</div>
-          <div className="sprint-header-container"> 
-            <div className="sprintContainer">
-              <h3>{actualSprint.name}</h3>
-              <div className="dateContainer">
-                <p>Start Date: {new Date(actualSprint.startDate).toLocaleDateString()}</p>
-                <p>End Date: {new Date(actualSprint.endDate).toLocaleDateString()}</p>
-                <p>Days Left: {Math.floor((new Date(actualSprint.endDate) - new Date()) / (1000 * 60 * 60 * 24))}</p>
-              </div>
-            </div>
-            <button className="completed-tasks-button" onClick={() => navigate('/usertasks')}>
-              Pending Tasks
-            </button>
-          </div>
+          <HeaderDev actualSprint={actualSprint} />
           <div className="task-list">
             {tasks.map((task, index) => (
               <ToDoItem
