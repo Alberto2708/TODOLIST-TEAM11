@@ -258,22 +258,21 @@ public class AssignedDevController {
     public ResponseEntity<Integer> getSumOfOverdueTasksByEmployee(@PathVariable Integer assignedDevId) {
         try{
             List<AssignedDev>  assignedDev = assignedDevService.getAssignedDevsByDevId(assignedDevId);
+            if (assignedDev == null){
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
             //System.out.println(assignedDev.size()); // Return number of tasks assigned to the developer.
-            List<ResponseEntity<ToDoItem>> tasks = new ArrayList<>();
+            Integer sum = 0;
             for(AssignedDev task : assignedDev){
                 System.out.println(task.toString());
                 //System.out.println(task.getToDoItemId()); //Returns the task id
                 //System.out.println(toDoItemService.getItemById(task.getToDoItemId()).getBody().getStatus()); //Returns the status of the task
-                if (toDoItemService.getItemById(task.getToDoItemId()).getBody().getStatus().matches("COMPLETED")){
-                    ToDoItem toDoItem = toDoItemService.getItemById(task.getToDoItemId()).getBody();
+                ToDoItem toDoItem = toDoItemService.getItemById(task.getToDoItemId()).getBody();
+
+                //If toDoItems deadline timestamps are properly set, you should use the commented if
+                if (toDoItem.getStatus().matches("COMPLETED") && toDoItem.getCompletionTs().isAfter(toDoItem.getDeadline())){
+                //if (toDoItem.getStatus().matches("COMPLETED") && toDoItem.getCompletionTs().getYear()*365 + toDoItem.getCompletionTs().getDayOfYear() > toDoItem.getDeadline().getYear()*365 + toDoItem.getDeadline().getDayOfYear()){
                     logger.info("Task ID: " + toDoItem.getID() + ", Status: " + toDoItem.getStatus() + ", CompletionTs: " + toDoItem.getCompletionTs() + ", Deadline: " + toDoItem.getDeadline());
-                    tasks.add(toDoItemService.getItemById(task.getToDoItemId()));
-                }
-            }
-            Integer sum = 0;
-            for(ResponseEntity<ToDoItem> task : tasks){
-                System.out.println(task.toString());
-                if(task.getBody().getCompletionTs().getYear()*365 + task.getBody().getCompletionTs().getDayOfYear() > task.getBody().getDeadline().getYear()*365 + task.getBody().getDeadline().getDayOfYear()){
                     sum += 1;
                 }
             }
