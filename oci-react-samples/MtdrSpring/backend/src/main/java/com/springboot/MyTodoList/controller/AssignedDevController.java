@@ -227,24 +227,25 @@ public class AssignedDevController {
     public ResponseEntity<Float> getCompletionDaysMean(@PathVariable Integer assignedDevId) {
         try{
             List<AssignedDev>  assignedDev = assignedDevService.getAssignedDevsByDevId(assignedDevId);
+            if (assignedDev == null){
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
             //System.out.println(assignedDev.size()); // Return number of tasks assigned to the developer.
-            List<ResponseEntity<ToDoItem>> tasks = new ArrayList<>();
+            Float sum = 0.0f;
+            Integer size = 0;
             for(AssignedDev task : assignedDev){
                 //System.out.println(task.getToDoItemId()); //Returns the task id
                 //System.out.println(toDoItemService.getItemById(task.getToDoItemId()).getBody().getStatus()); //Returns the status of the task
-                if (toDoItemService.getItemById(task.getToDoItemId()).getBody().getStatus().matches("COMPLETED")){
-                    ToDoItem toDoItem = toDoItemService.getItemById(task.getToDoItemId()).getBody();
+                ToDoItem toDoItem = toDoItemService.getItemById(task.getToDoItemId()).getBody();
+                if (toDoItem.getStatus().matches("COMPLETED")){
                     logger.info("Task ID: " + toDoItem.getID() + ", Status: " + toDoItem.getStatus() + ", CompletionTs: " + toDoItem.getCompletionTs() + ", Deadline: " + toDoItem.getDeadline());
-                    tasks.add(toDoItemService.getItemById(task.getToDoItemId()));
+                    sum += toDoItem.getDeadline().getYear()*365 + toDoItem.getDeadline().getDayOfYear() - toDoItem.getCompletionTs().getYear()*365 - toDoItem.getCompletionTs().getDayOfYear();
+                    size += 1;
+                    logger.info("Sum" + sum.toString());
                     //System.out.println("Hello World from adding task!!!");
                 }
             }
-            Float sum = 0.0f;
-            for(ResponseEntity<ToDoItem> task : tasks){
-                logger.info("Sum" + sum.toString());
-                sum += task.getBody().getDeadline().getYear()*365 + task.getBody().getDeadline().getDayOfYear() - task.getBody().getCompletionTs().getYear()*365 - task.getBody().getCompletionTs().getDayOfYear();
-            }
-            return new ResponseEntity<>(sum/tasks.size(), HttpStatus.OK);
+            return new ResponseEntity<>(sum/size, HttpStatus.OK);
             
         }catch(Exception e){
             System.out.println(e);
