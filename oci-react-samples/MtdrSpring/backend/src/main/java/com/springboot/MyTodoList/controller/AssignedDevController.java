@@ -9,6 +9,7 @@ import com.springboot.MyTodoList.model.AssignedDevId;
 import com.springboot.MyTodoList.model.Employee;
 import com.springboot.MyTodoList.model.SubToDoItem;
 import com.springboot.MyTodoList.model.WorkedHoursKpiResponse;
+import com.springboot.MyTodoList.model.OverdueTasksKpiResponse;
 import com.springboot.MyTodoList.service.AssignedDevService;
 import com.springboot.MyTodoList.service.ToDoItemService;
 import oracle.jdbc.proxy.annotation.GetProxy;
@@ -25,9 +26,13 @@ import org.springframework.http.ResponseEntity;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.criteria.CriteriaBuilder.In;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.apache.http.protocol.ResponseServer;
 import org.hibernate.boot.registry.classloading.spi.ClassLoaderService.Work;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -149,6 +154,39 @@ public class AssignedDevController {
             return null;
         }
     }
+
+    //KPI
+    //Get Overdue tasks Sum and Overdue tasks percentage by developer id and sprint id KPI
+    @GetMapping(value="/assignedDev/{assignedDevId}/sprint/{sprintId}/overdueTasks/kpi")
+    public ResponseEntity<OverdueTasksKpiResponse> getPercentageOfOverdueTasksByDeveloperIdAndSprintId(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
+        try{
+            //First we get the tasks assigned to the developer and sprint
+            List<ToDoItem> tasks = getAssignedTasksByAssignedDevAndSprint(assignedDevId, sprintId).getBody();
+            if (tasks == null){
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+            //we initialize the variables to count the completed and overdue tasks
+            Integer completedSum = 0, overdueSum = 0;
+            for (ToDoItem task : tasks){
+                logger.info("Task ID: " + task.getID() + ", Status: " + task.getStatus());
+                //We check if the task is completed
+                if (task.getStatus().matches("COMPLETED")){
+                    completedSum += 1;
+                    //We check if the task is overdue
+                    if( task.getCompletionTs()!= null && task.getCompletionTs().isAfter(task.getDeadline())){
+                        overdueSum += 1;
+                    }
+                }
+            }
+            Integer percentage = (int) (((double) overdueSum / completedSum) * 100);
+            return new ResponseEntity<>(new OverdueTasksKpiResponse(overdueSum, percentage), HttpStatus.OK);
+        }catch(Exception e){
+            logger.error("Error: " + e.getMessage());
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    
     
     
     
@@ -255,7 +293,8 @@ public class AssignedDevController {
 
     //KPI
     //calculates the sum of overdue tasks completed by employee 
-    @GetMapping(value = "/assignedDev/{assignedDevId}/overdue/kpi")
+    ////MERGED the endpoint of the method with the KPI endpoint to get percentage of overdue tasks completed by employee and sprint. 
+    /*@GetMapping(value = "/assignedDev/{assignedDevId}/overdue/kpi")
     public ResponseEntity<Integer> getSumOfOverdueTasksByEmployee(@PathVariable Integer assignedDevId) {
         try{
             List<AssignedDev>  assignedDev = assignedDevService.getAssignedDevsByDevId(assignedDevId);
@@ -282,7 +321,7 @@ public class AssignedDevController {
             System.out.println(e);
             return null;
         }
-    }
+    }*/
 
     @PostMapping(value = "/assignedDev")
     public ResponseEntity addDevAssignedTask(@RequestBody AssignedDev devAssignedTask) throws Exception{

@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.MyTodoList.model.Employee;
+import com.springboot.MyTodoList.model.OverdueTasksKpiResponse;
 import com.springboot.MyTodoList.model.Sprint;
 import com.springboot.MyTodoList.service.SprintService;
 import com.springboot.MyTodoList.service.ToDoItemService;
@@ -85,6 +86,7 @@ public class SprintController {
         }
     }
 
+    //KPI
     //Get percentage of completed tasks by a sprint
     @GetMapping(value = "/sprint/{sprintId}/kpi")
     public ResponseEntity<Integer> getCompletedTasksBySprint(@PathVariable Integer sprintId) {
@@ -103,6 +105,40 @@ public class SprintController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e) {
             return null;
+        }
+    }
+
+    //KPI
+    //Get Overdue tasks percentage by sprint id KPI
+    @GetMapping(value = "/sprint/{sprintId}/overdue/kpi")
+    public ResponseEntity<OverdueTasksKpiResponse> getOverdueTasksBySprint(@PathVariable Integer sprintId) {
+        try{
+            //Get all tasks by sprint id
+            List<ToDoItem> tasks = toDoItemService.getToDoItemsBySprintId(sprintId);
+            //Verify if the list is empty
+            //If null, return 404
+            if(tasks == null) {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+            Integer completedSum = 0, overdueSum = 0;
+            for (ToDoItem task : tasks) {
+                logger.info("Task: " + task.getName() + " - Status: " + task.getStatus() + " - CompletionTs: " + task.getCompletionTs() + " - Deadline: " + task.getDeadline());
+                if (task.getStatus().matches("COMPLETED")) {
+                    completedSum += 1;
+                    logger.info("Completed tasks: " + completedSum);
+                    if ( task.getCompletionTs() != null && task.getCompletionTs().isAfter(task.getDeadline())) {
+                        overdueSum += 1;
+                        logger.info("Overdue tasks: " + overdueSum);
+                    }
+                }
+            }
+            logger.info("Out of the FOR CYCLE");
+            Integer percentage = (int) (((double) overdueSum / completedSum) * 100);
+            logger.info("Overdue tasks percentage: " + percentage);
+            return new ResponseEntity<>(new OverdueTasksKpiResponse(overdueSum, percentage), HttpStatus.OK);
+        }catch (Exception e) {
+            logger.error("Error: " + e.getMessage());
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
