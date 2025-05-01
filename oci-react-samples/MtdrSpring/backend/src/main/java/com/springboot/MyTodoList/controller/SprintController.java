@@ -9,6 +9,7 @@ import com.springboot.MyTodoList.model.Sprint;
 import com.springboot.MyTodoList.service.SprintService;
 import com.springboot.MyTodoList.service.ToDoItemService;
 import com.springboot.MyTodoList.model.ToDoItem;
+import com.springboot.MyTodoList.model.WorkedHoursKpiResponse;
 import com.springboot.MyTodoList.controller.ToDoItemController;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -136,6 +137,36 @@ public class SprintController {
             Integer percentage = (int) (((double) overdueSum / completedSum) * 100);
             logger.info("Overdue tasks percentage: " + percentage);
             return new ResponseEntity<>(new OverdueTasksKpiResponse(overdueSum, percentage), HttpStatus.OK);
+        }catch (Exception e) {
+            logger.error("Error: " + e.getMessage());
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    //KPI
+    //Get Worked Hours by sprint id based on estHours for each task.
+    @GetMapping(value = "/sprint/{sprintId}/workedHours/kpi")
+    public ResponseEntity<WorkedHoursKpiResponse> getWorkedHoursBySprint(@PathVariable Integer sprintId) {
+        try{
+            //Get all tasks by sprint id
+            List<ToDoItem> tasks = toDoItemService.getToDoItemsBySprintId(sprintId);
+            //Verify if the list is empty
+            //If null, return 404
+            Integer workedHours = 0;
+            Integer workedHoursTotal = 0;
+            if(tasks == null) {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+
+            for (ToDoItem task : tasks) {
+                logger.info("Task: " + task.getName() + " - Status: " + task.getStatus() + " - EstHours: " + task.getEstHours());
+                workedHoursTotal += task.getEstHours();
+                if (task.getStatus().matches("COMPLETED")) {
+                    workedHours += task.getEstHours();
+                }
+            }
+            logger.info("Worked hours Total : " +workedHoursTotal + " - Worked hours: " + workedHours); 
+            return new ResponseEntity<>(new WorkedHoursKpiResponse(workedHours, workedHoursTotal), HttpStatus.OK);
         }catch (Exception e) {
             logger.error("Error: " + e.getMessage());
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

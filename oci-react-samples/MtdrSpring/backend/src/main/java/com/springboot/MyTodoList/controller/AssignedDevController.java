@@ -136,7 +136,7 @@ public class AssignedDevController {
             List<ToDoItem> tasks = getAssignedTasksByAssignedDevAndSprint(assignedDevId, sprintId).getBody();
             Integer workedHours = 0;
             Integer workedHoursTotal = 0;
-            if (tasks.isEmpty()){
+            if (tasks == null){
                 return new ResponseEntity<> (null, HttpStatus.NOT_FOUND);
             }
 
