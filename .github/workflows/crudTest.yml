@@ -27,10 +27,21 @@ jobs:
       run: |
         cd oci-react-samples/MtdrSpring
         base64 -d -i $WALLET_ENC_B64 > wallet.enc
-        openssl enc -aes-256-cbc -in wallet.enc -out Wallet_TEAM11.zip -k $WALLET_PASSWORD
       env:
         WALLET_ENC_64: ${{secrets.WALLET_ENC_B64}}
+        
+
+    - name: Decrypt wallet
+      run: |
+        cd oci-react-samples/MtdrSpring
+        openssl enc -aes-256-cbc -in wallet.enc -out Wallet_TEAM11.zip -k $WALLET_PASSWORD
+      env:
         WALLET_PASSWORD: ${{secrets.WALLET_PASSWORD}}
+
+    - name : Unzip wallet
+      run: |
+        cd oci-react-samples/MtdrSprint
+        unzip Wallet_Team11.zip 
       
     - name: Set up JDK 21
       uses: actions/setup-java@v4
@@ -42,6 +53,7 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '20'
+
     - name: Build with Maven
       run: |
           cd oci-react-samples
