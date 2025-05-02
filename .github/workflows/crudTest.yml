@@ -46,7 +46,7 @@ jobs:
 
     - name : Test if wallet was correctly 
       run: |
-        cd oci-react-samples/MtdrSpring/Wallet_TEAM11.zip
+        cd oci-react-samples/MtdrSpring/Wallet_TEAM11
         ls
 
   #Changing wallet path in applicatio.properties
