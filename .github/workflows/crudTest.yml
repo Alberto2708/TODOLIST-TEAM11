@@ -1,4 +1,4 @@
-
+##This workflow is used to test the CRUD operations of the Spring Boot application using Maven, it uses a wallet to connect to the Oracle database, which is encrypted and stored in a secret. The workflow is triggered on push and pull request events to the main branch.
 name: CRUD Springboot Testing
 
 on:
