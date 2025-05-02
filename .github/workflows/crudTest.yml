@@ -26,8 +26,8 @@ jobs:
     - name : Decode wallet.enc from base64 secret
       run: |
         cd oci-react-samples/MtdrSpring
-        echo "$WALLET_ENC_B64" | base64 -d > wallet.enc
-        openssl enc -d -aes-256-cbc -in wallet.enc -out Wallet_TEAM11.zip -pass pass:$WALLET_PASSWORD
+        base64 -d -i $WALLET_ENC_B64 > wallet.enc
+        openssl enc -aes-256-cbc -in wallet.enc -out Wallet_TEAM11.zip -k $WALLET_PASSWORD
       env:
         WALLET_ENC_64: ${{secrets.WALLET_ENC_B64}}
         WALLET_PASSWORD: ${{secrets.WALLET_PASSWORD}}
