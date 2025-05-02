@@ -30,7 +30,7 @@ jobs:
       env:
         WALLET_ENC_64: ${{secrets.WALLET_ENC_B64}}
         
-
+    #Step to decrypt wallet
     - name: Decrypt wallet
       run: |
         cd oci-react-samples/MtdrSpring
@@ -38,6 +38,7 @@ jobs:
       env:
         WALLET_PASSWORD: ${{secrets.WALLET_PASSWORD}}
 
+    #Step to unzip the wallet
     - name : Unzip wallet
       run: |
         cd oci-react-samples/MtdrSpring
