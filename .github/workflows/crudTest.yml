@@ -43,6 +43,11 @@ jobs:
       run: |
         cd oci-react-samples/MtdrSpring
         unzip Wallet_TEAM11.zip 
+
+    - name : Set wallet path in application.properties for VM running action.
+      run: |
+        WALLET_PATH="$(pwd)/oci-react-samples/MtdrSpring/Wallet_TEAM11"
+        sed -i "s|spring.datasource.url=jdbc:oracle:thin:@team11_high?TNS_ADMIN=.*|spring.datasource.url=jdbc:oracle:thin:@team11_high?TNS_ADMIN=${WALLET_PATH}|" oci-react-samples/MtdrSpring/backend/src/main/resources/application.properties
       
     - name: Set up JDK 21
       uses: actions/setup-java@v4
