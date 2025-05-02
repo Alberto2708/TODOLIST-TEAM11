@@ -40,7 +40,7 @@ jobs:
 
     - name : Unzip wallet
       run: |
-        cd oci-react-samples/MtdrSprint
+        cd oci-react-samples/MtdrSpring
         unzip Wallet_Team11.zip 
       
     - name: Set up JDK 21
