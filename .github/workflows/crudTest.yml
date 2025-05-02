@@ -44,6 +44,7 @@ jobs:
         cd oci-react-samples/MtdrSpring
         unzip Wallet_TEAM11.zip 
 
+  #Changing wallet path in applicatio.properties
     - name : Set wallet path in application.properties for VM running action.
       run: |
         WALLET_PATH="$(pwd)/oci-react-samples/MtdrSpring/Wallet_TEAM11"
