@@ -42,7 +42,7 @@ jobs:
     - name : Unzip wallet
       run: |
         cd oci-react-samples/MtdrSpring
-        unzip Wallet_TEAM11.zip 
+        unzip Wallet_TEAM11.zip -d Wallet_TEAM11
 
     - name : Test if wallet was correctly 
       run: |
@@ -50,11 +50,11 @@ jobs:
         ls
 
   #Changing wallet path in applicatio.properties
-    #- name : Set wallet path in application.properties for VM running action.
-     # run: |
-      #  WALLET_PATH="$(pwd)/oci-react-samples/MtdrSpring/Wallet_TEAM11"
-       # sed -i "s|spring.datasource.url=jdbc:oracle:thin:@team11_high?TNS_ADMIN=.*|spring.datasource.url=jdbc:oracle:thin:@team11_high?TNS_ADMIN=${WALLET_PATH}|" oci-react-samples/MtdrSpring/backend/src/main/resources/application.properties
-        #cat oci-react-samples/MtdrSpring/backend/src/main/resources/application.properties
+    - name : Set wallet path in application.properties for VM running action.
+      run: |
+        WALLET_PATH="$(pwd)/oci-react-samples/MtdrSpring/Wallet_TEAM11"
+        sed -i "s|spring.datasource.url=jdbc:oracle:thin:@team11_high?TNS_ADMIN=.*|spring.datasource.url=jdbc:oracle:thin:@team11_high?TNS_ADMIN=${WALLET_PATH}|" oci-react-samples/MtdrSpring/backend/src/main/resources/application.properties
+        cat oci-react-samples/MtdrSpring/backend/src/main/resources/application.properties
 
     
     - name: Set up JDK 21
