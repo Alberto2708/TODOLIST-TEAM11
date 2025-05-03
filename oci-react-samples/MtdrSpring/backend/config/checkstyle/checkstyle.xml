@@ -11,6 +11,11 @@
         <!-- Avoid equals on null -->
         <module name="EqualsAvoidNull"/>
 
+        <!-- Magic number detection -->
+        <module name="MagicNumber">
+            <property name="ignoreNumbers" value="0,1,100,365,6,3,2,4,10"/> <!-- Example: Ignore 0 and 1 -->
+        </module>
+
         <!-- Max nested for loop depth of 3 -->
         <module name="NestedForDepth">
             <property name="max" value="3"/>
