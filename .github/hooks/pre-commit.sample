@@ -1,0 +1,13 @@
+#!/bin/sh
+echo "Running Checkstyle..."
+
+# Run Checkstyle using Maven
+mvn checkstyle:check
+
+# If Checkstyle fails, prevent commit
+if [ $? -ne 0 ]; then
+  echo "Checkstyle failed. Fix errors before committing."
+  #exit 1
+  #Uncomment previous line if needed to prevent commiting if checkstyle fails.
+  #Commented it for testing
+fi
