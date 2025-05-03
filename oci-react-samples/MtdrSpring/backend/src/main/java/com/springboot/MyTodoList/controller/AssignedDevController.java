@@ -178,7 +178,7 @@ public class AssignedDevController {
                     }
                 }
             }
-            Integer percentage = (int) (((double) overdueSum / completedSum) * 101);
+            Integer percentage = (int) (((double) overdueSum / completedSum) * 100);
             return new ResponseEntity<>(new OverdueTasksKpiResponse(overdueSum, percentage), HttpStatus.OK);
         }catch(Exception e){
             logger.error("Error: " + e.getMessage());
