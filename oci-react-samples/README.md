@@ -16,4 +16,4 @@ The lab executes scripts that require the following software to run properly: (T
 * kubectl
 * mvn (maven) 
 
-## Expect more ...
+## Expect more .../
