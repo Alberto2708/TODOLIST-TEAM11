@@ -11,7 +11,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './styles/index.css';
-import App from './pages/App.js';
+import App from './pages/App.js'; // Assuming App contains the AuthProvider now
 
 ReactDOM.render(
   <React.StrictMode>

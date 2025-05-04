@@ -9,11 +9,11 @@ import HeaderMngr from "../components/HeaderMngr.js";
 
 export default function CompletedTasks() {
     const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState(false);
-    const [employeeId, setEmployeeId] = useState(null);
-    const [passedProjectId, setPassedProjectId] = useState(null);
+    const [/*employeeId*/, setEmployeeId] = useState(null);
+    const [/*passedProjectId*/, setPassedProjectId] = useState(null);
     const [employees, setEmployees] = useState([]);
     const [tasks, setTasks] = useState({});
-    const [subTasks, setSubTasks] = useState({});
+    const [/*subTasks*/, setSubTasks] = useState({});
     const [actualSprint, setActualSprint] = useState({});
     const [selectedTask, setSelectedTask] = useState(null);
     const [isScreenLoading, setScreenLoading] = useState(true);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect} from "react";
 import "../styles/TaskCreation.css";
 
 export default function SubTaskCreation({ onClose, onTaskCreated, managerId, projectId, sprintId }) {
@@ -13,11 +13,11 @@ export default function SubTaskCreation({ onClose, onTaskCreated, managerId, pro
     const [errorMessage, setErrorMessage] = useState("");
     const [employees, setEmployees] = useState([]);
     const [loadingEmployees, setLoadingEmployees] = useState(true);
-    const [errorLoadingEmployees, setErrorLoadingEmployees] = useState(null);
+    const [/*errorLoadingEmployees*/, setErrorLoadingEmployees] = useState(null);
     const [parentTasks, setParentTasks] = useState([]); // Array of parent tasks
     const [loadingParentTasks, setLoadingParentTasks] = useState(true);
     const [errorLoadingParentTasks, setErrorLoadingParentTasks] = useState(null);
-    const [isAddingSubTask, setIsAddingSubTask] = useState(false);
+    const [/*isAddingSubTask*/, setIsAddingSubTask] = useState(false);
     useEffect(() => {
         console.log("Selected parent task:", parent);
     }, [parent]);

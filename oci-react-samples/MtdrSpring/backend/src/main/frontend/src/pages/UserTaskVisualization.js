@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import "../styles/TaskVisualization.css";
 import ToDoItem from "../components/ToDoItem.js";
 import ModalTask from "../components/ModelTask.js";
 import { useNavigate } from "react-router-dom";
 import HeaderDev from "../components/HeaderDev.js"; 
+import { useAuth } from "../context/AuthContext.js"; // Import the AuthContext
 
 function UserTaskVisualization() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,20 +17,21 @@ function UserTaskVisualization() {
   const [selectedTask, setSelectedTask] = useState(null);
   const [isScreenLoading, setIsScreenLoading] = useState(true); // Add loading state
   const navigate = useNavigate();
+  const { authData } = useAuth(); // Access authData from context
 
-  useEffect(() => {
-    const employeeId = localStorage.getItem("employeeId");
-    const projectId = localStorage.getItem("projectId");
-    console.log("employeeId:", employeeId, "projectId:", projectId); // Debugging
-    setEmployeeId(employeeId);
-    setPassedProjectId(projectId);
-    if (employeeId && projectId) {
-        fetchActualSprint(projectId, employeeId); // Pass employeeId to fetchActualSprint
-    } else {
-        console.log("No employeeId or projectId found in localStorage");
-        setIsScreenLoading(false); // Stop loading if data is missing
-    }
-}, []);
+
+useEffect(() => {
+  if(!authData) {
+    console.log("No authData found, redirecting to login page.");
+    navigate("/login"); // Redirect to login page if authData is not available
+    return;
+  }
+  const { employeeId, projectId } = authData; // Destructure employeeId and projectId from authData
+  console.log("employeeId:", employeeId, "projectId:", projectId); // Debugging
+  setEmployeeId(employeeId);
+  setPassedProjectId(projectId);
+  fetchActualSprint(projectId, employeeId); // Pass employeeId to fetchActualSprint
+}, [authData, navigate]); // Add authData and navigate to dependencies
 
 const fetchActualSprint = async (projectId, employeeId) => {
   try {

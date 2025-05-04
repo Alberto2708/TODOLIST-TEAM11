@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import "../styles/ModelTask.css";
-import ToDoItem from './ToDoItem';
+//import ToDoItem from './ToDoItem';
 
 export default function ModalTask({ setOpen, handleDoneClick, task }) {
     const [open, setModalOpen] = useState(true);
@@ -11,7 +11,7 @@ export default function ModalTask({ setOpen, handleDoneClick, task }) {
 
     const markAsDone = (toDoItemId) => {
       try{
-        const response = fetch(`/todolist/complete/${toDoItemId} `, {
+        fetch(`/todolist/complete/${toDoItemId} `, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',

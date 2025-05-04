@@ -3,7 +3,7 @@ import "../styles/TaskCreation.css";
 
 export default function TaskCreation({ onClose, onTaskCreated, managerId, projectId, sprintId }) {
     const [taskName, setTaskName] = useState("");
-    const [parentName, setParentName] = useState("");
+    //const [parentName, setParentName] = useState("");
     const [description, setDescription] = useState("");
     const [dueDate, setDueDate] = useState("");
     const [responsibles, setResponsibles] = useState([{ id: "", name: "" }]);
@@ -13,7 +13,7 @@ export default function TaskCreation({ onClose, onTaskCreated, managerId, projec
     const [errorMessage, setErrorMessage] = useState("");
     const [employees, setEmployees] = useState([]);
     const [loadingEmployees, setLoadingEmployees] = useState(true);
-    const [errorLoadingEmployees, setErrorLoadingEmployees] = useState(null);
+    const [/*errorLoadingEmployees*/, setErrorLoadingEmployees] = useState(null);
 
     useEffect(() => {
         const fetchEmployees = async () => {

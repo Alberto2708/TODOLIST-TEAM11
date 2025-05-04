@@ -6,21 +6,23 @@ import LoadingScreen from "./LoadingScreen";
 import CompletedTasks from "./CompletedTasks";
 import Stats from "./Stats";
 import UserCompletedTasks from "./UserCompletedTasks";
-
+import { AuthProvider } from "../context/AuthContext"; // 👈 Import your context
 
 const App = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/usertasks" element= {<UserTaskVisualization/>} />
-        <Route path="/managertasks" element= {<ManagerTaskVis/>} />
-        <Route path="/loading" element={<LoadingScreen/>} />
-        <Route path="/completedtasks" element={<CompletedTasks/>} />
-        <Route path="/stats" element={<Stats/>} />
-        <Route path="/usercompletedtasks" element={<UserCompletedTasks/>} />
-      </Routes>
-    </Router>
+    <AuthProvider> {/* 👈 Wrap the whole Router inside AuthProvider */}
+      <Router>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/usertasks" element={<UserTaskVisualization />} />
+          <Route path="/managertasks" element={<ManagerTaskVis />} />
+          <Route path="/loading" element={<LoadingScreen />} />
+          <Route path="/completedtasks" element={<CompletedTasks />} />
+          <Route path="/stats" element={<Stats />} />
+          <Route path="/usercompletedtasks" element={<UserCompletedTasks />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 };
 
