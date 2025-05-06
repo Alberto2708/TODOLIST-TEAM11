@@ -15,7 +15,7 @@ export default function ManagerTaskVis() {
     const [isSubTaskCreationModalOpen, setIsSubTaskCreationModalOpen] = useState(false);
     const [selectedTaskIndex, setSelectedTaskIndex] = useState(null);
     const [modalAction, setModalAction] = useState(null);
-    const [employeeId, setEmployeeId] = useState(null);
+    const [authEmployeeId, setEmployeeId] = useState(null);
     const [passedProjectId, setPassedProjectId] = useState(null);
     const [employees, setEmployees] = useState([]);
     const [tasks, setTasks] = useState({});
@@ -224,6 +224,13 @@ export default function ManagerTaskVis() {
         closeTaskDetailsModal();
     };
 
+    const handleDeleteClick = () => {
+        console.log("Delete button clicked in modal");
+        setModalAction('delete');
+        closeTaskDetailsModal();
+        handleRefresh(passedProjectId, authEmployeeId); 
+      };
+
     return (
         <div className="mtvContainer">
             {isScreenLoading ? (
@@ -237,6 +244,7 @@ export default function ManagerTaskVis() {
                         employees={employees}
                         selectedDeveloper={selectedDeveloper}
                         setSelectedDeveloper={setSelectedDeveloper}
+                        onCreateTask={openTaskCreationModal}
                     />
 
                     {employees.length === 0 ? (
@@ -283,8 +291,8 @@ export default function ManagerTaskVis() {
                             <div className="modal-content">
                                 <TaskCreation 
                                     onClose={closeTaskCreationModal}
-                                    onTaskCreated={() => handleRefresh(passedProjectId, employeeId)}
-                                    managerId={employeeId}
+                                    onTaskCreated={() => handleRefresh(passedProjectId, authEmployeeId)}
+                                    managerId={authEmployeeId}
                                     projectId={passedProjectId}
                                     sprintId={actualSprint.id}
                                 />
@@ -297,8 +305,8 @@ export default function ManagerTaskVis() {
                             <div className="modal-content">
                                 <SubTaskCreation 
                                     onClose={closeSubTaskCreationModal}
-                                    onTaskCreated={() => handleRefresh(passedProjectId, employeeId)}
-                                    managerId={employeeId}
+                                    onTaskCreated={() => handleRefresh(passedProjectId, authEmployeeId)}
+                                    managerId={authEmployeeId}
                                     projectId={passedProjectId}
                                     sprintId={actualSprint.id}
                                 />
@@ -312,6 +320,7 @@ export default function ManagerTaskVis() {
                             handleDoneClick={handleSaveClick}
                             handleCancelClick={handleCancelClick}
                             task={selectedTask}
+                            handleDeleteClick={handleDeleteClick}
                         />
                     )}
                 </>
