@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 import { useAuth } from "../context/AuthContext";
@@ -9,7 +9,20 @@ function Login() {
   const [isLoading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
-  const { login } = useAuth(); // Usa el contexto
+  const { login, employeeId, managerId} = useAuth(); // Usa el contexto
+
+  useEffect(() => {
+    if (employeeId && managerId !== undefined) {
+      if (managerId === null) {
+        navigate("/managertasks");
+      } else {
+        navigate("/usertasks");
+      }
+    }
+  }, [employeeId, managerId, navigate]);
+
+
+
 
   async function handleLogin(event) {
     event.preventDefault();
