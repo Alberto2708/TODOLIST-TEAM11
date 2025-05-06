@@ -42,14 +42,14 @@ export default function Stats() {
     fetchActualSprint(projectId, employeeId);
   }, [authData, navigate]);
 
-    const fetchActualSprint = async (projectId, assignedDevId) => {
+    const fetchActualSprint = async (projectId, managerId) => {
         try {
             const response = await fetch(`/sprint/project/${projectId}`);
             if (response.ok) {
                 const data = await response.json();
                 setActualSprint(data);
                 console.log("Actual sprint:", data);
-                fetchEmployees(assignedDevId, data.id);
+                fetchEmployees(managerId, data.id);
             } else {
                 console.error("Error fetching actual sprint:", response.statusText);
             }
@@ -58,9 +58,9 @@ export default function Stats() {
         }
     };
 
-    const fetchEmployees = async (assignedDevId, sprintId) => {
+    const fetchEmployees = async (managerId, sprintId) => {
         try {
-            const response = await fetch(`/employees/managerId/${assignedDevId}`);
+            const response = await fetch(`/employees/managerId/${managerId}`);
             const data = await response.json();
             setEmployees(data);
 
