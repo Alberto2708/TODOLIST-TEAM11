@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext"; // Import the AuthContext
 import {
     BarChart,
     Bar,
@@ -26,19 +27,20 @@ export default function Stats() {
     const [workedHours, setWorkedHours] = useState(0);
     const [estimatedHours, setEstimatedHours] = useState(0);
     const navigate = useNavigate();
+    const { authData } = useAuth(); // Use the AuthContext to get authData
 
-    useEffect(() => {
-        const employeeId = localStorage.getItem("employeeId");
-        const projectId = localStorage.getItem("projectId");
-        setEmployeeId(employeeId);
-        setPassedProjectId(projectId);
-        if (employeeId && projectId) {
-            fetchActualSprint(projectId, employeeId);
-        } else {
-            console.log("No employeeId or projectId found in localStorage");
-            setScreenLoading(false);
-        }
-    }, []);
+  useEffect(() => {
+    if (!authData) {
+      console.log("No authData found, redirecting to login page.");
+      navigate("/login");
+      return;
+    }
+    const { employeeId, projectId } = authData;
+    console.log("employeeId:", employeeId, "projectId:", projectId);
+    setEmployeeId(employeeId);
+    setPassedProjectId(projectId);
+    fetchActualSprint(projectId, employeeId);
+  }, [authData, navigate]);
 
     const fetchActualSprint = async (projectId, managerId) => {
         try {
@@ -94,11 +96,11 @@ export default function Stats() {
         }
     };
 
-    const fetchDeveloperCompletedPercentage = async (developerId, sprintId) => {
+    const fetchDeveloperCompletedPercentage = async (assignedDevId, sprintId) => {
         try {
-            const response = await fetch(`/assignedDev/${developerId}/sprint/${sprintId}/completedTasks/kpi`);
+            const response = await fetch(`/assignedDev/${assignedDevId}/sprint/${sprintId}/completedTasks/kpi`);
             const data = await response.json();
-            console.log(developerId, "Developer completed percentage:", data);
+            console.log(assignedDevId, "Developer completed percentage:", data);
             return data;
         } catch (error) {
             console.error("Error fetching developer completed percentage:", error);
@@ -106,11 +108,11 @@ export default function Stats() {
         }
     };
 
-    const fetchDeveloperWorkedHours = async (developerId, sprintId) => {
+    const fetchDeveloperWorkedHours = async (assignedDevId, sprintId) => {
         try {
-            const response = await fetch(`/assignedDev/${developerId}/sprint/${sprintId}/workedHours/kpi`);
+            const response = await fetch(`/assignedDev/${assignedDevId}/sprint/${sprintId}/workedHours/kpi`);
             const data = await response.json();
-            console.log(developerId, "Worked Hours Data:", data);
+            console.log(assignedDevId, "Worked Hours Data:", data);
             return data;
         } catch (error) {
             console.error("Error fetching developer worked hours:", error);

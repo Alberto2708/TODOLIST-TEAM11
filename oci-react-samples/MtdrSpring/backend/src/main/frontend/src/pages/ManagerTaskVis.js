@@ -6,6 +6,7 @@ import ManagerModalTask from "../components/ManagerModalTask";
 import TaskCreation from "../components/TaskCreation";
 import SubTaskCreation from "../components/SubTaskCreation";
 import HeaderMngr from "../components/HeaderMngr";
+import { useAuth } from "../context/AuthContext"; // Import the AuthContext
 
 export default function ManagerTaskVis() {
     // States
@@ -19,29 +20,27 @@ export default function ManagerTaskVis() {
     const [employees, setEmployees] = useState([]);
     const [tasks, setTasks] = useState({});
     const [subTasks, setSubTasks] = useState({});
-    const [kpis, setKpis] = useState({});
-    const [totalCompletedTasks, setTotalCompletedTasks] = useState(null);
-    const [percentageKpis, setPercentageKpis] = useState({});
-    const [sumOverdueTasks, setSumOverdueTasks] = useState({});
     const [actualSprint, setActualSprint] = useState({});
     const [selectedTask, setSelectedTask] = useState(null);
     const [isScreenLoading, setScreenLoading] = useState(true);
     const [selectedDeveloper, setSelectedDeveloper] = useState("all");
     const [filteredTasks, setFilteredTasks] = useState({});
     const navigate = useNavigate();
+    const { authData } = useAuth(); // Use the AuthContext to get authData
 
-    useEffect(() => {
-        const employeeId = localStorage.getItem("employeeId");
-        const projectId = localStorage.getItem("projectId");
-        setEmployeeId(employeeId);
-        setPassedProjectId(projectId);
-        if (employeeId && projectId) {
-            fetchActualSprint(projectId, employeeId);
-        } else {
-            console.log("No employeeId or projectId found in localStorage");
-            setScreenLoading(false);
-        }
-    }, []);
+
+  useEffect(() => {
+    if (!authData) {
+      console.log("No authData found, redirecting to login page.");
+      navigate("/login");
+      return;
+    }
+    const { employeeId, projectId } = authData;
+    console.log("employeeId:", employeeId, "projectId:", projectId);
+    setEmployeeId(employeeId);
+    setPassedProjectId(projectId);
+    fetchActualSprint(projectId, employeeId);
+  }, [authData, navigate]);
 
     useEffect(() => {
         console.log("Selected Developer:", selectedDeveloper);
@@ -87,11 +86,7 @@ export default function ManagerTaskVis() {
             const data = await response.json();
             setEmployees(data);
             const taskPromises = data.map(employee => fetchTasks(employee.id, sprintId));
-            const kpiPromises = data.map(employee => fetchKpi(employee.id));
-            const percentageKpiPromises = data.map(employee => fetchCompletedPercentage(employee.id, sprintId));
-            const sumOverdueTasksPromises = data.map(employee => fetchSumOverdueTasks(employee.id));
-            const totalCompletedTasksPromise = fetchTotalCompletedTasksbySprint(sprintId);
-            await Promise.all([...taskPromises, ...kpiPromises, ...percentageKpiPromises, ...sumOverdueTasksPromises]);
+            await Promise.all([...taskPromises]);
             setScreenLoading(false);
         } catch (error) {
             console.error("Error fetching employees:", error);
@@ -128,9 +123,9 @@ export default function ManagerTaskVis() {
         }
     };
 
-    const fetchSubTasks = async (taskId, employeeId) => {
+    const fetchSubTasks = async (taskId, assignedDevId) => {
         try {
-            const response = await fetch(`subToDoItems/toDoItem/${taskId}/employee/${employeeId}/pending`);
+            const response = await fetch(`subToDoItems/toDoItem/${taskId}/employee/${assignedDevId}/pending`);
             if (!response.ok) {
                 console.error("Error fetching subtasks:", response.statusText);
                 return [];
@@ -150,7 +145,7 @@ export default function ManagerTaskVis() {
                         deadline: new Date(item.deadline).toLocaleDateString(),
                         description: item.description,
                         status: item.status,
-                        subTasks: await fetchSubTasks(item.id, employeeId),
+                        subTasks: await fetchSubTasks(item.id, assignedDevId),
                     }))
                 );
                 
@@ -166,77 +161,7 @@ export default function ManagerTaskVis() {
         }
     };
 
-    const fetchKpi = async (assignedDevId) => {
-        try {
-            const response = await fetch(`/assignedDev/kpi/${assignedDevId}`);
-            if (response.ok) {
-                const text = await response.text();
-                const data = text ? JSON.parse(text) : null;
-                if (data !== null && !isNaN(data)) {
-                    setKpis(prevKpis => ({ ...prevKpis, [assignedDevId]: data }));
-                } else {
-                    setKpis(prevKpis => ({ ...prevKpis, [assignedDevId]: null }));
-                }
-            } else {
-                setKpis(prevKpis => ({ ...prevKpis, [assignedDevId]: null }));
-            }
-        } catch (error) {
-            setKpis(prevKpis => ({ ...prevKpis, [assignedDevId]: null }));
-        }
-    };
 
-    const fetchCompletedPercentage = async (employeeId, sprintId) => {
-        try {
-            const response = await fetch(`/assignedDev/${employeeId}/sprint/${sprintId}/kpi`);
-            if (response.ok) {
-                const text = await response.text();
-                const data = text ? JSON.parse(text) : null;
-                if (data !== null && !isNaN(data)) {
-                    setPercentageKpis(prevKpis => ({ ...prevKpis, [employeeId]: data }));
-                } else {
-                    setPercentageKpis(prevKpis => ({ ...prevKpis, [employeeId]: null }));
-                }
-            } else {
-                setPercentageKpis(prevKpis => ({ ...prevKpis, [employeeId]: null }));
-            }
-        } catch (error) {
-            setPercentageKpis(prevKpis => ({ ...prevKpis, [employeeId]: null }));
-        }
-    };
-
-    const fetchSumOverdueTasks = async (employeeId) => {
-        try {
-            const response = await fetch(`/assignedDev/kpi/${employeeId}/overdue`);
-            if (response.ok) {
-                const text = await response.text();
-                const data = text ? JSON.parse(text) : null;
-                if (data !== null && !isNaN(data)) {
-                    setSumOverdueTasks(prevKpis => ({ ...prevKpis, [employeeId]: data }));
-                } else {
-                    setSumOverdueTasks(prevKpis => ({ ...prevKpis, [employeeId]: null }));
-                }
-            } else {
-                setSumOverdueTasks(prevKpis => ({ ...prevKpis, [employeeId]: null }));
-            }
-        } catch (error) {
-            setSumOverdueTasks(prevKpis => ({ ...prevKpis, [employeeId]: null }));
-        }
-    };
-
-    const fetchTotalCompletedTasksbySprint = async (sprintId) => {
-        try {
-            const response = await fetch(`sprint/${sprintId}/kpi`);
-            if (response.ok) { 
-                const text = await response.text();
-                const data = text ? JSON.parse(text) : null;
-                if (data !== null && !isNaN(data)) {
-                    setTotalCompletedTasks(data);
-                }
-            }
-        } catch (error) {
-            console.error("Error fetching total completed tasks by sprint:", error);
-        }
-    };
 
     const getStatusColor = (status) => {
         switch (status) {
@@ -262,37 +187,6 @@ export default function ManagerTaskVis() {
         setIsTaskDetailsModalOpen(true);
         setSelectedTask(task);
         setModalAction(null);
-    };
-
-    const calculateKpi = (employeeId) => {
-        if (kpis[employeeId] === null) {
-            return "more information needed";
-        }
-        return kpis[employeeId];
-    };
-
-    const calculatePercentageKpi = (employeeId) => {
-        if (percentageKpis[employeeId] === null) {
-            return "more information needed";
-        }
-        return percentageKpis[employeeId];
-    };
-
-    const calculateTotalCompletedTasks = () => {
-        if (totalCompletedTasks === null) {
-            return "No data available";
-        } else if (isNaN(totalCompletedTasks)) {
-            return "Invalid data";
-        }
-        return totalCompletedTasks;
-    };
-
-    const calculateSumOverdueTasks = (employeeId) => {
-        const overdueTasks = sumOverdueTasks[employeeId];
-        if (overdueTasks === null || overdueTasks === undefined || isNaN(overdueTasks)) {
-            return "No overdue tasks data available";
-        }
-        return overdueTasks;
     };
 
     const closeTaskDetailsModal = () => {
@@ -323,11 +217,6 @@ export default function ManagerTaskVis() {
     const handleSaveClick = () => {
         setModalAction('save');
         closeTaskDetailsModal();
-    };
-
-    const handleSubTaskCancelClick = () => {
-        setModalAction('cancel');
-        closeSubTaskCreationModal();
     };
 
     const handleCancelClick = () => {

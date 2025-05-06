@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/TaskVisualization.css";
 import ToDoItem from "../components/ToDoItem.js";
 import ModalTask from "../components/ModelTask.js";
@@ -10,131 +10,128 @@ function UserTaskVisualization() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [triggerClickIndex, setTriggerClickIndex] = useState(null); 
   const [actualSprint, setActualSprint] = useState(null);
-  const [employeeId, setEmployeeId] = useState(null);
+  const [authEmployeeId, setEmployeeId] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [subTasks, setSubTasks] = useState({});
   const [passedProjectId, setPassedProjectId] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
-  const [isScreenLoading, setIsScreenLoading] = useState(true); // Add loading state
+  const [isScreenLoading, setIsScreenLoading] = useState(true);
   const navigate = useNavigate();
-  const { authData } = useAuth(); // Access authData from context
+  const { authData } = useAuth();
 
+  useEffect(() => {
+    if (!authData) {
+      console.log("No authData found, redirecting to login page.");
+      navigate("/login");
+      return;
+    }
+    const { employeeId, projectId } = authData;
+    console.log("employeeId:", employeeId, "projectId:", projectId);
+    setEmployeeId(employeeId);
+    setPassedProjectId(projectId);
+    fetchActualSprint(projectId, employeeId);
+  }, [authData, navigate]);
 
-useEffect(() => {
-  if(!authData) {
-    console.log("No authData found, redirecting to login page.");
-    navigate("/login"); // Redirect to login page if authData is not available
-    return;
-  }
-  const { employeeId, projectId } = authData; // Destructure employeeId and projectId from authData
-  console.log("employeeId:", employeeId, "projectId:", projectId); // Debugging
-  setEmployeeId(employeeId);
-  setPassedProjectId(projectId);
-  fetchActualSprint(projectId, employeeId); // Pass employeeId to fetchActualSprint
-}, [authData, navigate]); // Add authData and navigate to dependencies
-
-const fetchActualSprint = async (projectId, employeeId) => {
-  try {
+  const fetchActualSprint = async (projectId, assignedDevId) => {
+    try {
       const response = await fetch(`/sprint/project/${projectId}`);
       if (response.ok) {
-          const data = await response.json();
-          setActualSprint(data);
-          console.log("Actual sprint:", data);
-          fetchTasks(employeeId, data.id); // Pass employeeId to fetchTasks
+        const data = await response.json();
+        setActualSprint(data);
+        console.log("Actual sprint:", data);
+        fetchTasks(assignedDevId, data.id); 
       } else {
-          console.error("Error fetching actual sprint:", response.statusText);
-          setIsScreenLoading(false); // Stop loading on error
+        console.error("Error fetching actual sprint:", response.statusText);
+        setIsScreenLoading(false);
       }
-  } catch (error) {
+    } catch (error) {
       console.error("Error fetching actual sprint:", error);
-      setIsScreenLoading(false); // Stop loading on error
-  }
-};
+      setIsScreenLoading(false);
+    }
+  };
 
-const fetchTasks = async (assignedDevId, sprintId) => {
-  try {
+  const fetchTasks = async (assignedDevId, sprintId) => {
+    try {
       const response = await fetch(`/assignedDev/${assignedDevId}/sprint/${sprintId}/father/pending`);
       if (!response.ok) {
-          console.error("Error fetching tasks:", response.statusText);
-          setIsScreenLoading(false); // Stop loading on error
-          return;
+        console.error("Error fetching tasks:", response.statusText);
+        setIsScreenLoading(false);
+        return;
       }
+
       const data = await response.json();
       console.log("Tasks:", data);
 
       const parseTasks = await Promise.all(
-          data.map(async (task) => {
-              const subTasks = await fetchSubTasks(task.id, employeeId);
-              console.log(`Fetched subtasks for task ID ${task.id}:`, subTasks);
+        data.map(async (task) => {
+          const subTasks = await fetchSubTasks(task.id, assignedDevId);
+          console.log(`Fetched subtasks for task ID ${task.id}:`, subTasks);
 
-              return {
-                  id: task.id,
-                  name: task.name,
-                  deadline: task.deadline,
-                  status: task.status,
-                  subTasks: subTasks, // Include the fetched subtasks
-              };
-          })
+          return {
+            id: task.id,
+            name: task.name,
+            deadline: task.deadline,
+            status: task.status,
+            subTasks: subTasks,
+          };
+        })
       );
 
       console.log("Parsed tasks:", parseTasks);
       setTasks(parseTasks);
-      setIsScreenLoading(false); // Stop loading after tasks are fetched
-  } catch (error) {
-      console.error("Error fetching tasks:", error);
-      setIsScreenLoading(false); 
-  }
-};
-
-const fetchSubTasks = async (taskId, employeeId) => {
-  try {
-    console.log("Fetching subtasks for task ID:", taskId, "and employee ID:", employeeId);
-    const response = await fetch(`subToDoItems/toDoItem/${taskId}/employee/${employeeId}/pending`);
-    if (!response.ok) {
-      console.error("Error fetching subtasks:", response.statusText);
-      return [];
-    }
-
-    const text = await response.text();
-    if (!text) {
-  
-      console.warn(`Empty response for task ID ${taskId}`);
-      return [];
-    }
-
-    try {
-      const data = JSON.parse(text); 
-      console.log(`Fetched subtasks data for toDoItemId ${taskId}:`, data);
-
-      
-      const parsedSubTasks = await Promise.all(
-        data.map(async (item) => ({
-          id: item.id, 
-          name: item.name,
-          deadline: new Date(item.deadline).toLocaleDateString(),
-          description: item.description,
-          status: item.status,
-          subTasks: await fetchSubTasks(item.id, employeeId),
-        }))
-      );
-
-      setSubTasks((prevSubTasks) => ({ ...prevSubTasks, [taskId]: parsedSubTasks }));
-      return parsedSubTasks;
+      setIsScreenLoading(false);
     } catch (error) {
-      console.error("Invalid JSON response:", text);
+      console.error("Error fetching tasks:", error);
+      setIsScreenLoading(false);
+    }
+  };
+
+  const fetchSubTasks = async (taskId, assignedDevId) => {
+    try {
+      console.log("Fetching subtasks for task ID:", taskId, "and employee ID:", assignedDevId);
+      const response = await fetch(`subToDoItems/toDoItem/${taskId}/employee/${assignedDevId}/pending`);
+      if (!response.ok) {
+        console.error("Error fetching subtasks:", response.statusText);
+        return [];
+      }
+
+      const text = await response.text();
+      if (!text) {
+        console.warn(`Empty response for task ID ${taskId}`);
+        return [];
+      }
+
+      try {
+        const data = JSON.parse(text);
+        console.log(`Fetched subtasks data for toDoItemId ${taskId}:`, data);
+
+        const parsedSubTasks = await Promise.all(
+          data.map(async (item) => ({
+            id: item.id,
+            name: item.name,
+            deadline: new Date(item.deadline).toLocaleDateString(),
+            description: item.description,
+            status: item.status,
+            subTasks: await fetchSubTasks(item.id, assignedDevId), 
+          }))
+        );
+
+        setSubTasks((prevSubTasks) => ({ ...prevSubTasks, [taskId]: parsedSubTasks }));
+        return parsedSubTasks;
+      } catch (error) {
+        console.error("Invalid JSON response:", text);
+        return [];
+      }
+    } catch (error) {
+      console.error("Error fetching subtasks:", error);
       return [];
     }
-  } catch (error) {
-    console.error("Error fetching subtasks:", error);
-    return [];
-  }
-};
+  };
 
-const handleRefresh = (projectId, employeeId) => {
-  setIsScreenLoading(true);
-  fetchActualSprint(projectId, employeeId);
-}
-
+  const handleRefresh = (projectId, employeeId) => {
+    setIsScreenLoading(true);
+    fetchActualSprint(projectId, employeeId);
+  };
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -155,21 +152,21 @@ const handleRefresh = (projectId, employeeId) => {
     setIsModalOpen(true);
     setTriggerClickIndex(index);
     setSelectedTask(tasks[index]);
-};
+  };
 
-const closeModal = () => {
+  const closeModal = () => {
     console.log("Closing modal");
     setIsModalOpen(false);
-};
+  };
 
-const handleDoneClick = () => {
+  const handleDoneClick = () => {
     console.log("Done button clicked in modal");
     setTriggerClickIndex(null);
     closeModal();
-    handleRefresh(passedProjectId, employeeId); 
-};
+    handleRefresh(passedProjectId, authEmployeeId); 
+  };
 
-  console.log("employeeId: ", employeeId);
+  console.log("employeeId: ", authEmployeeId);
   return (
     <div>
       {isScreenLoading ? (
@@ -177,8 +174,8 @@ const handleDoneClick = () => {
           <div className="spinner"></div>
         </div>
       ) : (
-      <div className="utv-container">
-            <HeaderDev actualSprint={actualSprint} />
+        <div className="utv-container">
+          <HeaderDev actualSprint={actualSprint} />
           <div className="task-list">
             {tasks.map((task, index) => (
               <ToDoItem
@@ -188,8 +185,8 @@ const handleDoneClick = () => {
                 taskStatus={task.status}
                 subTasks={task.subTasks}
                 statusColor={getStatusColor(task.status)}
-                onClick={() => openModal(index)} 
-                triggerClick={triggerClickIndex === index} 
+                onClick={() => openModal(index)}
+                triggerClick={triggerClickIndex === index}
               />
             ))}
           </div>
@@ -200,11 +197,11 @@ const handleDoneClick = () => {
         <ModalTask
           setOpen={closeModal}
           handleDoneClick={handleDoneClick}
-          task={selectedTask} 
+          task={selectedTask}
         />
       )}
     </div>
   );
-};
+}
 
 export default UserTaskVisualization;

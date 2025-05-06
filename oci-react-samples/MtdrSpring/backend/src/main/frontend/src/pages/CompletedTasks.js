@@ -6,6 +6,7 @@ import React from 'react';
 import ToDoItem from "../components/ToDoItem.js";
 import ManagerModalTask from "../components/ManagerModalTask.js";
 import HeaderMngr from "../components/HeaderMngr.js";
+import { useAuth } from "../context/AuthContext.js"; // Import the AuthContext
 
 export default function CompletedTasks() {
     const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState(false);
@@ -19,24 +20,20 @@ export default function CompletedTasks() {
     const [isScreenLoading, setScreenLoading] = useState(true);
     const navigate = useNavigate();
     const [selectedDeveloper, setSelectedDeveloper] = useState("all");
+    const { authData } = useAuth(); // Use the AuthContext to get authData
 
-    useEffect(() => {
-        const employeeId = localStorage.getItem("employeeId");
-        const projectId = localStorage.getItem("projectId");
-        setEmployeeId(employeeId);
-        setPassedProjectId(projectId);
-        if (employeeId && projectId) {
-            fetchActualSprint(projectId, employeeId);
-        } else {
-            console.log("No employeeId or projectId found in localStorage");
-            setScreenLoading(false);
-        }
-    }, []);
-
-    const handleRefresh = (managerId, projectId) => {
-        setScreenLoading(true);
-        fetchActualSprint(projectId, managerId);
+  useEffect(() => {
+    if (!authData) {
+      console.log("No authData found, redirecting to login page.");
+      navigate("/login");
+      return;
     }
+    const { employeeId, projectId } = authData;
+    console.log("employeeId:", employeeId, "projectId:", projectId);
+    setEmployeeId(employeeId);
+    setPassedProjectId(projectId);
+    fetchActualSprint(projectId, employeeId);
+  }, [authData, navigate]);
 
     const fetchActualSprint = async (projectId, managerId) => {
         try {
@@ -54,10 +51,10 @@ export default function CompletedTasks() {
         }
     };
 
-    const fetchSubTasks = async (taskId, employeeId) => {
+    const fetchSubTasks = async (taskId, assignedDevId) => {
         try {
-            console.log("Fetching subtasks for task ID:", taskId, "and employee ID:", employeeId);
-            const response = await fetch(`/subToDoItems/toDoItem/${taskId}/employee/${employeeId}/completed`);
+            console.log("Fetching subtasks for task ID:", taskId, "and employee ID:", assignedDevId);
+            const response = await fetch(`/subToDoItems/toDoItem/${taskId}/employee/${assignedDevId}/completed`);
             if (!response.ok) {
                 console.error("Error fetching subtasks:", response.statusText);
                 return [];
@@ -80,7 +77,7 @@ export default function CompletedTasks() {
                         deadline: new Date(item.deadline).toLocaleDateString(),
                         description: item.description,
                         status: item.status,
-                        subTasks: await fetchSubTasks(item.id, employeeId),
+                        subTasks: await fetchSubTasks(item.id, assignedDevId),
                     }))
                 );
         

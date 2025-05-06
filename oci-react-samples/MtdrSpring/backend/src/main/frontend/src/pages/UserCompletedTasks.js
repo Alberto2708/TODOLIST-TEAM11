@@ -3,42 +3,43 @@ import "../styles/TaskVisualization.css";
 import ToDoItem from "../components/ToDoItem.js";
 import ModalTask from "../components/ModelTask.js";
 import { useNavigate } from "react-router-dom";
-import HeaderDev from "../components/HeaderDev.js"; 
+import HeaderDev from "../components/HeaderDev.js";
+import { useAuth } from "../context/AuthContext.js"; // Import the AuthContext
 
 function UserCompletedTasks() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [triggerClickIndex, setTriggerClickIndex] = useState(null); 
   const [actualSprint, setActualSprint] = useState(null);
-  const [employeeId, setEmployeeId] = useState(null);
+  const [authEmployeeId, setEmployeeId] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [subTasks, setSubTasks] = useState({});
   const [passedProjectId, setPassedProjectId] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
   const [isScreenLoading, setIsScreenLoading] = useState(true); // Add loading state
   const navigate = useNavigate();
+  const { authData } = useAuth(); // Use the AuthContext to get authData
 
   useEffect(() => {
-    const employeeId = localStorage.getItem("employeeId");
-    const projectId = localStorage.getItem("projectId");
-    console.log("employeeId:", employeeId, "projectId:", projectId); // Debugging
+    if (!authData) {
+      console.log("No authData found, redirecting to login page.");
+      navigate("/login");
+      return;
+    }
+    const { employeeId, projectId } = authData;
+    console.log("employeeId:", employeeId, "projectId:", projectId);
     setEmployeeId(employeeId);
     setPassedProjectId(projectId);
-    if (employeeId && projectId) {
-        fetchActualSprint(projectId, employeeId); // Pass employeeId to fetchActualSprint
-    } else {
-        console.log("No employeeId or projectId found in localStorage");
-        setIsScreenLoading(false); // Stop loading if data is missing
-    }
-}, []);
+    fetchActualSprint(projectId, employeeId);
+  }, [authData, navigate]);
 
-const fetchActualSprint = async (projectId, employeeId) => {
+const fetchActualSprint = async (projectId, assignedDevId) => {
   try {
       const response = await fetch(`/sprint/project/${projectId}`);
       if (response.ok) {
           const data = await response.json();
           setActualSprint(data);
           console.log("Actual sprint:", data);
-          fetchTasks(employeeId, data.id); // Pass employeeId to fetchTasks
+          fetchTasks(assignedDevId, data.id); 
       } else {
           console.error("Error fetching actual sprint:", response.statusText);
           setIsScreenLoading(false); // Stop loading on error
@@ -62,7 +63,7 @@ const fetchTasks = async (assignedDevId, sprintId) => {
 
       const parseTasks = await Promise.all(
           data.map(async (task) => {
-              const subTasks = await fetchSubTasks(task.id, employeeId);
+              const subTasks = await fetchSubTasks(task.id, assignedDevId);
               console.log(`Fetched subtasks for task ID ${task.id}:`, subTasks);
 
               return {
@@ -84,10 +85,10 @@ const fetchTasks = async (assignedDevId, sprintId) => {
   }
 };
 
-const fetchSubTasks = async (taskId, employeeId) => {
+const fetchSubTasks = async (taskId, assignedDevId) => {
   try {
-    console.log("Fetching subtasks for task ID:", taskId, "and employee ID:", employeeId);
-    const response = await fetch(`/subToDoItems/toDoItem/${taskId}/employee/${employeeId}/completed`);
+    console.log("Fetching subtasks for task ID:", taskId, "and employee ID:", assignedDevId);
+    const response = await fetch(`/subToDoItems/toDoItem/${taskId}/employee/${assignedDevId}/completed`);
     if (!response.ok) {
       console.error("Error fetching subtasks:", response.statusText);
       return [];
@@ -112,7 +113,7 @@ const fetchSubTasks = async (taskId, employeeId) => {
           deadline: new Date(item.deadline).toLocaleDateString(),
           description: item.description,
           status: item.status,
-          subTasks: await fetchSubTasks(item.id, employeeId),
+          subTasks: await fetchSubTasks(item.id, assignedDevId),
         }))
       );
 
@@ -128,9 +129,9 @@ const fetchSubTasks = async (taskId, employeeId) => {
   }
 };
 
-const handleRefresh = (projectId, employeeId) => {
+const handleRefresh = (projectId, assignedDevId) => {
   setIsScreenLoading(true);
-  fetchActualSprint(projectId, employeeId);
+  fetchActualSprint(projectId, assignedDevId);
 }
 
 
@@ -164,10 +165,10 @@ const handleDoneClick = () => {
     console.log("Done button clicked in modal");
     setTriggerClickIndex(null);
     closeModal();
-    handleRefresh(passedProjectId, employeeId); 
+    handleRefresh(passedProjectId, authEmployeeId); 
 };
 
-  console.log("employeeId: ", employeeId);
+  console.log("employeeId: ", authEmployeeId);
   return (
     <div>
       {isScreenLoading ? (
