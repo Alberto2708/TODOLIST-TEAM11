@@ -72,8 +72,7 @@
     height: 24px;
   }
   
-  .completedTasksButton,
-  .viewStatsButton {
+  .navButton {
     display: flex;
     align-items: center;
     gap: 8px;

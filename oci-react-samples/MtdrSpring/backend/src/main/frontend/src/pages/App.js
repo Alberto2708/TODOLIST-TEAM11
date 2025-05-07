@@ -7,6 +7,7 @@ import CompletedTasks from "./CompletedTasks";
 import Stats from "./Stats";
 import UserCompletedTasks from "./UserCompletedTasks";
 import { AuthProvider } from "../context/AuthContext"; // 👈 Import your context
+import SprintCarousel from "./SprintCarousel";
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
           <Route path="/completedtasks" element={<CompletedTasks />} />
           <Route path="/stats" element={<Stats />} />
           <Route path="/usercompletedtasks" element={<UserCompletedTasks />} />
+          <Route path="/sprintcarousel" element={<SprintCarousel />} />
         </Routes>
       </Router>
     </AuthProvider>
