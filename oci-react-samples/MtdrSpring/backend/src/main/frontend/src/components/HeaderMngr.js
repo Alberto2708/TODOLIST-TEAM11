@@ -33,6 +33,16 @@ function HeaderMngr({
         },
         showCreateButton: false
       };
+    }
+     else if (location.pathname.includes('SprintCarousel')) {
+      return {
+        title: "SPRINT CAROUSEL",
+        primaryButton: {
+          text: 'Tasks',
+          path : '/ManagerTasks'
+        },
+        showCreateButton: false
+      };
     } else {
       return {
         title: "TO DO LIST",
@@ -44,6 +54,10 @@ function HeaderMngr({
           text: 'View Statistics',
           path: '/Stats'
         },
+        terciaryButton: {
+          text: 'Sprint Carousel',
+          path: '/SprintCarousel'
+        },
         showCreateButton: true
       };
     }
@@ -53,6 +67,7 @@ function HeaderMngr({
     title, 
     primaryButton, 
     secondaryButton, 
+    terciaryButton,
     showCreateButton 
   } = getPageConfig();
 
@@ -114,6 +129,14 @@ function HeaderMngr({
               onClick={() => navigate(secondaryButton.path)}
             >
               {secondaryButton.text}
+            </button>
+          )}
+          {terciaryButton && (
+            <button 
+              className="navButton" 
+              onClick={() => navigate(terciaryButton.path)}
+            >
+              {terciaryButton.text}
             </button>
           )}
         </div>
