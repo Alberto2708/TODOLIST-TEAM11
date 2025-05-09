@@ -9,26 +9,32 @@ export default function ManagerModalTask({ setOpen, handleDeleteClick, task }) {
     setOpen(false); 
   };
 
-  const deleteTask = (toDoItemId) => {
+  const deleteTask = async (toDoItemId) => {
     console.log("Delete task:", toDoItemId);
-    try{
-      fetch(`todolist/${toDoItemId}`,{
+    try {
+      const response = await fetch(`todolist/${toDoItemId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
       });
-    }
-    catch (error) {
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete task: ${response.statusText}`);
+      }
+
+      console.log("Task successfully deleted.");
+      handleDeleteClick(toDoItemId); // Trigger parent to refresh only after success
+      closeModal(); // Close modal after deletion
+    } catch (error) {
       console.error("Error deleting task:", error);
+      alert("Failed to delete task. Please try again.");
     }
-    closeModal();
-  }
+  };
 
   const handleDelete = () => {
     console.log("Delete button clicked in ModalTask");
     deleteTask(task.id);
-    handleDeleteClick(); 
   };
 
   return (

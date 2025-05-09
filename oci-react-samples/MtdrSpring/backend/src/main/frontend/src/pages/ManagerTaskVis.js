@@ -224,12 +224,19 @@ export default function ManagerTaskVis() {
         closeTaskDetailsModal();
     };
 
-    const handleDeleteClick = () => {
-        console.log("Delete button clicked in modal");
+    const handleDeleteClick = (deletedTaskId) => {
+        setTasks(prevTasks => {
+            const newTasks = { ...prevTasks };
+            for (const [devId, devTasks] of Object.entries(newTasks)) {
+                newTasks[devId] = devTasks.filter(task => task.id !== deletedTaskId);
+            }
+            return newTasks;
+        });
+    
         setModalAction('delete');
         closeTaskDetailsModal();
-        handleRefresh(passedProjectId, authEmployeeId); 
-      };
+    };
+    
 
     return (
         <div className="mtvContainer">
@@ -320,7 +327,8 @@ export default function ManagerTaskVis() {
                             handleDoneClick={handleSaveClick}
                             handleCancelClick={handleCancelClick}
                             task={selectedTask}
-                            handleDeleteClick={handleDeleteClick}
+                            handleDeleteClick={(id) => handleDeleteClick(id)}
+
                         />
                     )}
                 </>
