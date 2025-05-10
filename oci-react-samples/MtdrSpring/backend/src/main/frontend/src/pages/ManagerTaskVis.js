@@ -327,6 +327,7 @@ export default function ManagerTaskVis() {
                             task={selectedTask}
                             handleDeleteClick={(id) => handleDeleteClick(id)}
                             onEditSaved={() => handleRefresh(passedProjectId, authEmployeeId)}
+                            mode = "pending"
                         />
                     )}
                 </>

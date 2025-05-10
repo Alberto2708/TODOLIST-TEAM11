@@ -177,6 +177,19 @@ export default function CompletedTasks() {
         closeTaskDetailsModal(); 
     };
 
+    
+    const handleDeleteClick = (deletedTaskId) => {
+        setTasks(prevTasks => {
+            const newTasks = { ...prevTasks };
+            for (const [devId, devTasks] of Object.entries(newTasks)) {
+                newTasks[devId] = devTasks.filter(task => task.id !== deletedTaskId);
+            }
+            return newTasks;
+        });
+
+        closeTaskDetailsModal();
+    };
+
     return (
         <div className="mtvContainer">
             {isScreenLoading ? (
@@ -221,6 +234,8 @@ export default function CompletedTasks() {
                             handleDoneClick={handleSaveClick} 
                             handleCancelClick={handleCancelClick} 
                             task={selectedTask} 
+                            handleDeleteClick={(id) => handleDeleteClick(id)}
+                            mode = "completed"
                         />
                     )}
                 </>

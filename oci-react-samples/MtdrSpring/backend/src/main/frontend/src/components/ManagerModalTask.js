@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import "../styles/ModelTask.css";
 
-export default function ManagerModalTask({ setOpen, handleDeleteClick, task, onEditSaved }) {
+export default function ManagerModalTask({ setOpen, handleDeleteClick, task, onEditSaved, mode = "pending" }) {
   const [open, setModalOpen] = useState(true);
   const [isEditMode, setIsEditMode] = useState(false);
 
@@ -133,6 +133,7 @@ export default function ManagerModalTask({ setOpen, handleDeleteClick, task, onE
               </div>
             </div>
 
+            {mode === "pending" && (
             <div className="modal-footer">
               {isEditMode ? (
                 <button className="btn btn-danger" onClick={handleSaveEdit}>
@@ -157,6 +158,7 @@ export default function ManagerModalTask({ setOpen, handleDeleteClick, task, onE
                 Delete
               </button>
             </div>
+    )}
           </div>
         </div>
       </div>
