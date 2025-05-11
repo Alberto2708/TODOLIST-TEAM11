@@ -1,7 +1,15 @@
 import React, { useState } from "react";
 import "../styles/ToDoItem.css";
 
-const CompletedItem = ({ name, timestamp, statusColor, taskStatus, subTasks = [], onClick, subTaskOnClick }) => {
+const CompletedItem = ({
+  name,
+  timestamp,
+  statusColor,
+  taskStatus,
+  subTasks = [],
+  onClick,
+  subTaskOnClick,
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleTaskClick = (e) => {
@@ -30,7 +38,9 @@ const CompletedItem = ({ name, timestamp, statusColor, taskStatus, subTasks = []
   };
 
   // Filter out non-completed subtasks
-  const completedSubTasks = subTasks.filter(subTask => subTask.status === "COMPLETED");
+  const completedSubTasks = subTasks.filter(
+    (subTask) => subTask.status === "COMPLETED"
+  );
 
   // Don't render the component at all if the main task isn't completed
   if (taskStatus !== "COMPLETED") {
