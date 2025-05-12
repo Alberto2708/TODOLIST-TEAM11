@@ -1,20 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, PureComponent } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext"; // Import the AuthContext
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  LabelList,
-  Cell,
-  PieChart,
-  Pie,
-} from "recharts";
+import { useAuth } from "../context/AuthContext";
 import "../styles/HistoricalStats.css";
 import HeaderMngr from "../components/HeaderMngr";
+import { BarChart, Bar, Rectangle, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function HistoricalStats() {
   const [passedemployeeId, setEmployeeId] = useState(null);
@@ -23,8 +12,10 @@ export default function HistoricalStats() {
   const [employees, setEmployees] = useState([]);
   const [screenLoading, setScreenLoading] = useState(true);
   const [sprints, setSprints] = useState([]);
+  const [selectedTab, setSelectedTab] = useState("sprint");
+  const [workedHoursObject, setWorkedHoursObject] = useState({});
   const navigate = useNavigate();
-  const { authData } = useAuth(); // Use the AuthContext to get authData
+  const { authData } = useAuth();
 
   useEffect(() => {
     if (!authData) {
@@ -33,11 +24,17 @@ export default function HistoricalStats() {
       return;
     }
     const { employeeId, projectId } = authData;
-    console.log("employeeId:", employeeId, "projectId:", projectId);
     setEmployeeId(employeeId);
     setPassedProjectId(projectId);
     fetchActualSprint(projectId, employeeId);
   }, [authData, navigate]);
+
+  useEffect(() => {
+  if (employees.length > 0 && sprints.length > 0) {
+    fetchWorkedHours(employees, sprints);
+  }
+}, [employees, sprints]);
+
 
   const fetchActualSprint = async (projectId, managerId) => {
     try {
@@ -45,7 +42,6 @@ export default function HistoricalStats() {
       if (response.ok) {
         const data = await response.json();
         setActualSprint(data);
-        console.log("Actual sprint:", data);
         fetchEmployees(managerId, data.id);
         fetchSprints(projectId);
       } else {
@@ -61,7 +57,6 @@ export default function HistoricalStats() {
       const response = await fetch(`/employees/managerId/${managerId}`);
       const data = await response.json();
       setEmployees(data);
-
       setScreenLoading(false);
     } catch (error) {
       console.error("Error fetching employees:", error);
@@ -70,17 +65,40 @@ export default function HistoricalStats() {
   };
 
   const fetchSprints = async (projectId) => {
-    try{
-        const response = await fetch(`/sprint/projects/${projectId}`);
-        const data = await response.json();
-        setSprints(data);
-        console.log("Sprints:", data);
+    try {
+      const response = await fetch(`/sprint/projects/${projectId}`);
+      const data = await response.json();
+      setSprints(data);
+      console.log("Sprints data:", data);
+    } catch (error) {
+      console.error("Error fetching sprints:", error);
+    }
+  };
+
+  const fetchWorkedHours = async (employeeList, sprintList) => {
+    const workedHours = {};
+
+    for (const sprintF of sprintList) {
+      workedHours[sprintF.id] = {}
+      let totalHoursPerSprint = 0;
+
+      for (const employeeF of employeeList) {
+        const response = await fetch(`/assignedDev/${employeeF.id}/sprint/${sprintF.id}/workedHours/kpi`);
+        if (response.ok) {
+          const data = await response.json();
+          workedHours[sprintF.id][employeeF.name] = data.workedHoursKpi;
+          totalHoursPerSprint += data.workedHoursKpi;
+          workedHours[sprintF.id]["sprintName"] = sprintF.name;
+        } else {
+          console.error("Error fetching worked hours:", response.statusText);
+        }
+      }
+      workedHours[sprintF.id]["totalWorkedHours"] = totalHoursPerSprint;
+
     }
 
-    catch (error) {
-        console.error("Error fetching sprints:", error);
-    }
-  }
+    console.log("Worked hours data:", workedHours);
+  };
 
   return (
     <div className="statsContainer">
@@ -91,11 +109,34 @@ export default function HistoricalStats() {
       ) : (
         <>
           <div className="chartContainer">
-            <HeaderMngr
-              actualSprint={actualSprint}
-              employees={employees}
-            />
-        
+            <HeaderMngr actualSprint={actualSprint} employees={employees} />
+
+            <div className="segment-control">
+            <button
+              className={selectedTab === "sprint" ? "active-tab" : ""}
+              onClick={() => setSelectedTab("sprint")}
+            >
+              Graphs
+            </button>
+            <button
+              className={selectedTab === "historical" ? "active-tab" : ""}
+              onClick={() => setSelectedTab("historical")}
+            >
+              Written report
+            </button>
+          </div>
+
+            {selectedTab === "sprint" && (
+              <div>
+                <h3>Current Sprint Stats</h3>
+              </div>
+            )}
+
+            {selectedTab === "historical" && (
+              <div>
+                <h3>Historical Statistics</h3>
+              </div>
+            )}
           </div>
         </>
       )}
