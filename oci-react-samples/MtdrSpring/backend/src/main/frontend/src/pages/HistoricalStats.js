@@ -22,10 +22,7 @@ export default function HistoricalStats() {
   const [actualSprint, setActualSprint] = useState(null);
   const [employees, setEmployees] = useState([]);
   const [screenLoading, setScreenLoading] = useState(true);
-  const [chartData, setChartData] = useState([]);
-  const [selectedDeveloper, setSelectedDeveloper] = useState("all");
-  const [workedHours, setWorkedHours] = useState(0);
-  const [estimatedHours, setEstimatedHours] = useState(0);
+  const [sprints, setSprints] = useState([]);
   const navigate = useNavigate();
   const { authData } = useAuth(); // Use the AuthContext to get authData
 
@@ -50,6 +47,7 @@ export default function HistoricalStats() {
         setActualSprint(data);
         console.log("Actual sprint:", data);
         fetchEmployees(managerId, data.id);
+        fetchSprints(projectId);
       } else {
         console.error("Error fetching actual sprint:", response.statusText);
       }
@@ -71,9 +69,18 @@ export default function HistoricalStats() {
     }
   };
 
+  const fetchSprints = async (projectId) => {
+    try{
+        const response = await fetch(`/sprint/projects/${projectId}`);
+        const data = await response.json();
+        setSprints(data);
+        console.log("Sprints:", data);
+    }
 
-
-
+    catch (error) {
+        console.error("Error fetching sprints:", error);
+    }
+  }
 
   return (
     <div className="statsContainer">
