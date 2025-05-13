@@ -76,29 +76,34 @@ export default function HistoricalStats() {
   };
 
   const fetchWorkedHours = async (employeeList, sprintList) => {
-    const workedHours = {};
+  const workedHoursArray = [];
 
-    for (const sprintF of sprintList) {
-      workedHours[sprintF.id] = {}
-      let totalHoursPerSprint = 0;
+  for (const sprintF of sprintList) {
+    let sprintEntry = {
+      sprintName: sprintF.name,
+    };
 
-      for (const employeeF of employeeList) {
-        const response = await fetch(`/assignedDev/${employeeF.id}/sprint/${sprintF.id}/workedHours/kpi`);
-        if (response.ok) {
-          const data = await response.json();
-          workedHours[sprintF.id][employeeF.name] = data.workedHoursKpi;
-          totalHoursPerSprint += data.workedHoursKpi;
-          workedHours[sprintF.id]["sprintName"] = sprintF.name;
-        } else {
-          console.error("Error fetching worked hours:", response.statusText);
-        }
+    let totalHoursPerSprint = 0;
+
+    for (const employeeF of employeeList) {
+      const response = await fetch(`/assignedDev/${employeeF.id}/sprint/${sprintF.id}/workedHours/kpi`);
+      if (response.ok) {
+        const data = await response.json();
+        sprintEntry[employeeF.name] = data.workedHoursKpi;
+        totalHoursPerSprint += data.workedHoursKpi;
+      } else {
+        console.error("Error fetching worked hours:", response.statusText);
       }
-      workedHours[sprintF.id]["totalWorkedHours"] = totalHoursPerSprint;
-
     }
 
-    console.log("Worked hours data:", workedHours);
-  };
+    sprintEntry.totalWorkedHours = totalHoursPerSprint;
+    workedHoursArray.push(sprintEntry);
+  }
+
+  console.log("Worked hours array for chart:", workedHoursArray);
+  setWorkedHoursObject(workedHoursArray); // ✅ Important!
+};
+
 
   return (
     <div className="statsContainer">
@@ -127,8 +132,24 @@ export default function HistoricalStats() {
           </div>
 
             {selectedTab === "sprint" && (
-              <div>
-                <h3>Current Sprint Stats</h3>
+              <div className="chart-container">
+                <h3>Hours worked by sprint</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart
+                    width={500}
+                    height={300}
+                    data={workedHoursObject}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="sprintName" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="totalWorkedHours" fill="#8884d8" />
+                  </BarChart>
+                </ResponsiveContainer>
+
+                
               </div>
             )}
 
