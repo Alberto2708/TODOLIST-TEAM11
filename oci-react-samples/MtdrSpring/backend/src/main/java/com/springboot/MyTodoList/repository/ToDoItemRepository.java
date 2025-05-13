@@ -21,4 +21,6 @@ public interface ToDoItemRepository extends JpaRepository<ToDoItem,Integer> {
     List<ToDoItem> findByManagerIdAndSprintId(@Param("managerId") Integer managerId, @Param("sprintId") Integer sprintId);
 
     List<ToDoItem> findBySprintId(@Param("sprintId") Integer sprintId);
+
+    List<ToDoItem> findBySprintIdAndStatus(@Param("sprintId") Integer sprintId, @Param("status") String status);
 }

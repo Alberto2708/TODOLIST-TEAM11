@@ -5,6 +5,9 @@ import com.springboot.MyTodoList.service.ToDoItemService;
 import com.springboot.MyTodoList.service.SubToDoItemService;
 import com.springboot.MyTodoList.controller.SubToDoItemController;
 import com.springboot.MyTodoList.controller.AssignedDevController;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -35,6 +38,8 @@ public class ToDoItemController {
     @Autowired
     private AssignedDevController assignedDevController;
 
+    private static final Logger logger = LoggerFactory.getLogger(AssignedDevController.class);
+
     // @CrossOrigin
     @GetMapping(value = "/todolist")
     public List<ToDoItem> getAllToDoItems() {
@@ -45,8 +50,8 @@ public class ToDoItemController {
     @GetMapping(value = "/todolist/{id}")
     public ResponseEntity<ToDoItem> getToDoItemById(@PathVariable Integer id) {
         try {
-            ResponseEntity<ToDoItem> responseEntity = toDoItemService.getItemById(id);
-            return new ResponseEntity<ToDoItem>(responseEntity.getBody(), HttpStatus.OK);
+            ToDoItem response = toDoItemService.getItemById(id);
+            return new ResponseEntity<ToDoItem>(response, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -73,7 +78,21 @@ public class ToDoItemController {
             return null;
         }
     }
-    
+
+    //Get Completed ToDoItems by Sprint ID
+    @GetMapping(value = "/todolist/sprint/{sprintId}/completed")
+    public ResponseEntity<List<ToDoItem>> getCompletedToDoItemsBySprintId(@PathVariable Integer sprintId) {
+        try{
+            List<ToDoItem> tasks = toDoItemService.getCompletedToDoItemsBySprintId(sprintId);
+            if (tasks.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(tasks, HttpStatus.OK);
+        } catch(Exception e){
+            logger.error("Error retrieving completed ToDoItems by Sprint ID: " + e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }    
     
     
     // Post Map for ToDoItem creation
@@ -84,7 +103,7 @@ public class ToDoItemController {
             Integer responseEntity = td.getID();
             return new ResponseEntity<>(responseEntity, HttpStatus.CREATED);
         } catch(Exception e){
-            System.out.println(e);
+            logger.error("Error creating ToDoItem: " + e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

@@ -73,19 +73,22 @@ public class AssignedDevController {
     }
 
     @GetMapping(value = "/assignedDev/{assignedDevId}")
-    public List<ResponseEntity<ToDoItem>> getDevAssignedTasksByAssignedDevId(@PathVariable Integer assignedDevId) {
+    public ResponseEntity<List<ToDoItem>> getDevAssignedTasksByAssignedDevId(@PathVariable Integer assignedDevId) {
         try{
             List<AssignedDev>  assignedDevs = assignedDevService.getAssignedDevsByDevId(assignedDevId);
-            System.out.println(assignedDevs.size());
-            List<ResponseEntity<ToDoItem>> tasks = new ArrayList<>();
+            logger.info("Number of tasks: " + assignedDevs.size());
+            if (assignedDevs == null){
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+            List<ToDoItem> tasks = new ArrayList<>();
             for(AssignedDev task : assignedDevs){
                 //System.out.println(task.getToDoItemId());
                 tasks.add(toDoItemService.getItemById(task.getToDoItemId()));
             }
-            return tasks;
+            return new ResponseEntity<List<ToDoItem>>(tasks, HttpStatus.OK);
         }catch(Exception e){
             System.out.println(e);
-            return null;
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -97,8 +100,8 @@ public class AssignedDevController {
             //System.out.println(assignedDevs.size());
             List<ToDoItem> tasks = new ArrayList<>();
             for(AssignedDev task : assignedDevs){
-                if (toDoItemService.getItemById(task.getToDoItemId()).getBody().getSprintId() == sprintId){
-                    tasks.add(toDoItemService.getItemById(task.getToDoItemId()).getBody());
+                if (toDoItemService.getItemById(task.getToDoItemId()).getSprintId() == sprintId){
+                    tasks.add(toDoItemService.getItemById(task.getToDoItemId()));
                 }
             }
             return new ResponseEntity<>(tasks, HttpStatus.OK);
@@ -107,10 +110,55 @@ public class AssignedDevController {
             return null;
         }
     }
+
+    //Get Completed tasks by developer id and sprint id
+    @GetMapping(value = "/assignedDev/{assignedDevId}/sprint/{sprintId}/completed")
+    public ResponseEntity<List<ToDoItem>> getCompletedTasksByEmployeeAndSprint(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
+        try{
+            List<AssignedDev> assignedDevs = assignedDevService.getAssignedDevsByDevId(assignedDevId);
+            if (assignedDevs == null){
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+            List<ToDoItem> completedTasks = new ArrayList<>();
+            for (AssignedDev assignedDev : assignedDevs){
+                ToDoItem toDoItem = toDoItemService.getItemById(assignedDev.getToDoItemId());
+                if (toDoItem.getSprintId() == sprintId && toDoItem.getStatus().matches("COMPLETED")){
+                    completedTasks.add(toDoItem);
+                }
+            }
+            return new ResponseEntity<>(completedTasks, HttpStatus.OK);
+        }catch(Exception e){
+            logger.error("Error: " + e.getMessage());
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    //Get Number of completed tasks by developer id and sprint id
+    @GetMapping(value = "/assignedDev/{assignedDevId}/sprint/{sprintId}/completed/number")
+    public ResponseEntity<Integer> getNumberOfCompletedTasksByEmployeeAndSprint(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
+        try{
+            List<AssignedDev> assignedDevs = assignedDevService.getAssignedDevsByDevId(assignedDevId);
+            if (assignedDevs == null){
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+            Integer completedTasks = 0;
+            for (AssignedDev assignedDev : assignedDevs){
+                ToDoItem toDoItem = toDoItemService.getItemById(assignedDev.getToDoItemId());
+                if (toDoItem.getSprintId() == sprintId && toDoItem.getStatus().matches("COMPLETED")){
+                    completedTasks += 1;
+                }
+            }
+            return new ResponseEntity<>(completedTasks, HttpStatus.OK);
+        }catch(Exception e){
+            logger.error("Error: " + e.getMessage());
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     //KPI
     //Get Completed percentage of assigned tasks by developer id and sprint id KPI
     @GetMapping(value="/assignedDev/{assignedDevId}/sprint/{sprintId}/completedTasks/kpi")
-    public Integer getCompletedTasksByEmployeeAndSprint(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
+    public Integer getCompletedTasksPercentageByEmployeeAndSprint(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
         try{
             List<ToDoItem> tasks = getAssignedTasksByAssignedDevAndSprint(assignedDevId, sprintId).getBody();
             Integer sum = 0;
@@ -193,22 +241,25 @@ public class AssignedDevController {
 
     //Get father tasks by developer id and sprint id
     @GetMapping(value = "/assignedDev/{assignedDevId}/sprint/{sprintId}/father")
-    public List<ResponseEntity<ToDoItem>> getAssignedTasksByAssignedDevAndSprintFather(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
+    public ResponseEntity<List<ToDoItem>> getAssignedTasksByAssignedDevAndSprintFather(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
         try{
             List<AssignedDev>  assignedDevs = assignedDevService.getAssignedDevsByDevId(assignedDevId);
-            List<ResponseEntity<ToDoItem>> tasks = new ArrayList<>();
+            if (assignedDevs == null){
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+            List<ToDoItem> tasks = new ArrayList<>();
             for(AssignedDev task : assignedDevs){
-                //Add logic for subtasks verification
-                if (toDoItemService.getItemById(task.getToDoItemId()).getBody().getSprintId() == sprintId ){
+                //Logic for subtasks verification
+                if (toDoItemService.getItemById(task.getToDoItemId()).getSprintId() == sprintId ){
                     if (subToDoItemService.checkIfIdIsntSubToDoItem(task.getToDoItemId())){
                         tasks.add(toDoItemService.getItemById(task.getToDoItemId()));
                     }
                 }
             }
-            return tasks;
+            return new ResponseEntity<>(tasks, HttpStatus.OK);
         }catch(Exception e){
-            System.out.println(e);
-            return null;
+            logger.error("Error: " + e.getMessage());
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -216,14 +267,14 @@ public class AssignedDevController {
     @GetMapping(value = "/assignedDev/{assignedDevId}/sprint/{sprintId}/father/completed")
     public ResponseEntity<List<ToDoItem>> getCompletedTasksByEmployeeAndSprintFather(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
         try{
-            List<ResponseEntity<ToDoItem>> tasks = getAssignedTasksByAssignedDevAndSprintFather(assignedDevId, sprintId);
-            if (tasks == null || tasks.isEmpty()){
+            List<ToDoItem> tasks = getAssignedTasksByAssignedDevAndSprintFather(assignedDevId, sprintId).getBody();
+            if (tasks == null){
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
             List<ToDoItem> completedTasks = new ArrayList<>();
-            for (ResponseEntity<ToDoItem> task : tasks){
-                if (task.getBody().getStatus().matches("COMPLETED")){
-                    completedTasks.add(task.getBody());
+            for (ToDoItem task : tasks){
+                if (task.getStatus().matches("COMPLETED")){
+                    completedTasks.add(task);
                 }
             }
             return new ResponseEntity<>(completedTasks, HttpStatus.OK);
@@ -237,14 +288,14 @@ public class AssignedDevController {
     @GetMapping(value = "/assignedDev/{assignedDevId}/sprint/{sprintId}/father/pending")
     public ResponseEntity<List<ToDoItem>> getPendingTasksByEmployeeAndSprintFather(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
         try{
-            List<ResponseEntity<ToDoItem>> tasks = getAssignedTasksByAssignedDevAndSprintFather(assignedDevId, sprintId);
-            if (tasks == null || tasks.isEmpty()){
+            List<ToDoItem> tasks = getAssignedTasksByAssignedDevAndSprintFather(assignedDevId, sprintId).getBody();
+            if (tasks == null){
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
             List<ToDoItem> pendingTasks = new ArrayList<>();
-            for (ResponseEntity<ToDoItem> task : tasks){
-                if (task.getBody().getStatus().matches("PENDING")){
-                    pendingTasks.add(task.getBody());
+            for (ToDoItem task : tasks){
+                if (task.getStatus().matches("PENDING")){
+                    pendingTasks.add(task);
                 }
             }
             return new ResponseEntity<>(pendingTasks, HttpStatus.OK);
@@ -274,7 +325,7 @@ public class AssignedDevController {
             for(AssignedDev task : assignedDev){
                 //System.out.println(task.getToDoItemId()); //Returns the task id
                 //System.out.println(toDoItemService.getItemById(task.getToDoItemId()).getBody().getStatus()); //Returns the status of the task
-                ToDoItem toDoItem = toDoItemService.getItemById(task.getToDoItemId()).getBody();
+                ToDoItem toDoItem = toDoItemService.getItemById(task.getToDoItemId());
                 if (toDoItem.getStatus().matches("COMPLETED")){
                     logger.info("Task ID: " + toDoItem.getID() + ", Status: " + toDoItem.getStatus() + ", CompletionTs: " + toDoItem.getCompletionTs() + ", Deadline: " + toDoItem.getDeadline());
                     sum += toDoItem.getDeadline().getYear()*365 + toDoItem.getDeadline().getDayOfYear() - toDoItem.getCompletionTs().getYear()*365 - toDoItem.getCompletionTs().getDayOfYear();

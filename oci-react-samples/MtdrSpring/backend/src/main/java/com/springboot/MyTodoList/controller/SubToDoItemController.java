@@ -82,15 +82,20 @@ public class SubToDoItemController {
 
     //Get Mapping to get all subToDoItems Objects by ToDoItemId
     @GetMapping(value="/subToDoItems/toDoItem/{toDoItemId}")
-    public List<ResponseEntity<ToDoItem>> getSubToDoItemsBytoDoItemId(@PathVariable Integer toDoItemId) {
+    public ResponseEntity<List<ToDoItem>> getSubToDoItemsBytoDoItemId(@PathVariable Integer toDoItemId) {
         try{
             List<SubToDoItem> subToDoItems = subToDoItemService.findAllSubToDoItemsByToDoItemId(toDoItemId);
-            List<ResponseEntity<ToDoItem>> toDoItems = new ArrayList<>();
+            if (subToDoItems == null) {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+
+            List<ToDoItem> toDoItems = new ArrayList<>();
             for(SubToDoItem subToDoItem : subToDoItems){
                 toDoItems.add(toDoItemService.getItemById(subToDoItem.getSubToDoItemId()));
             }
-            return toDoItems;
+            return new ResponseEntity<>(toDoItems, HttpStatus.OK);
         } catch(Exception e){
+            logger.info("Error: " + e.getMessage());
             return null;
         }
     }
@@ -100,17 +105,18 @@ public class SubToDoItemController {
     public List<ToDoItem> getSubToDoItemsByToDoItemIdAndEmployeeId(@PathVariable Integer toDoItemId, @PathVariable Integer employeeId) {
         try{
             List<SubToDoItem> subToDoItems = subToDoItemService.findAllSubToDoItemsByToDoItemId(toDoItemId);
-            if (subToDoItems.isEmpty()) {
+            if (subToDoItems == null) {
                 return null;
             }
             List<ToDoItem> toDoItems = new ArrayList<>();
             for(SubToDoItem subToDoItem : subToDoItems){
                 if (assignedDevService.checkIfToDoItemIsAssignedToEmployeByIds(subToDoItem.getSubToDoItemId(), employeeId)){
-                    toDoItems.add(toDoItemService.getItemById(subToDoItem.getSubToDoItemId()).getBody());
+                    toDoItems.add(toDoItemService.getItemById(subToDoItem.getSubToDoItemId()));
                 }
             }
             return toDoItems;
         } catch(Exception e){
+            logger.info("Error: " + e.getMessage());
             return null;
         }
     }
@@ -120,7 +126,7 @@ public class SubToDoItemController {
     public ResponseEntity<List<ToDoItem>> getCompletedSubToDoItemsByToDoItemIdAndEmployeeId(@PathVariable Integer toDoItemId, @PathVariable Integer employeeId) {
         try{
             List<ToDoItem> toDoItems = getSubToDoItemsByToDoItemIdAndEmployeeId(toDoItemId, employeeId);
-            if (toDoItems.isEmpty()) {
+            if (toDoItems == null) {
                 logger.info("IS EMPTY");
                 return null;
             }

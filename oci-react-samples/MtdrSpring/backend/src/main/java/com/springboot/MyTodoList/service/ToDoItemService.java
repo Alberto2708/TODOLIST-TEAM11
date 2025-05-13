@@ -24,17 +24,22 @@ public class ToDoItemService {
         return todoItems;
     }
 
-    public ResponseEntity<ToDoItem> getItemById(Integer id) {
+    public ToDoItem getItemById(Integer id) {
         Optional<ToDoItem> todoData = toDoItemRepository.findById(id);
         if (todoData.isPresent()) {
-            return new ResponseEntity<>(todoData.get(), HttpStatus.OK);
+            return todoData.get();
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return null;
         }
     }
 
     public List<ToDoItem> getToDoItemsBySprintId(Integer sprintId) {
         List<ToDoItem> todoData = toDoItemRepository.findBySprintId(sprintId);
+        return todoData;
+    }
+
+    public List<ToDoItem> getCompletedToDoItemsBySprintId(Integer sprintId) {
+        List<ToDoItem> todoData = toDoItemRepository.findBySprintIdAndStatus(sprintId, "COMPLETED");
         return todoData;
     }
 

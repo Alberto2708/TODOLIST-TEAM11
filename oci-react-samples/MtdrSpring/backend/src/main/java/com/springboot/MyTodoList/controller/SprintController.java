@@ -90,11 +90,11 @@ public class SprintController {
     //KPI
     //Get percentage of completed tasks by a sprint
     @GetMapping(value = "/sprint/{sprintId}/kpi")
-    public ResponseEntity<Integer> getCompletedTasksBySprint(@PathVariable Integer sprintId) {
+    public ResponseEntity<Integer> getCompletedTasksPercentageBySprint(@PathVariable Integer sprintId) {
         try{
             List<ToDoItem> tasks = toDoItemService.getToDoItemsBySprintId(sprintId);
-            if(tasks.size() == 0) {
-                return null;
+            if(tasks.size() == 0 || tasks == null) {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
             }
             Integer sum = 0;
             for (ToDoItem task : tasks) {
@@ -108,7 +108,6 @@ public class SprintController {
             return null;
         }
     }
-
     //KPI
     //Get Overdue tasks percentage by sprint id KPI
     @GetMapping(value = "/sprint/{sprintId}/overdue/kpi")
