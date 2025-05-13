@@ -1,34 +1,81 @@
 import { useState } from 'react';
 import "../styles/ModelTask.css";
 
-export default function ManagerModalTask({ setOpen, handleDeleteClick, task }) {
+export default function ManagerModalTask({ setOpen, handleDeleteClick, task, onEditSaved, mode = "pending" }) {
   const [open, setModalOpen] = useState(true);
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  // Editable fields
+  const [editedName, setEditedName] = useState('');
+  const [editedStatus, setEditedStatus] = useState('');
+  const [editedDescription, setEditedDescription] = useState('');
+  const [editedDeadline, setEditedDeadline] = useState('');
+  
+  
 
   const closeModal = () => {
     setModalOpen(false);
-    setOpen(false); 
+    setOpen(false);
   };
 
-  const deleteTask = (toDoItemId) => {
-    console.log("Delete task:", toDoItemId);
-    try{
-      fetch(`todolist/${toDoItemId}`,{
+  const deleteTask = async (toDoItemId) => {
+    try {
+      const response = await fetch(`todolist/${toDoItemId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
       });
-    }
-    catch (error) {
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete task: ${response.statusText}`);
+      }
+
+      console.log("Task successfully deleted.");
+      handleDeleteClick(toDoItemId);
+      closeModal();
+    } catch (error) {
       console.error("Error deleting task:", error);
+      alert("Failed to delete task. Please try again.");
     }
-    closeModal();
-  }
+  };
 
   const handleDelete = () => {
     console.log("Delete button clicked in ModalTask");
     deleteTask(task.id);
-    handleDeleteClick(); 
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      
+      const updatedTask = {
+        name: editedName,
+        status: editedStatus,
+        description: editedDescription,
+        deadline: new Date(editedDeadline).toISOString()
+      };
+      
+
+      const response = await fetch(`todolist/${task.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedTask),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update task');
+      }
+
+      console.log("Task updated successfully");
+      setIsEditMode(false);
+      onEditSaved();
+      closeModal();
+    } catch (error) {
+      console.error("Update failed:", error);
+      alert("Failed to update task. Please try again.");
+    }
   };
 
   return (
@@ -48,30 +95,70 @@ export default function ManagerModalTask({ setOpen, handleDeleteClick, task }) {
             <div className="modal-body">
               <div className="modal-description">
                 <div className="modal-line">
-                  Name: {task.name}<br />
+                  Name: {isEditMode ? (
+                    <input
+                      value={editedName}
+                      onChange={(e) => setEditedName(e.target.value)}
+                    />
+                  ) : task.name}
                 </div>
                 <div className="modal-line">
-                  Status: {task.status}<br />
+                  Status: {isEditMode ? (
+                    <select
+                      value={editedStatus}
+                      onChange={(e) => setEditedStatus(e.target.value)}
+                    >
+                      <option value="PENDING">PENDING</option>
+                      <option value="COMPLETED">COMPLETED</option>
+                    </select>
+                  ) : task.status}
                 </div>
                 <div className="modal-line">
-                  Description: {task.description} <br />
+                  Description: {isEditMode ? (
+                    <textarea
+                      value={editedDescription}
+                      onChange={(e) => setEditedDescription(e.target.value)}
+                    />
+                  ) : task.description}
                 </div>
                 <div className="modal-line">
-                  Due date: {task.deadline}<br />
+                  Due date: {isEditMode ? (
+                    <input
+                      type="date"
+                      value={editedDeadline}
+                      onChange={(e) => setEditedDeadline(e.target.value)}
+                    />
+                  ) : task.deadline}
                 </div>
               </div>
             </div>
+
+            {mode === "pending" && (
             <div className="modal-footer">
-              <button className="btn btn-danger">
-                Save
+              {isEditMode ? (
+                <button className="btn btn-danger" onClick={handleSaveEdit}>
+                  Save
+                </button>
+              ) : (
+                <button
+                className="btn btn-cancel"
+                onClick={() => {
+                  setEditedName(task.name);
+                  setEditedStatus(task.status);
+                  setEditedDescription(task.description);
+                  setEditedDeadline(new Date(task.deadline).toISOString().slice(0, 10));
+                  setIsEditMode(true);
+                }}
+              >
+                Edit task
               </button>
+
+              )}
               <button className="btn btn-cancel" onClick={handleDelete}>
                 Delete
               </button>
-              <button className="btn btn-cancel">
-                Edit task
-              </button>
             </div>
+    )}
           </div>
         </div>
       </div>

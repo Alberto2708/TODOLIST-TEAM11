@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
 import '../styles/ManagerTaskVis.css';
 import React from 'react';
 

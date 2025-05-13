@@ -6,10 +6,9 @@ import ManagerModalTask from "../components/ManagerModalTask";
 import TaskCreation from "../components/TaskCreation";
 import SubTaskCreation from "../components/SubTaskCreation";
 import HeaderMngr from "../components/HeaderMngr";
-import { useAuth } from "../context/AuthContext"; // Import the AuthContext
+import { useAuth } from "../context/AuthContext";
 
 export default function ManagerTaskVis() {
-    // States
     const [isTaskCreationModalOpen, setIsTaskCreationModalOpen] = useState(false);
     const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState(false);
     const [isSubTaskCreationModalOpen, setIsSubTaskCreationModalOpen] = useState(false);
@@ -26,36 +25,38 @@ export default function ManagerTaskVis() {
     const [selectedDeveloper, setSelectedDeveloper] = useState("all");
     const [filteredTasks, setFilteredTasks] = useState({});
     const navigate = useNavigate();
-    const { authData } = useAuth(); // Use the AuthContext to get authData
+    const { authData } = useAuth();
 
-
-  useEffect(() => {
-    if (!authData) {
-      console.log("No authData found, redirecting to login page.");
-      navigate("/login");
-      return;
-    }
-    const { employeeId, projectId } = authData;
-    console.log("employeeId:", employeeId, "projectId:", projectId);
-    setEmployeeId(employeeId);
-    setPassedProjectId(projectId);
-    fetchActualSprint(projectId, employeeId);
-  }, [authData, navigate]);
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+    };
 
     useEffect(() => {
-        console.log("Selected Developer:", selectedDeveloper);
-        console.log("Tasks before filtering:", tasks);
-    
+        if (!authData) {
+            console.log("No authData found, redirecting to login page.");
+            navigate("/login");
+            return;
+        }
+        const { employeeId, projectId } = authData;
+        console.log("employeeId:", employeeId, "projectId:", projectId);
+        setEmployeeId(employeeId);
+        setPassedProjectId(projectId);
+        fetchActualSprint(projectId, employeeId);
+    }, [authData, navigate]);
+
+    useEffect(() => {
         if (selectedDeveloper === "all") {
             setFilteredTasks(tasks);
-            console.log("Filtered Tasks (All Developers):", tasks);
         } else {
             const newFilteredTasks = {};
             if (tasks[selectedDeveloper]) {
                 newFilteredTasks[selectedDeveloper] = tasks[selectedDeveloper];
             }
             setFilteredTasks(newFilteredTasks);
-            console.log(`Filtered Tasks (Developer ${selectedDeveloper}):`, newFilteredTasks);
         }
     }, [selectedDeveloper, tasks]);
 
@@ -102,21 +103,21 @@ export default function ManagerTaskVis() {
                 return;
             }
             const data = await response.json();
-            
+
             const parsedTasks = await Promise.all(
                 data.map(async (item) => {
-                    const subTasks = await fetchSubTasks(item.id, assignedDevId); // Use item.id, not item.body.id
+                    const subTasks = await fetchSubTasks(item.id, assignedDevId);
                     return {
-                        id: item.id,          
-                        name: item.name,      
-                        deadline: new Date(item.deadline).toLocaleDateString(),
+                        id: item.id,
+                        name: item.name,
+                        deadline: formatDate(item.deadline),
                         description: item.description,
                         status: item.status,
                         subTasks: subTasks,
                     };
                 })
             );
-            
+
             setTasks(prevTasks => ({ ...prevTasks, [assignedDevId]: parsedTasks }));
         } catch (error) {
             console.error("Error in fetchTasks:", error);
@@ -130,25 +131,25 @@ export default function ManagerTaskVis() {
                 console.error("Error fetching subtasks:", response.statusText);
                 return [];
             }
-            
+
             const text = await response.text();
             if (!text) {
                 return [];
             }
-            
+
             try {
                 const data = JSON.parse(text);
                 const parsedSubTasks = await Promise.all(
                     data.map(async (item) => ({
                         id: item.id,
                         name: item.name,
-                        deadline: new Date(item.deadline).toLocaleDateString(),
+                        deadline: formatDate(item.deadline),
                         description: item.description,
                         status: item.status,
                         subTasks: await fetchSubTasks(item.id, assignedDevId),
                     }))
                 );
-                
+
                 setSubTasks(prevSubTasks => ({ ...prevSubTasks, [taskId]: parsedSubTasks }));
                 return parsedSubTasks;
             } catch (error) {
@@ -160,8 +161,6 @@ export default function ManagerTaskVis() {
             return [];
         }
     };
-
-
 
     const getStatusColor = (status) => {
         switch (status) {
@@ -224,12 +223,18 @@ export default function ManagerTaskVis() {
         closeTaskDetailsModal();
     };
 
-    const handleDeleteClick = () => {
-        console.log("Delete button clicked in modal");
+    const handleDeleteClick = (deletedTaskId) => {
+        setTasks(prevTasks => {
+            const newTasks = { ...prevTasks };
+            for (const [devId, devTasks] of Object.entries(newTasks)) {
+                newTasks[devId] = devTasks.filter(task => task.id !== deletedTaskId);
+            }
+            return newTasks;
+        });
+
         setModalAction('delete');
         closeTaskDetailsModal();
-        handleRefresh(passedProjectId, authEmployeeId); 
-      };
+    };
 
     return (
         <div className="mtvContainer">
@@ -256,7 +261,7 @@ export default function ManagerTaskVis() {
                             .filter(employee => selectedDeveloper === "all" || employee.id === selectedDeveloper)
                             .map((employee) => {
                                 const employeeTasks = filteredTasks[employee.id] || [];
-                                
+
                                 return (
                                     <div key={employee.id} className="employee-task-list">
                                         <h2>{employee.name}'s to do list:</h2>
@@ -276,7 +281,7 @@ export default function ManagerTaskVis() {
                                             ))
                                         ) : (
                                             <div className="no-tasks-message">
-                                                {selectedDeveloper === "all" 
+                                                {selectedDeveloper === "all"
                                                     ? "No tasks assigned to this developer"
                                                     : "This developer has no tasks"}
                                             </div>
@@ -289,7 +294,7 @@ export default function ManagerTaskVis() {
                     {isTaskCreationModalOpen && (
                         <div className="modal-overlay">
                             <div className="modal-content">
-                                <TaskCreation 
+                                <TaskCreation
                                     onClose={closeTaskCreationModal}
                                     onTaskCreated={() => handleRefresh(passedProjectId, authEmployeeId)}
                                     managerId={authEmployeeId}
@@ -303,7 +308,7 @@ export default function ManagerTaskVis() {
                     {isSubTaskCreationModalOpen && (
                         <div className="modal-overlay">
                             <div className="modal-content">
-                                <SubTaskCreation 
+                                <SubTaskCreation
                                     onClose={closeSubTaskCreationModal}
                                     onTaskCreated={() => handleRefresh(passedProjectId, authEmployeeId)}
                                     managerId={authEmployeeId}
@@ -320,7 +325,9 @@ export default function ManagerTaskVis() {
                             handleDoneClick={handleSaveClick}
                             handleCancelClick={handleCancelClick}
                             task={selectedTask}
-                            handleDeleteClick={handleDeleteClick}
+                            handleDeleteClick={(id) => handleDeleteClick(id)}
+                            onEditSaved={() => handleRefresh(passedProjectId, authEmployeeId)}
+                            mode = "pending"
                         />
                     )}
                 </>
