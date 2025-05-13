@@ -162,10 +162,17 @@ export default function Stats() {
               selectedDeveloper={selectedDeveloper}
               setSelectedDeveloper={setSelectedDeveloper}
             />
-            <div className="chartRow">
-              <button onClick={() => navigate("/historicalStats")}>
+
+            <div style={{ marginBottom: "1rem" }}>
+              <button
+                className="navButton"
+                onClick={() => navigate("/historicalStats")}
+              >
                 Historical Stats
               </button>
+            </div>
+
+            <div className="chartRow">
               <div className="barChartWrapper">
                 <h3 className="chartTitle">Percentage of tasks completed</h3>
                 <ResponsiveContainer width="100%" height={300}>

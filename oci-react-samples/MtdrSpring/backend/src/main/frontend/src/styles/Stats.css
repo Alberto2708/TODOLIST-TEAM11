@@ -72,6 +72,20 @@ html, body, #root {
     margin-bottom: 2rem;
   }
 
+    .navButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background-color: #C74634;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+    height: 40px;
+    color: white;
+  }
+  
   .returnButton{
     display: flex;
     align-items: center;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, PureComponent } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "../styles/HistoricalStats.css";
@@ -6,7 +6,6 @@ import HeaderMngr from "../components/HeaderMngr";
 import {
   BarChart,
   Bar,
-  Rectangle,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -20,16 +19,16 @@ export default function HistoricalStats() {
   const [passedProjectId, setPassedProjectId] = useState(null);
   const [actualSprint, setActualSprint] = useState(null);
   const [employees, setEmployees] = useState([]);
-  const [screenLoading, setScreenLoading] = useState(true);
+  const [screenLoading, setScreenLoading] = useState(true); // ✅ Show loading screen
   const [sprints, setSprints] = useState([]);
   const [selectedTab, setSelectedTab] = useState("sprint");
-  const [workedHoursObject, setWorkedHoursObject] = useState({});
   const navigate = useNavigate();
   const { authData } = useAuth();
-  const [ completedTasksNumber, setcompletedTasksNumber ] = useState({});
-  const [ completedTasks, setCompletedTasks ] = useState({});
+  const [workedHoursObject, setWorkedHoursObject] = useState({});
+  const [completedTasksNumber, setcompletedTasksNumber] = useState({});
+  const [completedTasks, setCompletedTasks] = useState({});
 
-  const colors = ["#8884d8", "#82ca9d", "#ffc658", "#ff8042", "#8dd1e1"];
+  const colors = ["#1e3888", "#47a8bd", "#f5e663", "#ffad69", "#9c3848"];
 
   useEffect(() => {
     if (!authData) {
@@ -40,76 +39,64 @@ export default function HistoricalStats() {
     const { employeeId, projectId } = authData;
     setEmployeeId(employeeId);
     setPassedProjectId(projectId);
-    fetchActualSprint(projectId, employeeId);
+    fetchAllData(projectId, employeeId); // ✅ Load all data together
   }, [authData, navigate]);
 
-  useEffect(() => {
-    if (employees.length > 0 && sprints.length > 0) {
-      fetchWorkedHours(employees, sprints);
-      fetchcompletedTasksNumber(employees, sprints);
-      fetchCompletedTasks(employees, sprints);
-    }
-  }, [employees, sprints]);
-
-  const fetchActualSprint = async (projectId, managerId) => {
+  const fetchAllData = async (projectId, managerId) => {
     try {
-      const response = await fetch(`/sprint/project/${projectId}`);
-      if (response.ok) {
-        const data = await response.json();
-        setActualSprint(data);
-        fetchEmployees(managerId, data.id);
-        fetchSprints(projectId);
-      } else {
-        console.error("Error fetching actual sprint:", response.statusText);
-      }
+      const sprintRes = await fetch(`/sprint/project/${projectId}`);
+      if (!sprintRes.ok) throw new Error("Failed to fetch actual sprint");
+      const actualSprintData = await sprintRes.json();
+      setActualSprint(actualSprintData);
+
+      const [employeesData, sprintsData] = await Promise.all([
+        fetchEmployees(managerId),
+        fetchSprints(projectId),
+      ]);
+      setEmployees(employeesData);
+      setSprints(sprintsData);
+
+      await Promise.all([
+        fetchWorkedHours(employeesData, sprintsData),
+        fetchcompletedTasksNumber(employeesData, sprintsData),
+        fetchCompletedTasks(employeesData, sprintsData),
+      ]);
+
+      setScreenLoading(false); // ✅ Show UI after all data is loaded
     } catch (error) {
-      console.error("Error fetching actual sprint:", error);
+      console.error("Error loading data:", error);
+      setScreenLoading(false); // ✅ Avoid infinite spinner on error
     }
   };
 
-  const fetchEmployees = async (managerId, sprintId) => {
-    try {
-      const response = await fetch(`/employees/managerId/${managerId}`);
-      const data = await response.json();
-      setEmployees(data);
-      setScreenLoading(false);
-    } catch (error) {
-      console.error("Error fetching employees:", error);
-      setScreenLoading(false);
-    }
+  const fetchEmployees = async (managerId) => {
+    const response = await fetch(`/employees/managerId/${managerId}`);
+    if (!response.ok) throw new Error("Failed to fetch employees");
+    return await response.json();
   };
 
   const fetchSprints = async (projectId) => {
-    try {
-      const response = await fetch(`/sprint/projects/${projectId}`);
-      const data = await response.json();
-      setSprints(data);
-      console.log("Sprints data:", data);
-    } catch (error) {
-      console.error("Error fetching sprints:", error);
-    }
+    const response = await fetch(`/sprint/projects/${projectId}`);
+    if (!response.ok) throw new Error("Failed to fetch sprints");
+    const data = await response.json();
+    return data.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
   };
 
   const fetchWorkedHours = async (employeeList, sprintList) => {
     const workedHoursArray = [];
 
-    for (const sprintF of sprintList) {
-      let sprintEntry = {
-        sprintName: sprintF.name,
-      };
-
+    for (const sprint of sprintList) {
+      let sprintEntry = { sprintName: sprint.name };
       let totalHoursPerSprint = 0;
 
-      for (const employeeF of employeeList) {
-        const response = await fetch(
-          `/assignedDev/${employeeF.id}/sprint/${sprintF.id}/workedHours/kpi`
+      for (const employee of employeeList) {
+        const res = await fetch(
+          `/assignedDev/${employee.id}/sprint/${sprint.id}/workedHours/kpi`
         );
-        if (response.ok) {
-          const data = await response.json();
-          sprintEntry[employeeF.name] = data.workedHoursKpi;
+        if (res.ok) {
+          const data = await res.json();
+          sprintEntry[employee.name] = data.workedHoursKpi;
           totalHoursPerSprint += data.workedHoursKpi;
-        } else {
-          console.error("Error fetching worked hours:", response.statusText);
         }
       }
 
@@ -117,64 +104,52 @@ export default function HistoricalStats() {
       workedHoursArray.push(sprintEntry);
     }
 
-    console.log("Worked hours array for chart:", workedHoursArray);
-    setWorkedHoursObject(workedHoursArray); // ✅ Important!
+    setWorkedHoursObject(workedHoursArray);
   };
 
   const fetchcompletedTasksNumber = async (employeeList, sprintList) => {
     const completedTasksNumberArray = [];
 
-    for (const sprintF of sprintList) {
-      let sprintEntry = {
-        sprintName: sprintF.name,
-      };
+    for (const sprint of sprintList) {
+      let sprintEntry = { sprintName: sprint.name };
 
-      for (const employeeF of employeeList) {
-        const response = await fetch(
-          `/assignedDev/${employeeF.id}/sprint/${sprintF.id}/completed/number`
+      for (const employee of employeeList) {
+        const res = await fetch(
+          `/assignedDev/${employee.id}/sprint/${sprint.id}/completed/number`
         );
-        if (response.ok) {
-          const data = await response.json();
-          sprintEntry[employeeF.name] = data;
-        } else {
-          console.error("Error fetching completed tasks:", response.statusText);
+        if (res.ok) {
+          const data = await res.json();
+          sprintEntry[employee.name] = data;
         }
       }
 
       completedTasksNumberArray.push(sprintEntry);
     }
 
-    console.log("Completed tasks array for chart:", completedTasksNumberArray);
-    setcompletedTasksNumber(completedTasksNumberArray); // ✅ Important!
+    setcompletedTasksNumber(completedTasksNumberArray);
   };
 
   const fetchCompletedTasks = async (employeeList, sprintList) => {
     const completedTasksArray = [];
 
-    for (const sprintF of sprintList) {
-      let sprintEntry = {
-        sprintName: sprintF.name,
-      };
+    for (const sprint of sprintList) {
+      let sprintEntry = { sprintName: sprint.name };
 
-      for (const employeeF of employeeList) {
-        const response = await fetch(
-          `/assignedDev/${employeeF.id}/sprint/${sprintF.id}/completed`
+      for (const employee of employeeList) {
+        const res = await fetch(
+          `/assignedDev/${employee.id}/sprint/${sprint.id}/completed`
         );
-        if (response.ok) {
-          const data = await response.json();
-          sprintEntry[employeeF.name] = data;
-        } else {
-          console.error("Error fetching completed tasks:", response.statusText);
+        if (res.ok) {
+          const data = await res.json();
+          sprintEntry[employee.name] = data;
         }
       }
 
       completedTasksArray.push(sprintEntry);
     }
 
-    console.log("Completed tasks array for chart:", completedTasksArray);
-    setCompletedTasks(completedTasksArray); // ✅ Important!
-  }
-
+    setCompletedTasks(completedTasksArray);
+  };
 
   return (
     <div className="statsContainer">
@@ -205,8 +180,8 @@ export default function HistoricalStats() {
             {selectedTab === "sprint" && (
               <div className="chart-container">
                 <h3>Hours worked by sprint</h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart width={300} height={300} data={workedHoursObject}>
+                <ResponsiveContainer width="70%" height={300}>
+                  <BarChart data={workedHoursObject}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="sprintName" />
                     <YAxis />
@@ -214,8 +189,11 @@ export default function HistoricalStats() {
                     <Legend />
                     <Bar dataKey="totalWorkedHours" fill="#8884d8" />
                   </BarChart>
+                </ResponsiveContainer>
 
-                  <BarChart width={300} height={300} data={workedHoursObject}>
+                <h3>Hours worked by dev by sprint</h3>
+                <ResponsiveContainer width="70%" height={300}>
+                  <BarChart data={workedHoursObject}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="sprintName" />
                     <YAxis />
@@ -225,12 +203,15 @@ export default function HistoricalStats() {
                       <Bar
                         key={employee.id}
                         dataKey={employee.name}
-                        fill={colors[index % colors.length]} // Cycle through colors
+                        fill={colors[index % colors.length]}
                       />
                     ))}
                   </BarChart>
+                </ResponsiveContainer>
 
-                  <BarChart width={300} height={300} data={completedTasksNumber}>
+                <h3>Completed tasks by sprint</h3>
+                <ResponsiveContainer width="70%" height={500}>
+                  <BarChart data={completedTasksNumber}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="sprintName" />
                     <YAxis />
@@ -240,7 +221,7 @@ export default function HistoricalStats() {
                       <Bar
                         key={employee.id}
                         dataKey={employee.name}
-                        fill={colors[index % colors.length]} // Cycle through colors
+                        fill={colors[index % colors.length]}
                       />
                     ))}
                   </BarChart>
@@ -249,8 +230,39 @@ export default function HistoricalStats() {
             )}
 
             {selectedTab === "historical" && (
-              <div>
-                <h3>Historical Statistics</h3>
+              <div className="historical-report">
+                <h3>Completed Tasks Report</h3>
+                {completedTasks.length === 0 ? (
+                  <p>No completed tasks found.</p>
+                ) : (
+                  completedTasks.map((sprint, idx) => (
+                    <div key={idx} className="sprint-section">
+                      <h4>{sprint.sprintName}</h4>
+                      <table className="historical-table">
+                        <thead>
+                          <tr>
+                            <th>Employee</th>
+                            <th>Task Name</th>
+                            <th>Status</th>
+                            <th>Hours</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {employees.map((employee) =>
+                            sprint[employee.name]?.map((task, i) => (
+                              <tr key={`${employee.id}-${i}`}>
+                                <td>{employee.name}</td>
+                                <td>{task.name}</td>
+                                <td>{task.status}</td>
+                                <td>{task.estHours}</td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  ))
+                )}
               </div>
             )}
           </div>
