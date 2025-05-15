@@ -8,14 +8,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -23,10 +28,12 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 import com.springboot.MyTodoList.controller.ToDoItemBotController;
+import com.springboot.MyTodoList.model.Employee;
 import com.springboot.MyTodoList.service.TelegramAuthService;
 import com.springboot.MyTodoList.service.TelegramTaskService;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class TelegramBotTest {
 
 
@@ -136,7 +143,62 @@ void testMyTasksCommand() throws Exception {
 }
 
 
+    @Test
+    @Order(3)
+    void testCompletedTasksCommand() throws Exception {
+        long chatId = 1001L;
+        long userId = 2002L;
 
+        // Simulate manager
+        when(authService.isAuthenticated(userId)).thenReturn(true);
+        when(authService.isManager(userId)).thenReturn(true);
+
+        String expectedResponse = "✅ Completed Tasks:\n#1 - Fix login\n#2 - Refactor service";
+
+        when(taskService.getAllCompletedTasks()).thenReturn(expectedResponse);
+        doReturn(null).when(bot).execute(any(SendMessage.class));
+
+        Update update = mockUpdate(chatId, userId, "📂 Completed Tasks");
+        bot.onUpdateReceived(update);
+
+        ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
+        verify(bot, atLeastOnce()).execute(captor.capture());
+
+        List<SendMessage> messages = captor.getAllValues();
+        assertEquals(expectedResponse, messages.get(messages.size() - 1).getText());
+    }
+
+    @Test
+    @Order(4)
+    void testCreateTaskFlow() throws Exception {
+        long chatId = 1001L;
+        long userId = 2002L;
+
+        // Setup manager user
+        Employee manager = new Employee();
+        manager.setID(1);
+        when(authService.getEmployee(userId)).thenReturn(manager);
+        when(authService.isAuthenticated(userId)).thenReturn(true);
+        when(authService.isManager(userId)).thenReturn(true);
+        doReturn(null).when(bot).execute(any(SendMessage.class));
+
+        // Simulate flow
+        bot.onUpdateReceived(mockUpdate(chatId, userId, "/newtask"));
+        bot.onUpdateReceived(mockUpdate(chatId, userId, "Task title"));
+        bot.onUpdateReceived(mockUpdate(chatId, userId, "5"));
+        bot.onUpdateReceived(mockUpdate(chatId, userId, "Fix bug"));
+
+        String expectedFinalResponse = "✅ Task #12 created!\n#12 - Task title\nStatus: PENDING\nHours: 5\nDescription: Fix bug\nDeadline: 2025-12-31";
+        lenient().when(taskService.createNewTask(eq(userId), eq("Task title"), eq(5), eq("Fix bug"), any()))
+            .thenReturn(expectedFinalResponse);
+
+        bot.onUpdateReceived(mockUpdate(chatId, userId, "2025-12-31"));
+
+        ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
+        verify(bot, atLeastOnce()).execute(captor.capture());
+
+        boolean found = captor.getAllValues().stream()
+            .anyMatch(msg -> expectedFinalResponse.equals(msg.getText()));
+        assertEquals(true, found, "Expected task creation confirmation message");
+    }
 }
-
-
