@@ -86,7 +86,7 @@ public void onUpdateReceived(Update update) {
             return;
         }
         
-        if (command.equals("/start")) {
+        if ("/start".equals(command)) {
             String sprintInfo = taskService.getCurrentSprintInfo();
             sendMessage(chatId, sprintInfo);
             showMainMenu(chatId, user.getId());
@@ -155,15 +155,15 @@ public void onUpdateReceived(Update update) {
     private void handleTaskCommand(long chatId, long telegramId, String command) {
         try {
             // Check authentication for all commands except help
-            if (!command.equals("/help") && !authService.isAuthenticated(telegramId)) {
+            if (!"/help".equals(command)&& !authService.isAuthenticated(telegramId)) {
                 sendLoginPrompt(chatId);
                 return;
             }
-            if (command.equals("📝 My Tasks") || command.equals("/mytasks")) {
+            if ("📝 My Tasks".equals(command) || "/mytasks".equals(command)) {
                 String tasks = taskService.getUserTasks(telegramId);
                 sendMessage(chatId, tasks);
             } 
-            else if (command.equals("📊 My KPIs") || command.equals("/mykpis")) {
+            else if ("📊 My KPIs".equals(command) || "/mykpis".equals(command)) {
                 String kpis = taskService.getDeveloperKPIs(telegramId);
                 sendMessage(chatId, kpis);
             }
@@ -184,7 +184,7 @@ public void onUpdateReceived(Update update) {
             else if (command.startsWith("✅ Complete Task") || command.startsWith("/completetask")) {
                 handleCompleteTaskCommand(chatId, command);
             }
-            else if (command.equals("📂 Completed Tasks")) {
+            else if ("📂 Completed Tasks".equals(command)) {
                 if (!authService.isManager(telegramId)) {
                     sendMessage(chatId, "⛔ Only managers can view completed tasks");
                     return;
@@ -243,7 +243,7 @@ public void onUpdateReceived(Update update) {
 
     private void handleAssignTaskCommand(long chatId, long telegramId, String command) {
         try {
-            if (command.equals("👥 Assign Task")) {
+            if ("👥 Assign Task".equals(command)) {
                 sendMessage(chatId, "👥 Format: /assigntask TaskID email@example.com");
                 return;
             }
@@ -266,7 +266,7 @@ public void onUpdateReceived(Update update) {
 
     private void handleCompleteTaskCommand(long chatId, String command) {
         try {
-            if (command.equals("✅ Complete Task")) {
+            if ("✅ Complete Task".equals(command)) {
                 sendMessage(chatId, "✅ Format: /completetask TaskID");
                 return;
             }
