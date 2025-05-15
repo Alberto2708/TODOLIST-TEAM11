@@ -161,7 +161,6 @@ export default function Stats() {
               employees={employees}
               selectedDeveloper={selectedDeveloper}
               setSelectedDeveloper={setSelectedDeveloper}
-              showFilter={false}
             />
 
             <div style={{ marginBottom: "1rem" }}>
