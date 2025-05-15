@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../styles/HeaderMngr.css';
+import Filter from './Filter';
 
 function HeaderMngr({ 
   actualSprint, 
@@ -31,7 +32,8 @@ function HeaderMngr({
           text: 'Tasks',
           path: '/ManagerTasks'
         },
-        showCreateButton: false
+        showCreateButton: false,
+        showFilter: false 
       };
     }
      else if (location.pathname.includes('SprintCarousel')) {
@@ -88,25 +90,11 @@ function HeaderMngr({
       )}
       <div className="action-bar">
         {showFilter && employees.length > 0 && (
-          <div className="filter-container">
-            <label htmlFor="developer-filter">Filter by Developer:</label>
-            <select
-              id="developer-filter"
-              value={selectedDeveloper}
-              onChange={(e) => {
-                const value = e.target.value === "all" ? "all" : parseInt(e.target.value);
-                setSelectedDeveloper(value);
-              }}
-              className="filter-select"
-            >
-              <option value="all">All Developers</option>
-              {employees.map((employee) => (
-                <option key={employee.id} value={employee.id}>
-                  {employee.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          <Filter 
+            employees={employees} 
+            selectedDeveloper={selectedDeveloper} 
+            setSelectedDeveloper={setSelectedDeveloper} 
+          />
         )}
         <div className="button-group">
           {showCreateButton && (

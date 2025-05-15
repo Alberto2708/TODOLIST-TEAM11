@@ -160,7 +160,8 @@ export default function HistoricalStats() {
       ) : (
         <>
           <div className="chartContainer">
-            <HeaderMngr actualSprint={actualSprint} employees={employees} />
+            <HeaderMngr actualSprint={actualSprint} employees={employees} 
+            showFilter={false}/>
 
             <div className="segment-control">
               <button
