@@ -1,18 +1,11 @@
-import sys
-import json
+import random
+import string
 
-# This simple python file reads JSON and tries to access the lab_oke_cluster_id value
-# and prints the OCID for processing. The JSON is expected
+def get_random_key(length):
+    letters = string.ascii_lowercase
+    digits = string.digits
+    length = length
+    result_str = ''.join(random.choice(letters + digits) for i in range(length))
+    print(result_str)
 
-
-system_input = json.load(sys.stdin)
-
-try:
-    OCID = system_input["lab_oke_cluster_id"]["value"]
-    print(OCID)
-except KeyError as e:
-    print("Error: Failed to access expected JSON key lab_oke_cluster_id or value")
-except json.decoder.JSONDecodeError as e:
-    print("Error: Failed to decode JSON")
-except Exception as e:
-    print("Error: Encountered unexpected error")
+get_random_key(5)
