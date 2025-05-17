@@ -1,19 +1,49 @@
-# oci-react-samples
-A repository for full stack Cloud Native applications with a React JS frontend and various backends (Java, Python, DotNet, and so on) on the Oracle Cloud Infrastructure.
+# MyTodoList Spring Boot + React Application
 
-![image](https://user-images.githubusercontent.com/7783295/116454396-cbfb7a00-a814-11eb-8196-ba2113858e8b.png)
-  
+## Prerequisites
 
-## MyToDo React JS
-The `mtdrworkshop` repository hosts the materiald (code, scripts and instructions) for building and deploying Cloud Native Application using a Java/Helidon backend
+- Java 11+
+- Maven
+- Node.js & npm
+- Oracle Database (Autonomous)
+- Docker Desktop
+
+## 1. Backend Setup
+
+### Step 1: Download and Prepare the Wallet
+
+- Download the Oracle Wallet from your Autonomous Database.
+- Unzip the contents of the wallet.
+- Move the unzipped wallet directory into the backend folder:
+```sh
+oci-react-samples/MtdrSpring/backend/<WALLET_FOLDER>
+```
 
 
-### Requirements
-The lab executes scripts that require the following software to run properly: (These are already installed on and included with the OCI Cloud Shell)
-* oci-cli
-* python 2.7^
-* terraform
-* kubectl
-* mvn (maven) 
+### Step 2: Configure Database Connection
 
-## Expect more ...
+- Edit [`application.properties`](MtdrSpring/backend/src/main/resources/application.properties) to update the database credentials. (URL and password)
+
+- Set the correct `TNS_ADMIN` path to match the folder where you placed the wallet.
+
+### Step 3: Install Dependencies
+
+- Before running the app, perform a clean install:
+```sh
+cd oci-react-samples/MtdrSpring/backend
+mvn clean install
+```
+
+### Step 4: Open Docker Desktop
+
+- Before running the app, make sure Docker is running.
+
+
+
+### Step 5: Run the service
+- You must stay in the /backend directory. Otherwise, it won't work.
+```sh
+mvn spring-boot:run
+```
+
+- The backend will be available at: http://localhost:8081
