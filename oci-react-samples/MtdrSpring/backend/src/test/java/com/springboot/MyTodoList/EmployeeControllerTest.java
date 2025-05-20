@@ -80,12 +80,11 @@ public class EmployeeControllerTest {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         
-        final Long inventedTelegramId = -5L; 
         Employee updatedEmployee = new Employee();
         updatedEmployee.setName("UpdatedName");
         updatedEmployee.setEmail("updated10001@gmail.com");
         updatedEmployee.setPassword("updatedPassword");
-        updatedEmployee.setTelegramId(inventedTelegramId);
+        updatedEmployee.setTelegramId(-5L);
 
         HttpEntity<Employee> request = new HttpEntity<>(updatedEmployee, headers);
         ResponseEntity<Employee> response = restTemplate.exchange("/employees/" + createdEmployeeId, HttpMethod.PUT, request, Employee.class);
@@ -93,7 +92,7 @@ public class EmployeeControllerTest {
         assertEquals("UpdatedName", response.getBody().getName());
         assertEquals("updated10001@gmail.com", response.getBody().getEmail());
         assertEquals("updatedPassword", response.getBody().getPassword());
-        assertEquals(inventedTelegramId, response.getBody().getTelegramId());
+        assertEquals(-5, response.getBody().getTelegramId());
         System.out.println("Employee name updated: " + response.getBody().getName() + " with ID: " + response.getBody().getID());
     }
 
