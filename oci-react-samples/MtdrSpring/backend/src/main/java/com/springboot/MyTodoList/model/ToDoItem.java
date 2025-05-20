@@ -1,9 +1,15 @@
-//This model is the representation of the ToDoItem table that exists already in the autonomous database.
-
+//This model is the representation of the ToDoItem table
+// that exists already in the autonomous database.
 package com.springboot.MyTodoList.model;
 
-import javax.persistence.*;
 import java.time.OffsetDateTime;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "TODOITEM")
@@ -14,39 +20,60 @@ public class ToDoItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "TODOITEM_ID")
     Integer ID;
-    
+
+    //Task name column
     @Column(name = "NAME")
     String name;
 
+    //Task status column
     @Column(name = "STATUS")
     String status;
-    
+
+    //Task manager id column
     @Column(name = "MANAGER_ID")
     Integer managerId;
-    
+
+    //Task completion timestamp column
     @Column(name = "COMPLETION_TS")
     OffsetDateTime completionTs;
-    
+
+    //Task start date column
     @Column(name = "START_DATE")
     OffsetDateTime startDate;
-    
+
+    //Task deadline column
     @Column(name = "DEADLINE")
     OffsetDateTime deadline;
-    
+
+    //Task sprint id column
     @Column(name = "SPRINT_ID")
     Integer sprintId;
-    
+
+    //Task description column
     @Column(name = "DESCRIPTION")
     String description;
-    
+
+    //Task estimated hours column
     @Column(name = "EST_HOURS")
     Integer estHours;
 
     //Empty Constructor
-    public ToDoItem(){}
+    public ToDoItem() {
+    }
 
     //Full Constructor
-    public ToDoItem(Integer ID, String name, String status, Integer managerId, OffsetDateTime completionTs, OffsetDateTime startDate, OffsetDateTime deadline, Integer sprintId, String description, Integer estHours) {
+    public ToDoItem(
+            Integer ID,
+            String name,
+            String status,
+            Integer managerId,
+            OffsetDateTime completionTs,
+            OffsetDateTime startDate,
+            OffsetDateTime deadline,
+            Integer sprintId,
+            String description,
+            Integer estHours
+    ) {
         this.ID = ID;
         this.name = name;
         this.status = status;
@@ -60,7 +87,16 @@ public class ToDoItem {
     }
 
     //Partial Constructor
-    public ToDoItem(String name, String status, Integer managerId, OffsetDateTime startDate, OffsetDateTime deadline, Integer sprintId, String description, Integer estHours) {
+    public ToDoItem(
+            String name,
+            String status,
+            Integer managerId,
+            OffsetDateTime startDate,
+            OffsetDateTime deadline,
+            Integer sprintId,
+            String description,
+            Integer estHours
+    ) {
         this.name = name;
         this.status = status;
         this.managerId = managerId;
@@ -72,7 +108,6 @@ public class ToDoItem {
     }
 
     //Getters and setters
-
     public Integer getID() {
         return ID;
     }
@@ -153,21 +188,20 @@ public class ToDoItem {
         this.estHours = estHours;
     }
 
-
     //toString method override
     @Override
     public String toString() {
-        return "ToDoItem{" +
-                "ID=" + ID + '\n' +
-                ", name='" + name + '\n' +
-                ", status='" + status + '\n' +
-                ", managerId=" + managerId + '\n' +
-                ", completionTs=" + completionTs + '\n' +
-                ", startDate=" + startDate + '\n' +
-                ", deadline=" + deadline + '\n' +
-                ", sprintId=" + sprintId + '\n' +
-                ", description='" + description + '\n' +
-                ", estHours=" + estHours + '\n' +
-                '}';
+        return "ToDoItem{"
+                + "ID=" + ID + '\n'
+                + ", name='" + name + '\n'
+                + ", status='" + status + '\n'
+                + ", managerId=" + managerId + '\n'
+                + ", completionTs=" + completionTs + '\n'
+                + ", startDate=" + startDate + '\n'
+                + ", deadline=" + deadline + '\n'
+                + ", sprintId=" + sprintId + '\n'
+                + ", description='" + description + '\n'
+                + ", estHours=" + estHours + '\n'
+                + '}';
     }
 }

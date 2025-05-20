@@ -1,3 +1,5 @@
+// Controller for the Telegram Bot, which handles user interactions and task management
+// This bot is designed to manage tasks, authenticate users, and provide a user-friendly interface for task management
 package com.springboot.MyTodoList.controller;
 
 import com.springboot.MyTodoList.model.ToDoItem;
@@ -40,12 +42,15 @@ public class ToDoItemController {
 
     private static final Logger logger = LoggerFactory.getLogger(AssignedDevController.class);
 
+    // -------------------- GET --------------------
+    // All ToDoItems
     // @CrossOrigin
     @GetMapping(value = "/todolist")
     public List<ToDoItem> getAllToDoItems() {
         return toDoItemService.findAll();
     }
 
+    // ToDoItems by Sprint ID
     // @CrossOrigin
     @GetMapping(value = "/todolist/{id}")
     public ResponseEntity<ToDoItem> getToDoItemById(@PathVariable Integer id) {
@@ -57,7 +62,7 @@ public class ToDoItemController {
         }
     }
 
-    //Get Father ToDoItems by Manager ID and Sprint ID
+    // Father ToDoItems by Manager ID and Sprint ID
     @GetMapping(value = "/todolist/manager/{managerId}/sprint/{sprintId}")
     public List<ToDoItem> getFatherToDoItemsByManagerIdAndSprintId(@PathVariable Integer managerId, @PathVariable Integer sprintId) {
         try{
@@ -79,7 +84,7 @@ public class ToDoItemController {
         }
     }
 
-    //Get Completed ToDoItems by Sprint ID
+    // Completed ToDoItems by Sprint ID
     @GetMapping(value = "/todolist/sprint/{sprintId}/completed")
     public ResponseEntity<List<ToDoItem>> getCompletedToDoItemsBySprintId(@PathVariable Integer sprintId) {
         try{
@@ -94,8 +99,8 @@ public class ToDoItemController {
         }
     }    
     
-    
-    // Post Map for ToDoItem creation
+    // -------------------- POST --------------------
+    // ToDoItem
     @PostMapping(value = "/todolist")
     public ResponseEntity addToDoItem(@RequestBody ToDoItem todoItem) throws Exception {
         try{
@@ -108,6 +113,7 @@ public class ToDoItemController {
         }
     }
 
+    // -------------------- PUT --------------------
     // @CrossOrigin
     @PutMapping(value = "/todolist/{id}")
     public ResponseEntity updateToDoItem(@RequestBody ToDoItem toDoItem, @PathVariable Integer id) {
@@ -119,6 +125,7 @@ public class ToDoItemController {
         }
     }
 
+    // ToDoItem Completion by ID
     @PutMapping(value="/todolist/complete/{id}")
     public ResponseEntity completeTask(@PathVariable Integer id) {
         try {
@@ -129,6 +136,7 @@ public class ToDoItemController {
         }
     }
 
+    // ToDoItem UNDO Completion by ID
     @PutMapping(value="/todolist/undoCompletion/{id}")
     public ResponseEntity undoCompletion(@PathVariable Integer id) {
         try {
@@ -139,7 +147,8 @@ public class ToDoItemController {
         }
     }
 
-    //Delete Mapping for ToDoItem by ID
+    // -------------------- DELETE --------------------
+    // ToDoItem by ID
     @DeleteMapping(value = "/todolist/{id}")
     public ResponseEntity<Boolean> deleteToDoItem(@PathVariable("id") Integer id) {
         Boolean flag = false;
@@ -164,7 +173,7 @@ public class ToDoItemController {
         }
     }
 
-    //Delete by Sprint ID
+    // Sprint ID
     @DeleteMapping(value = "/todolist/sprint/{sprintId}")
     public ResponseEntity<Boolean> deleteToDoItemBySprintId(@PathVariable("sprintId") Integer sprintId) {
         Boolean flag = false;

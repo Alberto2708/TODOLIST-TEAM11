@@ -1,3 +1,5 @@
+// Service class for managing assigned developers to todo items
+// This class contains methods to check, add, update, delete and retrieve assigned developers
 package com.springboot.MyTodoList.service;
 
 import com.springboot.MyTodoList.model.AssignedDev;
@@ -16,7 +18,8 @@ public class AssignedDevService {
     @Autowired
     private AssignedDevRepository assignedDevRepository;
 
-
+    // Check if a todo item is assigned to a specific employee by their IDs
+    // Returns true if the employee has the ToDoItem assigned, false otherwise
     public Boolean checkIfToDoItemIsAssignedToEmployeByIds(Integer toDoItemId, Integer assignedDevId) {
         try {
             if (assignedDevRepository.findByToDoItemIdAndEmployeeId(toDoItemId, assignedDevId).isEmpty()) {
@@ -35,6 +38,7 @@ public class AssignedDevService {
         return devAssignedTasks;
     }
 
+    // Finds tasks assigned to a specific developer by developer ID
     public AssignedDev findAssignedDevById(AssignedDevId assignedDevId) {
         try {
             Integer toDoItemId = assignedDevId.getToDoItemId();
@@ -50,6 +54,7 @@ public class AssignedDevService {
         }
     }
 
+    // Find assigned developers by todo item ID
     public List<AssignedDev> getAssignedDevsByToDoItemId(Integer toDoItemid) {
         try {
             List<AssignedDev> devAssignedTaskData = assignedDevRepository.findByToDoItemId(toDoItemid);
@@ -59,6 +64,7 @@ public class AssignedDevService {
         }
     }
 
+    // Find assigned developers by developer ID
     public List<AssignedDev> getAssignedDevsByDevId(Integer assignedDevId) {
         try {
             List<AssignedDev> devAssignedTaskData = assignedDevRepository.findByEmployeeId(assignedDevId);
@@ -68,11 +74,12 @@ public class AssignedDevService {
         }
     }
 
+    // Add a developer
     public AssignedDev addAssignedDev(AssignedDev devAssignedTask) {
         return assignedDevRepository.save(devAssignedTask);
     }
     
-
+    // Remove a developer
     public boolean deleteAssignedDev(Integer toDoItemId, Integer assignedDevId) {
         try {
             assignedDevRepository.deleteByToDoItemIdAndEmployeeId(toDoItemId, assignedDevId);
@@ -83,6 +90,7 @@ public class AssignedDevService {
         }
     }
 
+    // Update a developer's assignment by ToDoItem ID and developer ID
     public AssignedDev updateAssignedDev(Integer toDoItemId, Integer assignedDevId, AssignedDev dat) {
         Optional<AssignedDev> devAssignedTaskData = assignedDevRepository.findByToDoItemIdAndEmployeeId(toDoItemId, assignedDevId);
         if (devAssignedTaskData.isPresent()) {
@@ -95,6 +103,7 @@ public class AssignedDevService {
         }
     }
 
+    // Delete assigned developers by todo item ID
     public Boolean deleteAssignedDevByToDoItemId(Integer assignedDevId) {
         try {
             assignedDevRepository.deleteByToDoItemId(assignedDevId);
@@ -105,6 +114,7 @@ public class AssignedDevService {
         }
     }
 
+    // Delete assigned developers by developer ID
     public Boolean deleteAssignedDevByAssignedDevId(Integer assignedDevId) {
         try {
             assignedDevRepository.deleteByEmployeeId(assignedDevId);

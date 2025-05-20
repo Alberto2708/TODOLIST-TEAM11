@@ -1,8 +1,8 @@
 package com.springboot.MyTodoList.model;
 
 public class WorkedHoursKpiResponse {
-    //Attributes
 
+    //Attributes
     public Integer workedHoursKpi;
     public Integer totalEstHours;
 
