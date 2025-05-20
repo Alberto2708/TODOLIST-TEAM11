@@ -2,7 +2,6 @@ package com.springboot.MyTodoList;
 
 import com.springboot.MyTodoList.model.AssignedDev;
 import com.springboot.MyTodoList.model.AssignedDevId;
-import com.springboot.MyTodoList.model.Employee;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -36,9 +35,9 @@ public class AssignedDevControllerTest {
     private static AssignedDevId assignedDevID;
 
     /**
-     * Test the creation endpoint for AssignedDev.
-     * Verifies that a new AssignedDev can be created successfully.
-     */
+     Test the creation endpoint for AssignedDev.
+     Verifies that a new AssignedDev can be created successfully.
+     **/
     @Test
     @Order(1)
     void testAddAssignedDev() {
@@ -57,10 +56,13 @@ public class AssignedDevControllerTest {
     }
 
 
-    // Test Get endpoint for AssignedDev by ID
+    /**
+     Tests retrieval of an AssignedDev entity by its composite key via GET /assignedDev/{toDoItemId}/{employeeId}.
+     Verifies that the correct entity is returned and the response status is 200 OK.
+     **/
     @Test
     @Order(2)
-    void getAssignedDev() {
+    void testGetAssignedDev() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -79,10 +81,13 @@ public class AssignedDevControllerTest {
         System.out.println("AssignedDev retrieved: ToDoItem = " + response.getBody().getToDoItemId() + " - Employee = " + response.getBody().getAssignedDevId());
     }
 
-    // Test Deletion endpoint for AssignedDev
+    /**
+      Tests deletion of an AssignedDev entity by its composite key via DELETE /assignedDev/{toDoItemId}/{employeeId}.
+      Verifies that the entity is deleted and the response status is 200 OK.
+     **/
     @Test
     @Order(3)
-    void deleteAssignedDev() {
+    void testDeleteAssignedDev() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
