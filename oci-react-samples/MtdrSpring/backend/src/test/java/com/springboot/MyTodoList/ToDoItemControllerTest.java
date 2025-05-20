@@ -59,7 +59,7 @@ public class ToDoItemControllerTest {
      **/
     @Test
     @Order(2)
-    void getToDoItem() {
+    void testGetToDoItem() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -77,7 +77,7 @@ public class ToDoItemControllerTest {
      **/
     @Test
     @Order(2)
-    void updateToDoItem(){
+    void testUpdateToDoItem(){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -113,7 +113,7 @@ public class ToDoItemControllerTest {
      **/
     @Test
     @Order(3)
-    void deleteToDoItem() {
+    void testDeleteToDoItem() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
