@@ -190,7 +190,7 @@ public class Sprint3Test {
 
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        ResponseEntity<AssignedDev> response = restTemplate.exchange("/assignedDev/" + createdAssignedDevId.getToDoItemId()+"/"+createdAssignedDevId.getEmployeeId(), HttpMethod.DELETE, request, AssignedDev.class);
+        ResponseEntity<Boolean> response = restTemplate.exchange("/assignedDev/" + createdAssignedDevId.getToDoItemId()+"/"+createdAssignedDevId.getEmployeeId(), HttpMethod.DELETE, request, Boolean.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(true, response.getBody());
         logger.info("AssignedDev deleted: " + createdAssignedDevId);
@@ -208,7 +208,7 @@ public class Sprint3Test {
 
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        ResponseEntity<ToDoItem> response = restTemplate.exchange("/todolist/" + createdToDoItemId, HttpMethod.DELETE, request, ToDoItem.class);
+        ResponseEntity<Boolean> response = restTemplate.exchange("/todolist/" + createdToDoItemId, HttpMethod.DELETE, request, Boolean.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(true, response.getBody());
         logger.info("ToDoItem deleted: " + createdToDoItemId);
