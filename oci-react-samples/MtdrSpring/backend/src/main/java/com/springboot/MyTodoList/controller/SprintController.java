@@ -155,8 +155,8 @@ public class SprintController {
             List<ToDoItem> tasks = toDoItemService.getToDoItemsBySprintId(sprintId);
             //Verify if the list is empty
             //If null, return 404
-            Integer workedHours = 0;
-            Integer workedHoursTotal = 0;
+            Double workedHours = 0.0;
+            Double workedHoursTotal = 0.0;
             if (tasks == null) {
                 return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
             }

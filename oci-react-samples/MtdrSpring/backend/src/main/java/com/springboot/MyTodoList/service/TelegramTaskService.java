@@ -112,7 +112,7 @@ public class TelegramTaskService {
                     .filter(t -> "COMPLETED".equals(t.getStatus()))
                     .count();
             int total = tasks.size();
-            int hours = tasks.stream().mapToInt(ToDoItem::getEstHours).sum();
+            Double hours = tasks.stream().mapToDouble(ToDoItem::getEstHours).sum();
 
             return String.format(
                     "📊 Sprint #%d KPIs\n\n"
@@ -131,7 +131,7 @@ public class TelegramTaskService {
     }
 
     // Create a new task
-    public String createNewTask(long telegramId, String name, int estHours, String description, OffsetDateTime deadline) {
+    public String createNewTask(long telegramId, String name, Double estHours, String description, OffsetDateTime deadline) {
         try {
             Employee manager = authService.getEmployee(telegramId);
             if (manager == null || !authService.isManager(telegramId)) {

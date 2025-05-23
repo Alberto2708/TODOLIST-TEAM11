@@ -37,7 +37,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
     private class TaskCreationState {
 
         String name;
-        Integer estHours;
+        Double estHours;
         String description;
         OffsetDateTime deadline;
     }
@@ -212,7 +212,7 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
             sendMessage(chatId, "⏱️ Enter estimated hours for this task:");
         } else if (state.estHours == null) {
             try {
-                state.estHours = Integer.parseInt(input);
+                state.estHours = Double.parseDouble(input);
                 sendMessage(chatId, "📝 Enter task description:");
             } catch (NumberFormatException e) {
                 sendMessage(chatId, "❌ Please enter a valid number for hours");

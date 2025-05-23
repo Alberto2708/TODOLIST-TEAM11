@@ -189,7 +189,7 @@ void testMyTasksCommand() throws Exception {
         bot.onUpdateReceived(mockUpdate(chatId, userId, "Fix bug"));
 
         String expectedFinalResponse = "✅ Task #12 created!\n#12 - Task title\nStatus: PENDING\nHours: 5\nDescription: Fix bug\nDeadline: 2025-12-31";
-        lenient().when(taskService.createNewTask(eq(userId), eq("Task title"), eq(5), eq("Fix bug"), any()))
+        lenient().when(taskService.createNewTask(eq(userId), eq("Task title"), eq(5.0), eq("Fix bug"), any()))
             .thenReturn(expectedFinalResponse);
 
         bot.onUpdateReceived(mockUpdate(chatId, userId, "2025-12-31"));

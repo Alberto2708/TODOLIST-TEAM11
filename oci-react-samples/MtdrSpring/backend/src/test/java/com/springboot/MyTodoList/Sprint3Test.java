@@ -65,7 +65,7 @@ public class Sprint3Test {
     @Test
     @Order(1)
     void testAddToDoItem() {
-        ToDoItem newToDoItem = new ToDoItem("Sprint3Test", "PENDING",managerIDTest,OffsetDateTime.parse("2025-04-25T12:34:56+02:00"), OffsetDateTime.parse("2025-04-25T15:34:56+02:00"), sprintIDTest,"ToDoItem created using Springboot tests",3);
+        ToDoItem newToDoItem = new ToDoItem("Sprint3Test", "PENDING",managerIDTest,OffsetDateTime.parse("2025-04-25T12:34:56+02:00"), OffsetDateTime.parse("2025-04-25T15:34:56+02:00"), sprintIDTest,"ToDoItem created using Springboot tests",3.0);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

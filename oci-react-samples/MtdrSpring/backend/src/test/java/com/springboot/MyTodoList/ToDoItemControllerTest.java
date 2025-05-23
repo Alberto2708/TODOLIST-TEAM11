@@ -40,7 +40,7 @@ public class ToDoItemControllerTest {
     @Test
     @Order(1)
     void testAddToDoItem() {
-        ToDoItem newToDoItem = new ToDoItem("SpringBootToDoItem", "PENDING",managerIDTest,OffsetDateTime.parse("2025-04-25T12:34:56+02:00"), OffsetDateTime.parse("2025-04-25T15:34:56+02:00"), sprintIDTest,"ToDoItem created using Springboot tests",3);
+        ToDoItem newToDoItem = new ToDoItem("SpringBootToDoItem", "PENDING",managerIDTest,OffsetDateTime.parse("2025-04-25T12:34:56+02:00"), OffsetDateTime.parse("2025-04-25T15:34:56+02:00"), sprintIDTest,"ToDoItem created using Springboot tests",3.0);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -88,7 +88,7 @@ public class ToDoItemControllerTest {
         updatedToDoItem.setDeadline(OffsetDateTime.parse("2025-04-25T15:34:56+02:00"));
         updatedToDoItem.setCompletionTs(OffsetDateTime.parse("2025-04-25T15:34:56+02:00"));
         updatedToDoItem.setDescription("Updated description using Springboot tests");
-        updatedToDoItem.setEstHours(5);
+        updatedToDoItem.setEstHours(5.0);
 
 
         HttpEntity<ToDoItem> request = new HttpEntity<>(updatedToDoItem, headers);

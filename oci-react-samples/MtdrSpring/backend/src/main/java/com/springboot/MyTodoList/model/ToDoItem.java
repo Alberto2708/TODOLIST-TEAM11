@@ -55,7 +55,7 @@ public class ToDoItem {
 
     //Task estimated hours column
     @Column(name = "EST_HOURS")
-    Integer estHours;
+    Double estHours;
 
     //Empty Constructor
     public ToDoItem() {
@@ -72,7 +72,7 @@ public class ToDoItem {
             OffsetDateTime deadline,
             Integer sprintId,
             String description,
-            Integer estHours
+            Double estHours
     ) {
         this.ID = ID;
         this.name = name;
@@ -95,7 +95,7 @@ public class ToDoItem {
             OffsetDateTime deadline,
             Integer sprintId,
             String description,
-            Integer estHours
+            Double estHours
     ) {
         this.name = name;
         this.status = status;
@@ -180,11 +180,11 @@ public class ToDoItem {
         this.description = description;
     }
 
-    public Integer getEstHours() {
+    public Double getEstHours() {
         return estHours;
     }
 
-    public void setEstHours(Integer estHours) {
+    public void setEstHours(Double estHours) {
         this.estHours = estHours;
     }
 

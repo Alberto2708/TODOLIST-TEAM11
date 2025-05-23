@@ -3,29 +3,29 @@ package com.springboot.MyTodoList.model;
 public class WorkedHoursKpiResponse {
 
     //Attributes
-    public Integer workedHoursKpi;
-    public Integer totalEstHours;
+    public Double workedHoursKpi;
+    public Double totalEstHours;
 
     //Constructor
-    public WorkedHoursKpiResponse(Integer workedHoursKpi, Integer totalEstHours) {
+    public WorkedHoursKpiResponse(Double workedHoursKpi, Double totalEstHours) {
         this.workedHoursKpi = workedHoursKpi;
         this.totalEstHours = totalEstHours;
     }
 
     //Getters and Setters
-    public Integer getWorkedHoursKpi() {
+    public Double getWorkedHoursKpi() {
         return workedHoursKpi;
     }
 
-    public void setWorkedHoursKpi(Integer workedHoursKpi) {
+    public void setWorkedHoursKpi(Double workedHoursKpi) {
         this.workedHoursKpi = workedHoursKpi;
     }
 
-    public Integer getTotalEstHours() {
+    public Double getTotalEstHours() {
         return totalEstHours;
     }
 
-    public void setTotalEstHours(Integer totalEstHours) {
+    public void setTotalEstHours(Double totalEstHours) {
         this.totalEstHours = totalEstHours;
     }
 }

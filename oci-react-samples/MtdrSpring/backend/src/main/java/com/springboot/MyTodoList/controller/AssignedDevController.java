@@ -100,7 +100,7 @@ public class AssignedDevController {
             //System.out.println(assignedDevs.size());
             List<ToDoItem> tasks = new ArrayList<>();
             for (AssignedDev task : assignedDevs) {
-                if (toDoItemService.getItemById(task.getToDoItemId()).getSprintId() == sprintId) {
+                if (toDoItemService.getItemById(task.getToDoItemId()).getSprintId().equals(sprintId)) {
                     tasks.add(toDoItemService.getItemById(task.getToDoItemId()));
                 }
             }
@@ -122,7 +122,7 @@ public class AssignedDevController {
             List<ToDoItem> completedTasks = new ArrayList<>();
             for (AssignedDev assignedDev : assignedDevs) {
                 ToDoItem toDoItem = toDoItemService.getItemById(assignedDev.getToDoItemId());
-                if (toDoItem.getSprintId() == sprintId && toDoItem.getStatus().matches("COMPLETED")) {
+                if (toDoItem.getSprintId().equals(sprintId) && toDoItem.getStatus().matches("COMPLETED")) {
                     completedTasks.add(toDoItem);
                 }
             }
@@ -144,7 +144,7 @@ public class AssignedDevController {
             Integer completedTasks = 0;
             for (AssignedDev assignedDev : assignedDevs) {
                 ToDoItem toDoItem = toDoItemService.getItemById(assignedDev.getToDoItemId());
-                if (toDoItem.getSprintId() == sprintId && toDoItem.getStatus().matches("COMPLETED")) {
+                if (toDoItem.getSprintId().equals(sprintId) && toDoItem.getStatus().matches("COMPLETED")) {
                     completedTasks += 1;
                 }
             }
@@ -182,8 +182,8 @@ public class AssignedDevController {
     public ResponseEntity<WorkedHoursKpiResponse> getWorkedHoursByEmployeeAndSprint(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
         try {
             List<ToDoItem> tasks = getAssignedTasksByAssignedDevAndSprint(assignedDevId, sprintId).getBody();
-            Integer workedHours = 0;
-            Integer workedHoursTotal = 0;
+            Double workedHours = 0.0;
+            Double workedHoursTotal = 0.0;
             if (tasks == null) {
                 return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
             }
@@ -238,6 +238,8 @@ public class AssignedDevController {
     @GetMapping(value = "/assignedDev/{assignedDevId}/sprint/{sprintId}/father")
     public ResponseEntity<List<ToDoItem>> getAssignedTasksByAssignedDevAndSprintFather(@PathVariable Integer assignedDevId, @PathVariable Integer sprintId) {
         try {
+            Integer receivedSprintId = sprintId;
+
             List<AssignedDev> assignedDevs = assignedDevService.getAssignedDevsByDevId(assignedDevId);
             if (assignedDevs == null) {
                 return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -245,7 +247,8 @@ public class AssignedDevController {
             List<ToDoItem> tasks = new ArrayList<>();
             for (AssignedDev task : assignedDevs) {
                 //Logic for subtasks verification
-                if (toDoItemService.getItemById(task.getToDoItemId()).getSprintId() == sprintId) {
+                Integer actualToDoItemSprintId = toDoItemService.getItemById(task.getToDoItemId()).getSprintId();
+                if (toDoItemService.getItemById(task.getToDoItemId()).getSprintId().equals(sprintId)) {
                     if (subToDoItemService.checkIfIdIsntSubToDoItem(task.getToDoItemId())) {
                         tasks.add(toDoItemService.getItemById(task.getToDoItemId()));
                     }
