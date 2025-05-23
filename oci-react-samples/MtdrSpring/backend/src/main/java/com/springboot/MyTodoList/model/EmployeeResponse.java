@@ -4,13 +4,11 @@ package com.springboot.MyTodoList.model;
 public class EmployeeResponse {
 
     //Attributes
-    
     public Integer employeeId;
     public Integer managerId;
     public Integer projectId;
 
     //Constructor
-
     public EmployeeResponse(Integer employeeId, Integer managerId, Integer projectId) {
         this.employeeId = employeeId;
         this.managerId = managerId;
@@ -18,7 +16,6 @@ public class EmployeeResponse {
     }
 
     //Getters and Setters
-
     public Integer getEmployeeId() {
         return employeeId;
     }

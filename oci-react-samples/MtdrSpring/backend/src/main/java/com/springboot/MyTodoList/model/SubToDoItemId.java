@@ -1,12 +1,14 @@
 package com.springboot.MyTodoList.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.util.Objects;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
 @Embeddable
-public class SubToDoItemId implements Serializable{
-    
+public class SubToDoItemId implements Serializable {
+
     //Attributes
     private static final long serialVersionUID = 1L;
 
@@ -17,8 +19,8 @@ public class SubToDoItemId implements Serializable{
     private Integer subToDoItemId;
 
     //Constructors
-
-    public SubToDoItemId() {}
+    public SubToDoItemId() {
+    }
 
     public SubToDoItemId(Integer toDoItemId, Integer subToDoItemId) {
         this.toDoItemId = toDoItemId;
@@ -26,7 +28,6 @@ public class SubToDoItemId implements Serializable{
     }
 
     // Getters and Setters
-
     public Integer getToDoItemId() {
         return toDoItemId;
     }
@@ -45,16 +46,18 @@ public class SubToDoItemId implements Serializable{
 
     //equals() function override
     @Override
-
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         SubToDoItemId that = (SubToDoItemId) o;
         return Objects.equals(toDoItemId, that.toDoItemId) && Objects.equals(subToDoItemId, that.subToDoItemId);
     }
 
     //hashCode() function override
-
     @Override
     public int hashCode() {
         return Objects.hash(toDoItemId, subToDoItemId);

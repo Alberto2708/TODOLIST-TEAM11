@@ -1,31 +1,30 @@
 //This model purpose is to manage the assigned tasks to the developers in the database.
 //It has a composite primary key which is a combination of the toDoItemId and assignedDevId.
-
 package com.springboot.MyTodoList.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
+
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "ASSIGNEDDEV")
 public class AssignedDev implements Serializable {
-    //Attributes
 
+    //Attributes
     @EmbeddedId
     private AssignedDevId id;
 
-
     //Constructors
-
-    public AssignedDev() {}
+    public AssignedDev() {
+    }
 
     public AssignedDev(AssignedDevId id) {
         this.id = id;
     }
 
-
     //Getters and Setters
-
     public AssignedDevId getId() {
         return id;
     }
@@ -50,14 +49,12 @@ public class AssignedDev implements Serializable {
         id.setEmployeeId(assignedDevId);
     }
 
-
-    //toString method override
-    
+    // toString method override
     @Override
     public String toString() {
-        return "DevAssignedTask{" +
-                "toDoItemId=" + id.getToDoItemId() + '\n' +
-                ", assignedDevId='" + id.getEmployeeId() + '\n' +
-                '}';
+        return "DevAssignedTask{"
+                + "toDoItemId=" + id.getToDoItemId() + '\n'
+                + ", assignedDevId='" + id.getEmployeeId() + '\n'
+                + '}';
     }
 }

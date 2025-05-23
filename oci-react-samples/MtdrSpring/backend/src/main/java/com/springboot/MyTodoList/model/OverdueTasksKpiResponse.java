@@ -1,3 +1,5 @@
+// Model for the KPI of overdue tasks response
+
 package com.springboot.MyTodoList.model;
 
 public class OverdueTasksKpiResponse {

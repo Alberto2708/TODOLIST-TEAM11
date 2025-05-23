@@ -1,3 +1,5 @@
+// Controller for the Telegram Bot, which handles user interactions and task management
+// This bot is designed to manage tasks, authenticate users, and provide a user-friendly interface for task management
 package com.springboot.MyTodoList.controller;
 
 import java.time.LocalDate;
@@ -28,81 +30,85 @@ import com.springboot.MyTodoList.service.TelegramTaskService;
 
 @Component
 public class ToDoItemBotController extends TelegramLongPollingBot {
+
     private static final Logger logger = LoggerFactory.getLogger(ToDoItemBotController.class);
     private Map<Long, TaskCreationState> taskCreationStates = new HashMap<>();
 
     private class TaskCreationState {
+
         String name;
         Integer estHours;
         String description;
         OffsetDateTime deadline;
     }
-    private static final String HELP_TEXT = 
-        "🤖 Bot Commands:\n\n" +
-        "/auth email - Authenticate\n" +
-        "/menu - Show main menu\n" +
-        "/mytasks - List your tasks\n" +
-        "/mykpis - Show your KPIs\n" +
-        "/newtask \"Name\" -s SprintID -h Hours - Create task\n" +
-        "/assigntask TaskID email - Assign task\n" +
-        "/starttask TaskID - Start task\n" +
-        "/completetask TaskID - Complete task";
-
+    private static final String HELP_TEXT
+            = "🤖 Bot Commands:\n\n"
+            + "/auth email - Authenticate\n"
+            + "/menu - Show main menu\n"
+            + "/mytasks - List your tasks\n"
+            + "/mykpis - Show your KPIs\n"
+            + "/newtask \"Name\" -s SprintID -h Hours - Create task\n"
+            + "/assigntask TaskID email - Assign task\n"
+            + "/starttask TaskID - Start task\n"
+            + "/completetask TaskID - Complete task";
 
     @Autowired
     private TelegramTaskService taskService;
-    
+
     @Autowired
     private TelegramAuthService authService;
-    
+
     @Value("${telegram.bot.token}")
     private String botToken;
-    
+
     @Value("${telegram.bot.name}")
     private String botName;
 
+    // Getters for bot name and token
     @Override
     public String getBotUsername() {
         return botName;
     }
 
-    
     @Override
     public String getBotToken() {
         return botToken;
     }
 
+    // This function processes incoming Telegram bot updates, handling user commands, authentication,
+    // and task creation steps based on the message content and user state
     @Override
-public void onUpdateReceived(Update update) {
-    if (!update.hasMessage() || !update.getMessage().hasText()) return;
-
-    long chatId = update.getMessage().getChatId();
-    User user = update.getMessage().getFrom();
-    String command = update.getMessage().getText();
-
-    try {
-        if (taskCreationStates.containsKey(chatId)) {
-            handleTaskCreationStep(chatId, user.getId(), command);
+    public void onUpdateReceived(Update update) {
+        if (!update.hasMessage() || !update.getMessage().hasText()) {
             return;
         }
-        
-        if ("/start".equals(command)) {
-            String sprintInfo = taskService.getCurrentSprintInfo();
-            sendMessage(chatId, sprintInfo);
-            showMainMenu(chatId, user.getId());
-        }
-        else if (command.startsWith("/auth ")) {
-            String email = command.substring(6).trim();
-            handleAuthCommand(chatId, user.getId(), email);
-        }
-        else {
-            handleTaskCommand(chatId, user.getId(), command);
-        }
-    } catch (Exception e) {
-        handleError(chatId, e);
-    }
-}
 
+        long chatId = update.getMessage().getChatId();
+        User user = update.getMessage().getFrom();
+        String command = update.getMessage().getText();
+
+        try {
+            if (taskCreationStates.containsKey(chatId)) {
+                handleTaskCreationStep(chatId, user.getId(), command);
+                return;
+            }
+
+            if ("/start".equals(command)) {
+                String sprintInfo = taskService.getCurrentSprintInfo();
+                sendMessage(chatId, sprintInfo);
+                showMainMenu(chatId, user.getId());
+            } else if (command.startsWith("/auth ")) {
+                String email = command.substring(6).trim();
+                handleAuthCommand(chatId, user.getId(), email);
+            } else {
+                handleTaskCommand(chatId, user.getId(), command);
+            }
+        } catch (Exception e) {
+            handleError(chatId, e);
+        }
+    }
+
+    // This function sends a welcome message and displays the main menu with options for the user
     private void showMainMenu(long chatId, long telegramId) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
@@ -110,13 +116,13 @@ public void onUpdateReceived(Update update) {
 
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> keyboard = new ArrayList<>();
-        
+
         // Row 1
         KeyboardRow row1 = new KeyboardRow();
         row1.add(new KeyboardButton("📝 My Tasks"));
         row1.add(new KeyboardButton("📊 My KPIs"));
         keyboard.add(row1);
-        
+
         if (authService.isManager(telegramId)) {
             // Row 2 - Manager only buttons
             KeyboardRow row2 = new KeyboardRow();
@@ -125,7 +131,7 @@ public void onUpdateReceived(Update update) {
             row2.add(new KeyboardButton("📂 Completed Tasks"));
             keyboard.add(row2);
         }
-        
+
         // Row 3
         KeyboardRow row3 = new KeyboardRow();
         row3.add(new KeyboardButton("✅ Complete Task"));
@@ -142,56 +148,54 @@ public void onUpdateReceived(Update update) {
         }
     }
 
+    // This function handles the command for creating a new task, checking if the user is a manager,
     private void handleNewTaskCommand(long chatId, long telegramId, String Command) {
         if (!authService.isManager(telegramId)) {
             sendMessage(chatId, "⛔ Only managers can create tasks");
             return;
         }
-        
+
         taskCreationStates.put(chatId, new TaskCreationState());
         sendMessage(chatId, "📝 Enter task name:");
     }
 
+    // This function handles the command for assigning a task, checking if the user is a manager,
+    // and validating the input format
+    // It also sends the result of the assignment back to the user
     private void handleTaskCommand(long chatId, long telegramId, String command) {
         try {
             // Check authentication for all commands except help
-            if (!"/help".equals(command)&& !authService.isAuthenticated(telegramId)) {
+            if (!"/help".equals(command) && !authService.isAuthenticated(telegramId)) {
                 sendLoginPrompt(chatId);
                 return;
             }
             if ("📝 My Tasks".equals(command) || "/mytasks".equals(command)) {
                 String tasks = taskService.getUserTasks(telegramId);
                 sendMessage(chatId, tasks);
-            } 
-            else if ("📊 My KPIs".equals(command) || "/mykpis".equals(command)) {
+            } else if ("📊 My KPIs".equals(command) || "/mykpis".equals(command)) {
                 String kpis = taskService.getDeveloperKPIs(telegramId);
                 sendMessage(chatId, kpis);
-            }
-            else if (command.startsWith("➕ New Task") || command.startsWith("/newtask")) {
+            } else if (command.startsWith("➕ New Task") || command.startsWith("/newtask")) {
                 if (!authService.isManager(telegramId)) {
                     sendMessage(chatId, "⛔ Only managers can create tasks");
                     return;
                 }
                 handleNewTaskCommand(chatId, telegramId, command);
-            }
-            else if (command.startsWith("👥 Assign Task") || command.startsWith("/assigntask")) {
+            } else if (command.startsWith("👥 Assign Task") || command.startsWith("/assigntask")) {
                 if (!authService.isManager(telegramId)) {
                     sendMessage(chatId, "⛔ Only managers can assign tasks");
                     return;
                 }
                 handleAssignTaskCommand(chatId, telegramId, command);
-            }
-            else if (command.startsWith("✅ Complete Task") || command.startsWith("/completetask")) {
+            } else if (command.startsWith("✅ Complete Task") || command.startsWith("/completetask")) {
                 handleCompleteTaskCommand(chatId, command);
-            }
-            else if ("📂 Completed Tasks".equals(command)) {
+            } else if ("📂 Completed Tasks".equals(command)) {
                 if (!authService.isManager(telegramId)) {
                     sendMessage(chatId, "⛔ Only managers can view completed tasks");
                     return;
                 }
                 handleCompletedTasksCommand(chatId, telegramId);
-            }
-            else {
+            } else {
                 sendMessage(chatId, "❌ Unknown command. Type /help for options.");
             }
         } catch (Exception e) {
@@ -199,47 +203,44 @@ public void onUpdateReceived(Update update) {
         }
     }
 
+    // This function handles the task creation steps, prompting the user for task details
     private void handleTaskCreationStep(long chatId, long telegramId, String input) {
-    TaskCreationState state = taskCreationStates.get(chatId);
-    
-    if (state.name == null) {
-        state.name = input;
-        sendMessage(chatId, "⏱️ Enter estimated hours for this task:");
-    } 
-    else if (state.estHours == null) {
-        try {
-            state.estHours = Integer.parseInt(input);
-            sendMessage(chatId, "📝 Enter task description:");
-        } catch (NumberFormatException e) {
-            sendMessage(chatId, "❌ Please enter a valid number for hours");
-        }
-    }
-    else if (state.description == null) {
-        state.description = input;
-        sendMessage(chatId, "📅 Enter deadline in format YYYY-MM-DD:");
-    }
-    else if (state.deadline == null) {
-        try {
-            state.deadline = LocalDate.parse(input).atStartOfDay().atOffset(ZoneOffset.UTC);
-            String result = taskService.createNewTask(
-                telegramId, 
-                state.name, 
-                state.estHours,
-                state.description,
-                state.deadline
-            );
-            sendMessage(chatId, result);
-            taskCreationStates.remove(chatId);
-        } catch (DateTimeParseException e) {
-            sendMessage(chatId, "❌ Invalid date format. Please use YYYY-MM-DD");
-        } catch (Exception e) {
-            sendMessage(chatId, "❌ Failed to create task");
-            taskCreationStates.remove(chatId);
-            logger.error("Task creation failed", e);
-        }
-    }
-}
+        TaskCreationState state = taskCreationStates.get(chatId);
 
+        if (state.name == null) {
+            state.name = input;
+            sendMessage(chatId, "⏱️ Enter estimated hours for this task:");
+        } else if (state.estHours == null) {
+            try {
+                state.estHours = Integer.parseInt(input);
+                sendMessage(chatId, "📝 Enter task description:");
+            } catch (NumberFormatException e) {
+                sendMessage(chatId, "❌ Please enter a valid number for hours");
+            }
+        } else if (state.description == null) {
+            state.description = input;
+            sendMessage(chatId, "📅 Enter deadline in format YYYY-MM-DD:");
+        } else if (state.deadline == null) {
+            try {
+                state.deadline = LocalDate.parse(input).atStartOfDay().atOffset(ZoneOffset.UTC);
+                String result = taskService.createNewTask(
+                        telegramId,
+                        state.name,
+                        state.estHours,
+                        state.description,
+                        state.deadline
+                );
+                sendMessage(chatId, result);
+                taskCreationStates.remove(chatId);
+            } catch (DateTimeParseException e) {
+                sendMessage(chatId, "❌ Invalid date format. Please use YYYY-MM-DD");
+            } catch (Exception e) {
+                sendMessage(chatId, "❌ Failed to create task");
+                taskCreationStates.remove(chatId);
+                logger.error("Task creation failed", e);
+            }
+        }
+    }
 
     private void handleAssignTaskCommand(long chatId, long telegramId, String command) {
         try {
@@ -247,16 +248,16 @@ public void onUpdateReceived(Update update) {
                 sendMessage(chatId, "👥 Format: /assigntask TaskID email@example.com");
                 return;
             }
-            
+
             String[] parts = command.split(" ");
             if (parts.length < 3) {
                 sendMessage(chatId, "❌ Format: /assigntask TaskID email@example.com");
                 return;
             }
-            
+
             long taskId = Long.parseLong(parts[1]);
             String email = parts[2];
-            
+
             String result = taskService.assignTask(telegramId, taskId, email);
             sendMessage(chatId, result);
         } catch (Exception e) {
@@ -270,13 +271,13 @@ public void onUpdateReceived(Update update) {
                 sendMessage(chatId, "✅ Format: /completetask TaskID");
                 return;
             }
-            
+
             String[] parts = command.split(" ");
             if (parts.length < 2) {
                 sendMessage(chatId, "❌ Format: /completetask TaskID");
                 return;
             }
-            
+
             long taskId = Long.parseLong(parts[1]);
             String result = taskService.completeTask(taskId);
             sendMessage(chatId, result);
@@ -299,7 +300,7 @@ public void onUpdateReceived(Update update) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText("🔒 Please authenticate with:\n/auth your_email@company.com");
-        
+
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> keyboard = new ArrayList<>();
         KeyboardRow row = new KeyboardRow();
@@ -308,7 +309,7 @@ public void onUpdateReceived(Update update) {
         keyboardMarkup.setKeyboard(keyboard);
         keyboardMarkup.setResizeKeyboard(true);
         message.setReplyMarkup(keyboardMarkup);
-        
+
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -335,7 +336,7 @@ public void onUpdateReceived(Update update) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText(text);
-        
+
         try {
             execute(message);
         } catch (TelegramApiException e) {

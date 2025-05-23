@@ -13,17 +13,20 @@ import java.util.Optional;
 
 @Service
 public class SubToDoItemService {
+
     @Autowired
     private SubToDoItemRepository subToDoItemRepository;
 
+    // Find all SubToDoItems
     public List<SubToDoItem> findAllSubToDoItems() {
-        try{
+        try {
             return subToDoItemRepository.findAll();
-        }catch(Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
 
+    // Find SubToDoItem by ID
     public SubToDoItem findSubToDoItemById(SubToDoItemId subToDoItemID) {
         try {
             Integer toDoItemId = subToDoItemID.getToDoItemId();
@@ -38,71 +41,76 @@ public class SubToDoItemService {
             return null;
         }
     }
-    
-    public Boolean checkIfIdIsntSubToDoItem(Integer subToDoItemId){
-        try{
-            if(subToDoItemRepository.findBySubToDoItemId(subToDoItemId).isEmpty()){
+
+    // Check a given SubToDoItem ID is in fact a SubToDoItem ID or a ToDoItem ID
+    public Boolean checkIfIdIsntSubToDoItem(Integer subToDoItemId) {
+        try {
+            if (subToDoItemRepository.findBySubToDoItemId(subToDoItemId).isEmpty()) {
                 //Returns true if the id is a Father ToDo Item id
                 return true;
-            }else{
+            } else {
                 //Returns false if the id is a Sub ToDo Item id
                 return false;
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
 
-    public List<Integer> findAllSubToDoItemsIdsByToDoItemId(Integer toDoItemId){
-        try{
+    // Find SubToDoItems IDs by ToDoItem ID
+    public List<Integer> findAllSubToDoItemsIdsByToDoItemId(Integer toDoItemId) {
+        try {
             return subToDoItemRepository.findAllSubToDoItemIdsByToDoItemId(toDoItemId);
-        }catch(Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
-    
-    public List<SubToDoItem> findAllSubToDoItemsByToDoItemId(Integer toDoItemId){
-        try{
+
+    // Find SubToDoItems by ToDoItem ID
+    public List<SubToDoItem> findAllSubToDoItemsByToDoItemId(Integer toDoItemId) {
+        try {
             return subToDoItemRepository.findAllSubToDoItemsByToDoItemId(toDoItemId);
-        }catch(Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
 
-
+    // Add a new SubToDoItem
     public SubToDoItem addSubToDoItem(SubToDoItem subToDoItem) {
         return subToDoItemRepository.save(subToDoItem);
     }
 
-    public Boolean deleteSubToDoItem(Integer toDoItemId, Integer subToDoItemId){
-        try{
+    // Delete a SubToDoItem by ToDoItem ID and SubToDoItem ID
+    public Boolean deleteSubToDoItem(Integer toDoItemId, Integer subToDoItemId) {
+        try {
             subToDoItemRepository.deleteByToDoItemIdAndSubToDoItemId(toDoItemId, subToDoItemId);
             return true;
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println(e);
             return false;
         }
     }
 
-    public Boolean deleteBySubToDoItemById(Integer subToDoItemId){
-        try{
+    // Delete a SubToDoItem by SubToDoItem ID
+    public Boolean deleteBySubToDoItemById(Integer subToDoItemId) {
+        try {
             subToDoItemRepository.deleteBySubToDoItemId(subToDoItemId);
             return true;
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println(e);
             return false;
         }
     }
 
-    public Boolean deleteByToDoItemId(Integer toDoItemId){
-        try{
+    // Delete all SubToDoItems by ToDoItem ID
+    public Boolean deleteByToDoItemId(Integer toDoItemId) {
+        try {
             subToDoItemRepository.deleteByToDoItemId(toDoItemId);
             return true;
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println(e);
             return false;
         }
     }
-
 
 }

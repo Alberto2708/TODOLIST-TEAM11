@@ -1,3 +1,4 @@
+// Service class for managing Project Entity in the application
 package com.springboot.MyTodoList.service;
 
 import java.util.Optional;
@@ -12,40 +13,46 @@ import com.springboot.MyTodoList.model.Project;
 
 @Service
 public class ProjectService {
+
     @Autowired
     private ProjectRepository projectRepository;
 
-    public List<Project> findAll(){
+    // Find All Projects
+    public List<Project> findAll() {
         List<Project> projects = projectRepository.findAll();
         return projects;
     }
 
+    // Find Project by ID
     public Project findProjectById(Integer id) {
         Optional<Project> projectData = projectRepository.findById(id);
-        if (projectData.isPresent()){
+        if (projectData.isPresent()) {
             return projectData.get();
-        }else{
+        } else {
             return null;
         }
     }
 
+    // Add a new Project
     public Project addProject(Project project) {
         return projectRepository.save(project);
     }
 
-    public Project updateProject (Integer id, Project newProject){
+    // Update an existing Project
+    public Project updateProject(Integer id, Project newProject) {
         Optional<Project> projectData = projectRepository.findById(id);
-        if (projectData.isPresent()){
+        if (projectData.isPresent()) {
             Project project = projectData.get();
             project.setID(id);
             project.setName(newProject.getName());
             return projectRepository.save(project);
-        }else{
+        } else {
             return null;
         }
     }
 
-    public Boolean deleteProject(Integer projectId){
+    // Delete a Project
+    public Boolean deleteProject(Integer projectId) {
         try {
             projectRepository.deleteById(projectId);
             return true;
