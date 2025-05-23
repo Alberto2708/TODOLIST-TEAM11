@@ -14,12 +14,15 @@ import org.springframework.http.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
+/**
+ * Integration tests for SubToDoItemController endpoints.
+ * Tests creation, retrieval, and deletion of SubToDoItem entities.
+ */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(classes = com.springboot.MyTodoList.MyTodoListApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SubToDoItemControllerTest {
 
-    //Predefined test variables
+    // Test data: Make sure these IDs exist in your test database. Predefined test variables.
     //If database is modified or this specific ids are not present, the test will fail.
     private final int toDoItemIDTestFather = 124;
     private final int toDoItemIDTestChild = 125;
@@ -27,9 +30,13 @@ public class SubToDoItemControllerTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private static SubToDoItemId subToDoItemId;
+    // SubToDoItemId is used to save the composite key of the SubToDoItem entity.
+    private static SubToDoItemId createdSubToDoItemId;
 
-    //Test Creation endpoint for SubToDoItem
+    /**
+     Test the creation endpoint for SubToDoItem.
+     Verifies that a new SubToDoItem can be created successfully.
+     **/
     @Test
     @Order(1)
     void testAddSubToDoItem() {
@@ -42,45 +49,51 @@ public class SubToDoItemControllerTest {
         HttpEntity<SubToDoItem> request = new HttpEntity<>(newSubToDoItem, headers);
 
         ResponseEntity<SubToDoItemId> response = restTemplate.postForEntity("/subToDoItems", request, SubToDoItemId.class);
-        subToDoItemId = response.getBody();
+        createdSubToDoItemId = response.getBody();
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        System.out.println("SubToDoItem created: Parent ToDoItem = " + subToDoItemId.getToDoItemId() + " - Child ToDoItem = " + subToDoItemId.getSubToDoItemId());
+        System.out.println("SubToDoItem created: Parent ToDoItem = " + createdSubToDoItemId.getToDoItemId() + " - Child ToDoItem = " + createdSubToDoItemId.getSubToDoItemId());
     }
 
 
-    // Test Get endpoint for SubToDoItem ID
+    /**
+     Tests retrieval of an SubToDoItem entity by its composite key via GET /subToDoItems/{toDoItemId}/{subToDoItemId}.
+     Verifies that the correct entity is returned and the response status is 200 OK.
+     **/
     @Test
     @Order(2)
-    void getSubToDoItem() {
+    void testGetSubToDoItem() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> request = new HttpEntity<>(headers);
 
         ResponseEntity<SubToDoItem> response = restTemplate.exchange(
-            "/subToDoItems/" + subToDoItemId.getToDoItemId() + "/" + subToDoItemId.getSubToDoItemId(),
+            "/subToDoItems/" + createdSubToDoItemId.getToDoItemId() + "/" + createdSubToDoItemId.getSubToDoItemId(),
             HttpMethod.GET,
             request,
             SubToDoItem.class
         );
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(subToDoItemId.getToDoItemId(), response.getBody().getToDoItemId());
-        assertEquals(subToDoItemId.getSubToDoItemId(), response.getBody().getSubToDoItemId());
+        assertEquals(createdSubToDoItemId.getToDoItemId(), response.getBody().getToDoItemId());
+        assertEquals(createdSubToDoItemId.getSubToDoItemId(), response.getBody().getSubToDoItemId());
         System.out.println("SubToDoItem retrieved: FatherToDoItem = " + response.getBody().getToDoItemId() + " - ChildSubToDoItem = " + response.getBody().getSubToDoItemId());
     }
 
-    // Test Deletion endpoint for SubToDoItem
+    /**
+      Tests deletion of an SubToDoItem entity by its composite key via DELETE /subToDoItems/{toDoItemId}/{subToDoItemId}.
+      Verifies that the entity is deleted and the response status is 200 OK.
+     **/
     @Test
     @Order(3)
-    void deleteSubToDoItem() {
+    void testDeleteSubToDoItem() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> request = new HttpEntity<>(headers);
 
         ResponseEntity<Boolean> response = restTemplate.exchange(
-            "/subToDoItems/" + subToDoItemId.getToDoItemId() + "/" + subToDoItemId.getToDoItemId(),
+            "/subToDoItems/" + createdSubToDoItemId.getToDoItemId() + "/" + createdSubToDoItemId.getSubToDoItemId(),
             HttpMethod.DELETE,
             request,
             Boolean.class
@@ -88,7 +101,7 @@ public class SubToDoItemControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(true, response.getBody());
-        System.out.println("SubToDoItem deleted: FatherToDoItem = " + subToDoItemId.getToDoItemId() + " - ChildSubToDoItem = " + subToDoItemId.getSubToDoItemId());
+        System.out.println("SubToDoItem deleted: FatherToDoItem = " + createdSubToDoItemId.getToDoItemId() + " - ChildSubToDoItem = " + createdSubToDoItemId.getSubToDoItemId());
     }
 
 

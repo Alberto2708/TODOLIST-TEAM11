@@ -13,7 +13,10 @@ import org.springframework.http.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
+/**
+ * Integration tests for ProjectController endpoints.
+ * Tests creation, retrieval, and deletion of Project entities.
+ */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(classes = com.springboot.MyTodoList.MyTodoListApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ProjectControllerTest {
@@ -23,7 +26,10 @@ public class ProjectControllerTest {
 
     private static Integer projectId;
 
-    //Test Creation endpoint for Project
+    /**
+     Test the creation endpoint for Project.
+     Verifies that a new Project can be created successfully.
+     **/
     @Test
     @Order(1)
     void testAddProject() {
@@ -41,10 +47,13 @@ public class ProjectControllerTest {
     }
 
 
-    //Test get endpoint for Project by ID
+    /**
+     Tests retrieval of an Project entity by its key via GET /project/{projectId}.
+     Verifies that the correct entity is returned and the response status is 200 OK.
+     **/
     @Test
     @Order(2)
-    void getProject() {
+    void testGetProject() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -56,10 +65,13 @@ public class ProjectControllerTest {
         System.out.println("Project retrieved: " + response.getBody().getName() + " with ID: " + response.getBody().getID());
     }
 
-    //Test update endpoint for Project
+    /**
+      Tests updating an Project entity via PUT /projects/{id}.
+      Verifies that the entity is updated and the response status is 200 OK.
+     **/
     @Test
     @Order(2)
-    void updateProject(){
+    void testUpdateProject(){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -70,13 +82,17 @@ public class ProjectControllerTest {
         ResponseEntity<Project> response = restTemplate.exchange("/projects/" + projectId, HttpMethod.PUT, request, Project.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("UpdatedProjectName", response.getBody().getName());
+        assertEquals(projectId, response.getBody().getID());
         System.out.println("Project name updated: " + response.getBody().getName() + " with ID: " + response.getBody().getID());
     }
 
-    //Test deletion endpoint for Project
+    /**
+      Tests deletion of an Project entity by its key via DELETE /projects/{projectId}.
+      Verifies that the entity is deleted and the response status is 200 OK.
+     **/
     @Test
     @Order(3)
-    void deleteProject() {
+    void testDeleteProject() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 

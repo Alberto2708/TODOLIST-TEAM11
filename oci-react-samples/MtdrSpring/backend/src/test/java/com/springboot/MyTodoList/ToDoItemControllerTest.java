@@ -15,12 +15,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.OffsetDateTime;
 
-
+/**
+ * Integration tests for ToDoItemController endpoints.
+ * Tests creation, retrieval, and deletion of ToDoItem entities.
+ */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(classes = com.springboot.MyTodoList.MyTodoListApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ToDoItemControllerTest {
 
-     //Predefined test variables
+     // Test data: Make sure these IDs exist in your test database. Predefined test variables.
     //If database is modified or this specific ids are not present, the test will fail.
     private final int sprintIDTest = 84;
     private final int managerIDTest = 206;
@@ -28,9 +31,12 @@ public class ToDoItemControllerTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private static Integer toDoItemID;
+    private static Integer createdToDoItemId;
 
-    //Test Creation endpoint for ToDoItem
+    /**
+     Test the creation endpoint for ToDoItem.
+     Verifies that a new ToDoItem can be created successfully.
+     **/
     @Test
     @Order(1)
     void testAddToDoItem() {
@@ -42,30 +48,36 @@ public class ToDoItemControllerTest {
         HttpEntity<ToDoItem> request = new HttpEntity<>(newToDoItem, headers);
 
         ResponseEntity response = restTemplate.postForEntity("/todolist", request, Integer.class);
-        toDoItemID = (Integer) response.getBody();
+        createdToDoItemId = (Integer) response.getBody();
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        System.out.println("ToDoItem created: "+ toDoItemID);
+        System.out.println("ToDoItem created: "+ createdToDoItemId);
     }
 
-    //Test get endpoint for Employee by ID
+    /**
+     Tests retrieval of an ToDoItem entity by its key via GET /todolist/{toDoItemId}.
+     Verifies that the correct entity is returned and the response status is 200 OK.
+     **/
     @Test
     @Order(2)
-    void getToDoItem() {
+    void testGetToDoItem() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        ResponseEntity<Employee> response = restTemplate.exchange("/todolist/" + toDoItemID, HttpMethod.GET, request, Employee.class);
+        ResponseEntity<Employee> response = restTemplate.exchange("/todolist/" + createdToDoItemId, HttpMethod.GET, request, Employee.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(toDoItemID, response.getBody().getID());
+        assertEquals(createdToDoItemId, response.getBody().getID());
         System.out.println("ToDoItem retrieved: " + response.getBody().getName() + " with ID: " + response.getBody().getID());
     }
 
-    //Test update endpoint for ToDoItem
+    /**
+      Tests updating an ToDoItem entity via PUT /todolist/{id}.
+      Verifies that the entity is updated and the response status is 200 OK.
+     **/
     @Test
     @Order(2)
-    void updateToDoItem(){
+    void testUpdateToDoItem(){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -80,7 +92,7 @@ public class ToDoItemControllerTest {
 
 
         HttpEntity<ToDoItem> request = new HttpEntity<>(updatedToDoItem, headers);
-        ResponseEntity<ToDoItem> response = restTemplate.exchange("/todolist/" + toDoItemID, HttpMethod.PUT, request, ToDoItem.class);
+        ResponseEntity<ToDoItem> response = restTemplate.exchange("/todolist/" + createdToDoItemId, HttpMethod.PUT, request, ToDoItem.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("UpdatedName", response.getBody().getName());
         assertEquals("COMPLETED", response.getBody().getStatus());
@@ -95,21 +107,24 @@ public class ToDoItemControllerTest {
         System.out.println("ToDoItem name updated: " + response.getBody().getName() + " with ID: " + response.getBody().getID());
     }
 
-    //Test deletion endpoint for ToDoItem
+    /**
+      Tests deletion of an ToDoItem entity by its key via DELETE /todolist/{toDoItemId}.
+      Verifies that the entity is deleted and the response status is 200 OK.
+     **/
     @Test
     @Order(3)
-    void deleteToDoItem() {
+    void testDeleteToDoItem() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        ResponseEntity response = restTemplate.exchange("/todolist/" + toDoItemID, HttpMethod.DELETE, request, Boolean.class);
+        ResponseEntity response = restTemplate.exchange("/todolist/" + createdToDoItemId, HttpMethod.DELETE, request, Boolean.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         // Check if the response body is true (indicating successful deletion)
         assertEquals(true, response.getBody());
         // Print the ID of the deleted employee
-        System.out.println("ToDoItem deleted: " + toDoItemID);
+        System.out.println("ToDoItem deleted: " + createdToDoItemId);
     }
 
 

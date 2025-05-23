@@ -14,21 +14,27 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.OffsetDateTime;
 
-
+/**
+ * Integration tests for SprintController endpoints.
+ * Tests creation, retrieval, and deletion of Sprint entities.
+ */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(classes = com.springboot.MyTodoList.MyTodoListApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SprintControllerTest {
 
-    //Predefined test variables
+    // Test data: Make sure these IDs exist in your test database. Predefined test variables.
     //If database is modified or this specific ids are not present, the test will fail.
     private final int projectIDTest = 83;
 
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private static Integer sprintId;
+    private static Integer createdSprintId;
 
-    //Test Creation endpoint for Sprint
+    /**
+     Test the creation endpoint for Sprint.
+     Verifies that a new Sprint can be created successfully.
+     **/
     @Test
     @Order(1)
     void testAddSprint() {
@@ -40,31 +46,37 @@ public class SprintControllerTest {
         HttpEntity<Sprint> request = new HttpEntity<>(newSprint, headers);
 
         ResponseEntity<Integer> response = restTemplate.postForEntity("/sprint", request, Integer.class);
-        sprintId = response.getBody();
+        createdSprintId = response.getBody();
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        System.out.println("Sprint created: " + sprintId);
+        System.out.println("Sprint created: " + createdSprintId);
     }
 
 
-    //Test get endpoint for Sprint by ID
+     /**
+     Tests retrieval of an Sprint entity by its key via GET /sprint/{sprintId}.
+     Verifies that the correct entity is returned and the response status is 200 OK.
+     **/
     @Test
     @Order(2)
-    void getSprint() {
+    void testGetSprint() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        ResponseEntity<Sprint> response = restTemplate.exchange("/sprint/" + sprintId, HttpMethod.GET, request, Sprint.class);
+        ResponseEntity<Sprint> response = restTemplate.exchange("/sprint/" + createdSprintId, HttpMethod.GET, request, Sprint.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(sprintId, response.getBody().getID());
+        assertEquals(createdSprintId, response.getBody().getID());
         System.out.println("Sprint retrieved: " + response.getBody().getName() + " with ID: " + response.getBody().getID());
     }
 
-    //Test update endpoint for Sprint
+    /**
+      Tests updating an Sprint entity via PUT /sprint/{sprintId}.
+      Verifies that the entity is updated and the response status is 200 OK.
+     **/
     @Test
     @Order(2)
-    void updateSprint(){
+    void testUpdateSprint(){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -74,7 +86,7 @@ public class SprintControllerTest {
         updatedSprint.setEndDate(OffsetDateTime.parse("2025-06-04T15:34:56+02:00"));
 
         HttpEntity<Sprint> request = new HttpEntity<>(updatedSprint, headers);
-        ResponseEntity<Sprint> response = restTemplate.exchange("/sprint/" + sprintId, HttpMethod.PUT, request, Sprint.class);
+        ResponseEntity<Sprint> response = restTemplate.exchange("/sprint/" + createdSprintId, HttpMethod.PUT, request, Sprint.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("UpdatedSprintName", response.getBody().getName());
         assertEquals(OffsetDateTime.parse("2025-04-25T10:34:56Z"), response.getBody().getStartDate());
@@ -82,18 +94,21 @@ public class SprintControllerTest {
         System.out.println("Sprint name updated: " + response.getBody().getName() + " with ID: " + response.getBody().getID());
     }
 
-    //Test deletion endpoint for Sprint
+    /**
+      Tests deletion of an Sprint entity by its key via DELETE /sprint/{sprintId}.
+      Verifies that the entity is deleted and the response status is 200 OK.
+     **/
     @Test
     @Order(3)
-    void deleteSprint() {
+    void testDeleteSprint() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        ResponseEntity<Boolean> response = restTemplate.exchange("/sprint/" + sprintId, HttpMethod.DELETE, request, Boolean.class);
+        ResponseEntity<Boolean> response = restTemplate.exchange("/sprint/" + createdSprintId, HttpMethod.DELETE, request, Boolean.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(true, response.getBody());
-        System.out.println("Sprint deleted: " + sprintId);
+        System.out.println("Sprint deleted: " + createdSprintId);
     }
 }
