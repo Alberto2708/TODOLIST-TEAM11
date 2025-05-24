@@ -117,7 +117,7 @@ public class TelegramTaskService {
             return String.format(
                     "📊 Sprint #%d KPIs\n\n"
                     + "✅ Completed: %d/%d (%d%%)\n"
-                    + "⏱️ Estimated Hours: %d\n"
+                    + "⏱️ Estimated Hours: %.2f\n"
                     + "📅 Deadline: %s",
                     sprint.getID(),
                     completed, total,
@@ -224,7 +224,7 @@ public class TelegramTaskService {
         return String.format(
                 "#%d - %s\n"
                 + "Status: %s\n"
-                + "Hours: %d\n"
+                + "Hours: %.2f\n"
                 + "Description: %s\n"
                 + "Deadline: %s",
                 task.getID(),
