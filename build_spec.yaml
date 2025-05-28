@@ -36,13 +36,15 @@ steps:
     name: "Docker Login"
     timeoutInSeconds: 60
     command: |
-      echo "Logging into Docker registry ${DOCKER_REGISTRY%%/*}"
-      # Extract the registry domain (everything before the first /)
-      REGISTRY_DOMAIN=${DOCKER_REGISTRY%%/*}
-      echo "Registry domain: ${REGISTRY_DOMAIN}"
-      echo "${OCI_AUTH_TOKEN}" | docker login -u "${OCI_USERNAME}" --password-stdin "${REGISTRY_DOMAIN}"
+      # Extract registry domain (e.g., "qro.ocir.io")
+      REGISTRY_DOMAIN=$(echo "${DOCKER_REGISTRY}" | awk -F/ '{print $1}')
+      echo "Logging into: ${REGISTRY_DOMAIN}"
+      
+      # Use the parameterized token
+      echo "${DOCKER_AUTH_TOKEN}" | docker login -u "${OCI_USERNAME}" --password-stdin "${REGISTRY_DOMAIN}"
+      
       if [ $? -ne 0 ]; then
-        echo "Docker login failed"
+        echo "ERROR: Docker login failed. Check username/token/registry."
         exit 1
       fi
 
