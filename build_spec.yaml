@@ -4,19 +4,69 @@ timeoutInSeconds: 600
 runAs: root
 shell: bash
 
+exportedVariables:
+  - IMAGE
+  - DOCKER_REGISTRY
+
+
 env:
   variables:
     JAVA_HOME: "javahome"
+    IMAGE_NAME: "todolistapp-springboot"
+    IMAGE_VERSION: "0.1"
 
 steps:
   - type: Command
-    name: "Execute build.sh"
+    name: "Build and Push Docker Image"
     timeoutInSeconds: 600
     command: |
-      echo "Running build script"
-      echo "Current directory: $(pwd)"
+      echo "Starting Docker build process"
       cd ${OCI_PRIMARY_SOURCE_DIR}/oci-react-samples/MtdrSprint/backend
-      echo "Current directory: $(pwd)"
-      ls
-      source build.sh
-      echo "Build script executed successfully"
+      
+      # Attempt to get DOCKER_REGISTRY from pipeline state
+      if [ -z "$DOCKER_REGISTRY" ]; then
+        export DOCKER_REGISTRY=$(state_get DOCKER_REGISTRY)
+        echo "DOCKER_REGISTRY retrieved from state: $DOCKER_REGISTRY"
+      fi
+      
+      # Check again if DOCKER_REGISTRY was set successfully
+      if [ -z "$DOCKER_REGISTRY" ]; then
+        echo "Error: DOCKER_REGISTRY env variable needs to be set!"
+        exit 1
+      fi
+
+      # Compose full image tag
+      export IMAGE="${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_VERSION}"
+      echo "Using IMAGE tag: $IMAGE"
+
+      echo "Running Maven build"
+      mvn clean package spring-boot:repackage
+
+      echo "Building Docker image"
+      docker build -f Dockerfile -t $IMAGE .
+
+      echo "Pushing Docker image"
+      docker push $IMAGE
+
+      if [ $? -eq 0 ]; then
+        echo "Image pushed successfully, cleaning up local image"
+        docker rmi "$IMAGE"
+      fi
+    
+    onFailure: 
+      - type: Command
+        name: "Handle Failure"
+        command: |
+          echo "Build or push failed. Please check the logs for details."
+        timeoutInSeconds: 60
+        runAs: root
+
+outputArtifacts:
+  - name: "DockerImage"
+    type: DOCKER_IMAGE
+    source: "${IMAGE}"
+    description: "The Docker image built and pushed during the pipeline run."
+  - name: "DockerRegistry"
+    type: STRING
+    source: "${DOCKER_REGISTRY}"
+    description: "The Docker registry where the image was pushed."
