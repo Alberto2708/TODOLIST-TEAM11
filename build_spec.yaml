@@ -13,6 +13,7 @@ env:
 
   exportedVariables:
     - IMAGE
+    - DOCKER_REGISTRY
 
 steps:
   - type: Command
