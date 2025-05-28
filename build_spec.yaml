@@ -64,9 +64,9 @@ steps:
 outputArtifacts:
   - name: "DockerImage"
     type: DOCKER_IMAGE
-    source: "${IMAGE}"
+    location: "${IMAGE}"
     description: "The Docker image built and pushed during the pipeline run."
   - name: "DockerRegistry"
     type: STRING
-    source: "${DOCKER_REGISTRY}"
+    location: "${DOCKER_REGISTRY}"
     description: "The Docker registry where the image was pushed."
