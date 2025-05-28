@@ -11,6 +11,8 @@ env:
     IMAGE_NAME: "todolistapp-springboot"
     IMAGE_VERSION: "0.1"
     DOCKER_REGISTRY: "qro.ocir.io/a01637667/reacttodo/dcfkg/todolistapp-springboot"
+    OCI_USERNAME: "a01637667/a01637667@tec.mx"
+    OCI_AUTH_TOKEN: "${OCI_AUTH_TOKEN}"  # Replace with actual token or use a secure method to retrieve it
 
   exportedVariables:
     - IMAGE
@@ -27,6 +29,21 @@ steps:
         systemctl start docker
       else
         echo "Docker is already installed"
+      fi
+
+  
+  - type: Command
+    name: "Docker Login"
+    timeoutInSeconds: 60
+    command: |
+      echo "Logging into Docker registry ${DOCKER_REGISTRY%%/*}"
+      # Extract the registry domain (everything before the first /)
+      REGISTRY_DOMAIN=${DOCKER_REGISTRY%%/*}
+      echo "Registry domain: ${REGISTRY_DOMAIN}"
+      echo "${OCI_AUTH_TOKEN}" | docker login -u "${OCI_USERNAME}" --password-stdin "${REGISTRY_DOMAIN}"
+      if [ $? -ne 0 ]; then
+        echo "Docker login failed"
+        exit 1
       fi
 
   - type: Command
