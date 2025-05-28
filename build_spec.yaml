@@ -6,14 +6,14 @@ shell: bash
 
 env:
   variables:
-  JAVA_HOME: "javahome"
-  
-  steps:
-      - type: Command
-        name : "Execute build.sh"
-        timeoutInSeconds: 600
-        command: |
-          echo "Running build script"
-          echo "Current directory: $(pwd)"
-          cd $MTDRWORKSHOP_LOCATION/backend
-          echo "Current directory: $(pwd)"
+    JAVA_HOME: "javahome"
+
+steps:
+  - type: Command
+    name: "Execute build.sh"
+    timeoutInSeconds: 600
+    command: |
+      echo "Running build script"
+      echo "Current directory: $(pwd)"
+      cd $MTDRWORKSHOP_LOCATION/backend
+      echo "Current directory: $(pwd)"
