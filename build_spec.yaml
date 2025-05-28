@@ -54,6 +54,7 @@ steps:
     timeoutInSeconds: 600
     command: |
       echo "Starting Docker build process"
+      pwd
       cd ${OCI_PRIMARY_SOURCE_DIR}/oci-react-samples/MtdrSprint/backend
       
       # Attempt to get DOCKER_REGISTRY from pipeline state
