@@ -28,6 +28,12 @@ steps:
       else
         echo "Docker is already installed"
       fi
+
+      echo "Removing any existing OpenJDK installations..."
+      yum remove -y java-17-openjdk java-17-openjdk-devel || true
+      yum remove -y java-1.8.0-openjdk java-1.8.0-openjdk-devel || true
+
+      
       if type -p java; then
         echo "Java found in PATH"
         JAVA_BIN=$(readlink -f $(which java))
