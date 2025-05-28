@@ -12,7 +12,7 @@ env:
     IMAGE_VERSION: "0.1"
     DOCKER_REGISTRY: "qro.ocir.io/a01637667/reacttodo/dcfkg/todolistapp-springboot"
     OCI_USERNAME: "a01637667/a01637667@tec.mx"
-    OCI_AUTH_TOKEN: "${OCI_AUTH_TOKEN}"  # Replace with actual token or use a secure method to retrieve it
+    OCI_AUTH_TOKEN: "${AUTH_TOKEN}"  # Replace with actual token or use a secure method to retrieve it
 
   exportedVariables:
     - IMAGE
