@@ -10,12 +10,26 @@ env:
     JAVA_HOME: "javahome"
     IMAGE_NAME: "todolistapp-springboot"
     IMAGE_VERSION: "0.1"
+    DOCKER_REGISTRY: "qro.ocir.io/axmgmaaw28rg/reacttodo/dcfkg/todolistapp-springboot"
 
   exportedVariables:
     - IMAGE
     - DOCKER_REGISTRY
 
 steps:
+  - type : Command
+    name: "Prepare Environment"
+    timeoutInSeconds: 300
+    command: |
+      # Install Docker if not present
+      if ! command -v docker &> /dev/null; then
+        echo "Installing Docker..."
+        yum install -y docker-engine
+        systemctl start docker
+      else
+        echo "Docker is already installed"
+      fi
+
   - type: Command
     name: "Build and Push Docker Image"
     timeoutInSeconds: 600
