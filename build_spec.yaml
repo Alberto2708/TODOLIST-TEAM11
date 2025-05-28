@@ -66,5 +66,5 @@ outputArtifacts:
     type: DOCKER_IMAGE
     location: "${IMAGE}"
   - name: "DockerRegistry"
-    type: STRING
+    type: INLINE
     location: "${DOCKER_REGISTRY}"
