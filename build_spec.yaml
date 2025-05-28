@@ -13,7 +13,6 @@ env:
 
   exportedVariables:
     - IMAGE
-    - DOCKER_REGISTRY
 
 steps:
   - type: Command
@@ -65,6 +64,3 @@ outputArtifacts:
   - name: "DockerImage"
     type: DOCKER_IMAGE
     location: "${IMAGE}"
-  - name: "DockerRegistry"
-    type: INLINE
-    location: "${DOCKER_REGISTRY}"
