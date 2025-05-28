@@ -4,25 +4,24 @@ timeoutInSeconds: 600
 runAs: root
 shell: bash
 
-
 env:
   variables:
     JAVA_HOME: "javahome"
     IMAGE_NAME: "todolistapp-springboot"
     IMAGE_VERSION: "0.1"
     DOCKER_REGISTRY: "qro.ocir.io/a01637667/reacttodo/dcfkg/todolistapp-springboot"
-    OCI_USERNAME: "a01637667/a01637667@tec.mx"
-    OCI_AUTH_TOKEN: "${AUTH_TOKEN}"  # Replace with actual token or use a secure method to retrieve it
+    # <<< SECURITY NOTE: Store these in OCI Vault or Pipeline Parameters instead of hardcoding!
+    OCI_USERNAME: "a01637667/a01637667@tec.mx"  # Format: "tenancy-namespace/username"
+    # <<< Remove OCI_AUTH_TOKEN from here! Pass it as a pipeline parameter instead.
 
   exportedVariables:
     - IMAGE
 
 steps:
-  - type : Command
+  - type: Command
     name: "Prepare Environment"
     timeoutInSeconds: 300
     command: |
-      # Install Docker if not present
       if ! command -v docker &> /dev/null; then
         echo "Installing Docker..."
         yum install -y docker-engine
@@ -31,20 +30,22 @@ steps:
         echo "Docker is already installed"
       fi
 
-  
   - type: Command
     name: "Docker Login"
     timeoutInSeconds: 60
     command: |
-      # Extract registry domain (e.g., "qro.ocir.io")
-      REGISTRY_DOMAIN=$(echo "${DOCKER_REGISTRY}" | awk -F/ '{print $1}')
+      # <<< Improved registry domain extraction
+      REGISTRY_DOMAIN=${DOCKER_REGISTRY%%/*}
       echo "Logging into: ${REGISTRY_DOMAIN}"
       
-      # Use the parameterized token
-      echo "${DOCKER_AUTH_TOKEN}" | docker login -u "${OCI_USERNAME}" --password-stdin "${REGISTRY_DOMAIN}"
+      # <<< Critical: Use --password-stdin to avoid TTY error
+      echo "${AUTH_TOKEN}" | docker login -u "${OCI_USERNAME}" --password-stdin "${REGISTRY_DOMAIN}"
       
       if [ $? -ne 0 ]; then
-        echo "ERROR: Docker login failed. Check username/token/registry."
+        echo "ERROR: Docker login failed. Possible issues:"
+        echo "1. Invalid auth token (generate a new one in OCI Console)"
+        echo "2. Incorrect username format (must be: 'tenancy-namespace/username')"
+        echo "3. Registry domain mismatch (used: ${REGISTRY_DOMAIN})"
         exit 1
       fi
 
@@ -52,46 +53,12 @@ steps:
     name: "Build and Push Docker Image"
     timeoutInSeconds: 600
     command: |
-      echo "Starting Docker build process"
       cd ${OCI_PRIMARY_SOURCE_DIR}/oci-react-samples/MtdrSprint/backend
-      
-      # Attempt to get DOCKER_REGISTRY from pipeline state
-      if [ -z "$DOCKER_REGISTRY" ]; then
-        export DOCKER_REGISTRY=$(state_get DOCKER_REGISTRY)
-        echo "DOCKER_REGISTRY retrieved from state: $DOCKER_REGISTRY"
-      fi
-      
-      # Check again if DOCKER_REGISTRY was set successfully
-      if [ -z "$DOCKER_REGISTRY" ]; then
-        echo "Error: DOCKER_REGISTRY env variable needs to be set!"
-        exit 1
-      fi
-
-      # Compose full image tag
       export IMAGE="${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_VERSION}"
-      echo "Using IMAGE tag: $IMAGE"
-
-      echo "Running Maven build"
+      
       mvn clean package spring-boot:repackage
-
-      echo "Building Docker image"
-      docker build -f Dockerfile -t $IMAGE .
-
-      echo "Pushing Docker image"
-      docker push $IMAGE
-
-      if [ $? -eq 0 ]; then
-        echo "Image pushed successfully, cleaning up local image"
-        docker rmi "$IMAGE"
-      fi
-    
-    onFailure: 
-      - type: Command
-        name: "Handle Failure"
-        command: |
-          echo "Build or push failed. Please check the logs for details."
-        timeoutInSeconds: 60
-        runAs: root
+      docker build -t "$IMAGE" -f Dockerfile .
+      docker push "$IMAGE" && docker rmi "$IMAGE"  # <<< Combined push/cleanup
 
 outputArtifacts:
   - name: "DockerImage"
