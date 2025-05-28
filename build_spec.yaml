@@ -53,12 +53,46 @@ steps:
     name: "Build and Push Docker Image"
     timeoutInSeconds: 600
     command: |
+      echo "Starting Docker build process"
       cd ${OCI_PRIMARY_SOURCE_DIR}/oci-react-samples/MtdrSprint/backend
-      export IMAGE="${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_VERSION}"
       
+      # Attempt to get DOCKER_REGISTRY from pipeline state
+      if [ -z "$DOCKER_REGISTRY" ]; then
+        export DOCKER_REGISTRY=$(state_get DOCKER_REGISTRY)
+        echo "DOCKER_REGISTRY retrieved from state: $DOCKER_REGISTRY"
+      fi
+      
+      # Check again if DOCKER_REGISTRY was set successfully
+      if [ -z "$DOCKER_REGISTRY" ]; then
+        echo "Error: DOCKER_REGISTRY env variable needs to be set!"
+        exit 1
+      fi
+
+      # Compose full image tag
+      export IMAGE="${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_VERSION}"
+      echo "Using IMAGE tag: $IMAGE"
+
+      echo "Running Maven build"
       mvn clean package spring-boot:repackage
-      docker build -t "$IMAGE" -f Dockerfile .
-      docker push "$IMAGE" && docker rmi "$IMAGE"  # <<< Combined push/cleanup
+
+      echo "Building Docker image"
+      docker build -f Dockerfile -t $IMAGE .
+
+      echo "Pushing Docker image"
+      docker push $IMAGE
+
+      if [ $? -eq 0 ]; then
+        echo "Image pushed successfully, cleaning up local image"
+        docker rmi "$IMAGE"
+      fi
+    
+    onFailure: 
+      - type: Command
+        name: "Handle Failure"
+        command: |
+          echo "Build or push failed. Please check the logs for details."
+        timeoutInSeconds: 60
+        runAs: root
 
 outputArtifacts:
   - name: "DockerImage"
