@@ -9,9 +9,9 @@ env:
     JAVA_HOME: "javahome"
     IMAGE_NAME: "todolistapp-springboot"
     IMAGE_VERSION: "0.1"
-    DOCKER_REGISTRY: "qro.ocir.io/a01637667/reacttodo/dcfkg/todolistapp-springboot"
+    DOCKER_REGISTRY: "qro.ocir.io/axmgmaaw28rg/reacttodo/dcfkg/todolistapp-springboot"
     # <<< SECURITY NOTE: Store these in OCI Vault or Pipeline Parameters instead of hardcoding!
-    OCI_USERNAME: "a01637667/a01637667@tec.mx"  # Format: "tenancy-namespace/username"
+    OCI_USERNAME: "axmgmaaw28rg/a01637667@tec.mx"  # Format: "tenancy-namespace/username"
     # <<< Remove OCI_AUTH_TOKEN from here! Pass it as a pipeline parameter instead.
 
   exportedVariables:
