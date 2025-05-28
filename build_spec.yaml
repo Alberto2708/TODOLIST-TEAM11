@@ -15,5 +15,8 @@ steps:
     command: |
       echo "Running build script"
       echo "Current directory: $(pwd)"
-      cd $MTDRWORKSHOP_LOCATION/backend
+      cd ${OCI_PRIMARY_SOURCE_DIR}/oci-react-samples/MtdrSprint/backend
       echo "Current directory: $(pwd)"
+      ls
+      source build.sh
+      echo "Build script executed successfully"
