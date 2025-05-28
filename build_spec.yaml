@@ -10,7 +10,7 @@ env:
     JAVA_HOME: "javahome"
     IMAGE_NAME: "todolistapp-springboot"
     IMAGE_VERSION: "0.1"
-    DOCKER_REGISTRY: "qro.ocir.io/$(state_get NAMESPACE)/$(state_get RUN_NAME)/$(state_get MTDR_KEY)"
+    DOCKER_REGISTRY: "qro.ocir.io/a01637667/reacttodo/dcfkg/todolistapp-springboot"
 
   exportedVariables:
     - IMAGE
