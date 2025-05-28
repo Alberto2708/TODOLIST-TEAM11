@@ -4,16 +4,16 @@ timeoutInSeconds: 600
 runAs: root
 shell: bash
 
-exportedVariables:
-  - IMAGE
-  - DOCKER_REGISTRY
-
 
 env:
   variables:
     JAVA_HOME: "javahome"
     IMAGE_NAME: "todolistapp-springboot"
     IMAGE_VERSION: "0.1"
+
+  exportedVariables:
+    - IMAGE
+    - DOCKER_REGISTRY
 
 steps:
   - type: Command
