@@ -29,6 +29,17 @@ steps:
       else
         echo "Docker is already installed"
       fi
+      if type -p java; then
+        echo "Java found in PATH"
+        JAVA_BIN=$(readlink -f $(which java))
+        export JAVA_HOME=$(dirname $(dirname $JAVA_BIN))
+        echo "JAVA_HOME set to $JAVA_HOME"
+      else
+        echo "Installing OpenJDK 17..."
+        yum install -y java-17-openjdk-devel
+        export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+        echo "JAVA_HOME set to $JAVA_HOME"
+      fi
 
   - type: Command
     name: "Docker Login"
@@ -86,6 +97,8 @@ steps:
         echo "Image pushed successfully, cleaning up local image"
         docker rmi "$IMAGE"
       fi
+
+      
     
     onFailure: 
       - type: Command
