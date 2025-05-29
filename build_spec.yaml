@@ -6,13 +6,11 @@ shell: bash
 
 env:
   variables:
-    IMAGE_NAME: "todolistapp-springboot"
     IMAGE_VERSION: "0.1"
     DOCKER_REGISTRY: "qro.ocir.io/axmgmaaw28rg/reacttodo/dcfkg/todolistapp-springboot"
     # <<< SECURITY NOTE: Store these in OCI Vault or Pipeline Parameters instead of hardcoding!
     OCI_USERNAME: "axmgmaaw28rg/a01637667@tec.mx"  # Format: "tenancy-namespace/username"
     # <<< Remove OCI_AUTH_TOKEN from here! Pass it as a pipeline parameter instead.
-
   exportedVariables:
     - IMAGE
 
@@ -91,7 +89,7 @@ steps:
       fi
 
       # Compose full image tag
-      export IMAGE="${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_VERSION}"
+      export IMAGE="${DOCKER_REGISTRY}:${IMAGE_VERSION}"
       echo "Using IMAGE tag: $IMAGE"
 
       echo "Running Maven build"
