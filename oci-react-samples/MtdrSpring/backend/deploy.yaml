@@ -14,35 +14,44 @@ steps:
     name: "Prepare Environment"
     timeoutInSeconds: 300
     command: |
-      if [ -z "$DOCKER_REGISTRY" ]; then
-          echo "DOCKER_REGISTRY set."
-      fi
-      if [ -z "$DOCKER_REGISTRY" ]; then
-          echo "Error: DOCKER_REGISTRY env variable needs to be set!"
-          exit 1
-      fi
+        pwd
+        if [ -z "$DOCKER_REGISTRY" ]; then
+            echo "DOCKER_REGISTRY needs to be set!"
+        fi
 
-      if [ -z "$TODO_PDB_NAME" ]; then
-          echo "TODO_PDB_NAME set."
-      fi
-      if [ -z "$TODO_PDB_NAME" ]; then
-          echo "Error: TODO_PDB_NAME env variable needs to be set!"
-          exit 1
-      fi
+        if [ -z "$TODO_PDB_NAME" ]; then
+            echo "TODO_PDB_NAME needs to be set!"
+        fi
 
-      if [ -z "$REGION" ]; then
-          echo "REGION not set. Will get it with state_get"
-      fi
-      if [ -z "$REGION" ]; then
-          echo "Error: REGION env variable needs to be set!"
-          exit 1
-      fi
+        if [ -z "$REGION" ]; then
+            echo "REGION needs to be set!"
+        fi
 
-      if [ -z "$UI_USERNAME" ]; then
-          echo "UI_USERNAME not set. Will get it with state_get"
-      fi
-      if [ -z "$UI_USERNAME" ]; then
-          echo "Error: UI_USERNAME env variable needs to be set!"
-          exit 1
-      fi
-      
+        if [ -z "$UI_USERNAME" ]; then
+            echo "UI_USERNAME needs to be set!"
+        fi
+
+        if [ -z "$IMAGE_VERSION" ]; then
+            echo "IMAGE_VERSION needs to be set!"
+        fi
+
+        echo "Creating springboot deplyoment and service"
+        const CURRENTTIME=$( date '+%F_%H:%M:%S' )
+        cp src/main/resources/todolistapp-springboot.yaml todolistapp-springboot-$CURRENTTIME.yaml
+
+        sed -i "s|%DOCKER_REGISTRY%|${DOCKER_REGISTRY}|g" todolistapp-springboot-$CURRENTTIME.yaml
+
+        sed -e "s|%DOCKER_REGISTRY%|${DOCKER_REGISTRY}|g" todolistapp-springboot-${CURRENTTIME}.yaml > /tmp/todolistapp-springboot-${CURRENTTIME}.yaml
+        mv -- /tmp/todolistapp-springboot-$CURRENTTIME.yaml todolistapp-springboot-$CURRENTTIME.yaml
+        sed -e "s|%TODO_PDB_NAME%|${TODO_PDB_NAME}|g" todolistapp-springboot-${CURRENTTIME}.yaml > /tmp/todolistapp-springboot-${CURRENTTIME}.yaml
+        mv -- /tmp/todolistapp-springboot-$CURRENTTIME.yaml todolistapp-springboot-$CURRENTTIME.yaml
+        sed -e "s|%OCI_REGION%|${OCI_REGION}|g" todolistapp-springboot-${CURRENTTIME}.yaml > /tmp/todolistapp-springboot-$CURRENTTIME.yaml
+        mv -- /tmp/todolistapp-springboot-$CURRENTTIME.yaml todolistapp-springboot-$CURRENTTIME.yaml
+        sed -e "s|%UI_USERNAME%|${UI_USERNAME}|g" todolistapp-springboot-${CURRENTTIME}.yaml > /tmp/todolistapp-springboot-$CURRENTTIME.yaml
+        mv -- /tmp/todolistapp-springboot-$CURRENTTIME.yaml todolistapp-springboot-$CURRENTTIME.yaml
+        if [ -z "$1" ]; then
+            kubectl apply -f $SCRIPT_DIR/todolistapp-springboot-$CURRENTTIME.yaml -n mtdrworkshop
+        else
+            kubectl apply -f <(istioctl kube-inject -f $SCRIPT_DIR/todolistapp-springboot-$CURRENTTIME.yaml) -n mtdrworkshop
+        fi
+        
