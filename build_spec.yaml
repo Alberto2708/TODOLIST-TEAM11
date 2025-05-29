@@ -99,9 +99,7 @@ steps:
       docker build -f Dockerfile -t $IMAGE .
 
       echo "Pushing Docker image"
-      docker push $IMAGE
-
-      
+      docker push $IMAGE      
     
     onFailure: 
       - type: Command
