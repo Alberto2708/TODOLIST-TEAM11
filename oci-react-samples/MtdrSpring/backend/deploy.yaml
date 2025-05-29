@@ -14,5 +14,35 @@ steps:
     name: "Prepare Environment"
     timeoutInSeconds: 300
     command: |
-      echo "Checking Java version..."
+      if [ -z "$DOCKER_REGISTRY" ]; then
+          echo "DOCKER_REGISTRY set."
+      fi
+      if [ -z "$DOCKER_REGISTRY" ]; then
+          echo "Error: DOCKER_REGISTRY env variable needs to be set!"
+          exit 1
+      fi
+
+      if [ -z "$TODO_PDB_NAME" ]; then
+          echo "TODO_PDB_NAME set."
+      fi
+      if [ -z "$TODO_PDB_NAME" ]; then
+          echo "Error: TODO_PDB_NAME env variable needs to be set!"
+          exit 1
+      fi
+
+      if [ -z "$REGION" ]; then
+          echo "REGION not set. Will get it with state_get"
+      fi
+      if [ -z "$REGION" ]; then
+          echo "Error: REGION env variable needs to be set!"
+          exit 1
+      fi
+
+      if [ -z "$UI_USERNAME" ]; then
+          echo "UI_USERNAME not set. Will get it with state_get"
+      fi
+      if [ -z "$UI_USERNAME" ]; then
+          echo "Error: UI_USERNAME env variable needs to be set!"
+          exit 1
+      fi
       
