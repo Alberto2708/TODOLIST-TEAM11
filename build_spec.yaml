@@ -12,7 +12,6 @@ env:
     # <<< Remove OCI_AUTH_TOKEN from here! Pass it as a pipeline parameter instead.
   exportedVariables:
     - IMAGE
-    - deploy_name
 
 steps:
   - type: Command
