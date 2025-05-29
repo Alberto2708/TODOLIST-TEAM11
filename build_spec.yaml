@@ -103,11 +103,6 @@ steps:
       echo "Pushing Docker image"
       docker push $IMAGE
 
-      if [ $? -eq 0 ]; then
-        echo "Image pushed successfully, cleaning up local image"
-        docker rmi "$IMAGE"
-      fi
-
       
     
     onFailure: 
