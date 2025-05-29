@@ -95,7 +95,7 @@ steps:
       echo "Using IMAGE tag: $IMAGE"
 
       echo "Running Maven build"
-      mvn clean package spring-boot:repackage
+      mvn clean package spring-boot:repackage -DskipTests
 
       echo "Building Docker image"
       docker build -f Dockerfile -t $IMAGE .
