@@ -29,22 +29,27 @@ steps:
         echo "Docker is already installed"
       fi
 
-      echo "Removing any existing OpenJDK installations..."
-      yum remove -y java-17-openjdk java-17-openjdk-devel || true
-      yum remove -y java-1.8.0-openjdk java-1.8.0-openjdk-devel || true
-
-      
-      if type -p java; then
-        echo "Java found in PATH"
-        JAVA_BIN=$(readlink -f $(which java))
-        export JAVA_HOME=$(dirname $(dirname $JAVA_BIN))
-        echo "JAVA_HOME set to $JAVA_HOME"
+      echo "Checking Java version..."
+      if command -v java &> /dev/null; then
+        CURRENT_VERSION=$(java -version 2>&1 | awk -F[\".] '/version/ {print $2}')
+        echo "Detected Java major version: $CURRENT_VERSION"
+        if [ "$CURRENT_VERSION" -ne 11 ]; then
+          echo "Removing incorrect Java version (detected $CURRENT_VERSION)..."
+          yum remove -y java-1.* java-17-openjdk* java-18-openjdk* java-19-openjdk* || true
+          echo "Installing OpenJDK 11..."
+          yum install -y java-11-openjdk-devel
+        else
+          echo "Java 11 already installed"
+        fi
       else
-        echo "Installing OpenJDK 11..."
+        echo "Java not found, installing OpenJDK 11..."
         yum install -y java-11-openjdk-devel
-        export JAVA_HOME=/usr/lib/jvm/java-11-openjdk
-        echo "JAVA_HOME set to $JAVA_HOME"
       fi
+
+      echo "Setting JAVA_HOME to Java 11..."
+      export JAVA_HOME=/usr/lib/jvm/java-11-openjdk
+      echo "JAVA_HOME set to $JAVA_HOME"
+      java -version
 
   - type: Command
     name: "Docker Login"
