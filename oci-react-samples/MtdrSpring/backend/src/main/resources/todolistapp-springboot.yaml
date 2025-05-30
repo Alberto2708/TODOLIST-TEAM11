@@ -64,11 +64,7 @@ spec:
             - name: ui_username
               value: "${UI_USERNAME}"
             - name: ui_password
-              valueFrom:
-                secretKeyRef:
-                  name: frontendadmin
-                  key: password
-                  optional: true
+              value: "{DB_PASSWORD}"
           volumeMounts:
             - name: creds
               mountPath: /mtdrworkshop/creds
