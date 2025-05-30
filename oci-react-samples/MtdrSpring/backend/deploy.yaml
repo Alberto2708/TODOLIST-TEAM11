@@ -6,7 +6,7 @@ shell: bash
 
 env:
   variables:
-    DOCKER_REGISTRY: "qro.ocir.io/axmgmaaw28rg/reacttodo/dcfkg/todolistapp-springboot"
+    DOCKER_REGISTRY: " mx-queretaro-1.ocir.io/axmgmaaw28rg/reacttodo/dcfkg/todolistapp-springboot"
     OCI_USERNAME: "axmgmaaw28rg/a01637667@tec.mx" 
 
 steps:
