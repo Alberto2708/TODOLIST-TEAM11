@@ -16,6 +16,7 @@ steps:
     command: |
         echo "Starting preparing environment at: "
         pwd
+        SCRIPT_DIR=${OCI_PRIMARY_SOURCE_DIR}/oci-react-samples/MtdrSpring/backend/src/main/resources
         if [ -z "$DOCKER_REGISTRY" ]; then
             echo "DOCKER_REGISTRY needs to be set!"
         fi
