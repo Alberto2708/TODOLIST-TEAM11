@@ -60,11 +60,7 @@ spec:
             - name: REGION
               value: "${REGION}"
             - name: dbpassword
-              valueFrom:
-                secretKeyRef:
-                  name: dbuser
-                  key: dbpassword
-                  optional: true
+              value: "${DB_PASSWORD}"
             - name: ui_username
               value: "${UI_USERNAME}"
             - name: ui_password
