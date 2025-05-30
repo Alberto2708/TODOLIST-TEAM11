@@ -37,7 +37,7 @@ steps:
         fi
 
         echo "Creating springboot deplyoment and service"
-        const CURRENTTIME=$( date '+%F_%H:%M:%S' )
+        CURRENTTIME=$( date '+%F_%H:%M:%S' )
         echo "Current time is: $CURRENTTIME"
         cp src/main/resources/todolistapp-springboot.yaml todolistapp-springboot-$CURRENTTIME.yaml
 
