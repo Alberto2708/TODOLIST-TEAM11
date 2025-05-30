@@ -55,6 +55,8 @@ steps:
       # <<< Improved registry domain extraction
       REGISTRY_DOMAIN=${DOCKER_REGISTRY%%/*}
       echo "Logging into: ${REGISTRY_DOMAIN}"
+      echo "Using OCI_USERNAME: ${OCI_USERNAME}"
+      echo "Registry domain: ${REGISTRY_DOMAIN}"
       
       # <<< Critical: Use --password-stdin to avoid TTY error
       echo "${AUTH_TOKEN}" | docker login -u "${OCI_USERNAME}" --password-stdin "${REGISTRY_DOMAIN}"
