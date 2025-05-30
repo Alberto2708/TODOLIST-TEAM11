@@ -47,7 +47,7 @@ function HeaderMngr({
       };
     } else {
       return {
-        title: "TO DO LIST",
+        title: "TO DO LIST (PENDING TASKS)",
         primaryButton: {
           text: 'Completed Tasks',
           path: '/CompletedTasks'
