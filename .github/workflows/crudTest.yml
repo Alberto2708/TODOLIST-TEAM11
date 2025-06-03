@@ -4,9 +4,13 @@ name: CRUD Springboot Testing
 on:
   workflow_dispatch:
   push:
-    branches: [ "main" ]
+    branches:
+      - "main"
+      - "LocalBuild"
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - "main"
+      - "LocalBuild"
 
 jobs:
   test:
