@@ -69,7 +69,7 @@ function Login() {
   return (
     <div className="login-container">
       <form className="login-box" onSubmit={handleLogin}>
-        <h2>Login</h2>
+        <h2>Logn</h2>
         {errorMessage && <p className="error-message">{errorMessage}</p>}
         <input
           type="email"
