@@ -114,9 +114,6 @@ outputArtifacts:
   - name: "DockerImage"
     type: DOCKER_IMAGE
     location: "${IMAGE}"
-  - name: "deployment_yaml"
-    type: BINARY
-    location: "${OCI_PRIMARY_SOURCE_DIR}/oci-react-samples/MtdrSpring/backend/deploy.yaml"
   - name: "todolistapp-springboot_yaml"
     type: BINARY
     location: "${OCI_PRIMARY_SOURCE_DIR}/oci-react-samples/MtdrSpring/backend/src/main/resources/todolistapp-springboot.yaml"
