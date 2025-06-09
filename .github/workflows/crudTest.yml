@@ -6,6 +6,7 @@ on:
   push:
     branches: 
       - localDeploy
+      - deployPantai
   pull_request:
     branches: 
       - deployPantai
@@ -59,8 +60,12 @@ jobs:
         WALLET_PATH="$(pwd)/oci-react-samples/MtdrSpring/Wallet_TEAM11"
         sed -i "s|spring.datasource.url=jdbc:oracle:thin:@team11_high?TNS_ADMIN=.*|spring.datasource.url=jdbc:oracle:thin:@team11_high?TNS_ADMIN=${WALLET_PATH}|" oci-react-samples/MtdrSpring/backend/src/main/resources/application.properties
         cat oci-react-samples/MtdrSpring/backend/src/main/resources/application.properties
-
-    
+  #Changing OracleConfiguration.java to use DB configuration for local, instead of using the OCI one, it prevents testing from succeeding
+    - name: Set OracleConfiguration.java isLocal boolean to true
+      run: |    
+        sed -i "s|final boolean isLocal = false;|final boolean isLocal = true;|" oci-react-samples/MtdrSpring/backend/src/main/java/com/springboot/MyTodoList/config/OracleConfiguration.java
+        cat oci-react-samples/MtdrSpring/backend/src/main/java/com/springboot/MyTodoList/config/OracleConfiguration.java
+        
     - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
