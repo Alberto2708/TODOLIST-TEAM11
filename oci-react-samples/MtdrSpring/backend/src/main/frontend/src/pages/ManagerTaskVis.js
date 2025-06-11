@@ -60,6 +60,7 @@ export default function ManagerTaskVis() {
         }
     }, [selectedDeveloper, tasks]);
 
+
     const handleRefresh = (managerId, projectId) => {
         setScreenLoading(true);
         fetchActualSprint(projectId, managerId);
@@ -250,6 +251,7 @@ export default function ManagerTaskVis() {
                         selectedDeveloper={selectedDeveloper}
                         setSelectedDeveloper={setSelectedDeveloper}
                         onCreateTask={openTaskCreationModal}
+                        onCreateSubTask={openSubTaskCreationModal}
                     />
 
                     {employees.length === 0 ? (
@@ -273,10 +275,10 @@ export default function ManagerTaskVis() {
                                                     timestamp={task.deadline}
                                                     statusColor={getStatusColor(task.status)}
                                                     taskStatus={task.status}
-                                                    subTasks={task.subTasks}
+                                                    subTasks={task.subTasks || []}
                                                     onClick={() => openTaskDetailsModal(employee.id, index)}
                                                     userName={employee.name}
-                                                    subTaskOnClick={() => openSubTaskDetailsModal(task)}
+                                                    subTaskOnClick={(subtask) => openSubTaskDetailsModal(subtask)}
                                                 />
                                             ))
                                         ) : (
@@ -327,7 +329,7 @@ export default function ManagerTaskVis() {
                             task={selectedTask}
                             handleDeleteClick={(id) => handleDeleteClick(id)}
                             onEditSaved={() => handleRefresh(passedProjectId, authEmployeeId)}
-                            mode = "pending"
+                            mode="pending"
                         />
                     )}
                 </>
@@ -335,3 +337,4 @@ export default function ManagerTaskVis() {
         </div>
     );
 }
+
