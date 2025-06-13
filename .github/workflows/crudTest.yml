@@ -6,6 +6,7 @@ on:
   push:
     branches: 
       - localDeploy
+      - deployPantai
   pull_request:
     branches: 
       - deployPantai
