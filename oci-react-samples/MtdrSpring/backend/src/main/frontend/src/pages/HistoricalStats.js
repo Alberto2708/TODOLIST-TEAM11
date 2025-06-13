@@ -28,7 +28,7 @@ export default function HistoricalStats() {
   const [completedTasksNumber, setcompletedTasksNumber] = useState({});
   const [completedTasks, setCompletedTasks] = useState({});
 
-  const colors = ["#1e3888", "#47a8bd", "#f5e663", "#ffad69", "#9c3848"];
+  const colors = ["#1e3888", "#47a8bd", "#f5e663", "#ffad69", "#9c3848", "#460257", "#8a2be2", "#ff4500", "#2e8b57", "#d2691e"];
 
   useEffect(() => {
     if (!authData) {
