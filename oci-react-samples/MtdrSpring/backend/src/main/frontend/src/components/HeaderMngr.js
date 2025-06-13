@@ -57,10 +57,6 @@ function HeaderMngr({
           text: 'View Statistics',
           path: '/Stats'
         },
-        terciaryButton: {
-          text: 'Sprint Carousel',
-          path: '/SprintCarousel'
-        },
         showCreateButton: true
       };
     }
