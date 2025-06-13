@@ -1,9 +1,10 @@
+// TaskCreation.js modificado
 import React, { useState, useEffect } from "react";
+import SubTaskCreation from "./SubTaskCreation"; // Importamos el componente de subtarea
 import "../styles/TaskCreation.css";
 
 export default function TaskCreation({ onClose, onTaskCreated, managerId, projectId, sprintId }) {
     const [taskName, setTaskName] = useState("");
-    //const [parentName, setParentName] = useState("");
     const [description, setDescription] = useState("");
     const [dueDate, setDueDate] = useState("");
     const [responsibles, setResponsibles] = useState([{ id: "", name: "" }]);
@@ -13,25 +14,27 @@ export default function TaskCreation({ onClose, onTaskCreated, managerId, projec
     const [errorMessage, setErrorMessage] = useState("");
     const [employees, setEmployees] = useState([]);
     const [loadingEmployees, setLoadingEmployees] = useState(true);
-    const [/*errorLoadingEmployees*/, setErrorLoadingEmployees] = useState(null);
+    const [showSubtaskOption, setShowSubtaskOption] = useState(false);
+    const [createAsSubtask, setCreateAsSubtask] = useState(false);
+
+    useEffect(() => 
+        {setShowSubtaskOption(parseFloat(estHours) > 4);
+    }, [estHours]);
+
+    const fetchEmployees = async () => {
+        try {
+            setLoadingEmployees(true);
+            const response = await fetch(`/employees/managerId/${managerId}`);
+            const data = await response.json();
+            setEmployees(data);
+        } catch (error) {
+            console.error("Error loading employees:", error);
+        } finally {
+            setLoadingEmployees(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchEmployees = async () => {
-            try {
-                setLoadingEmployees(true);
-                setErrorLoadingEmployees(null);
-
-                const response = await fetch(`/employees/managerId/${managerId}`);
-                const data = await response.json();
-                setEmployees(data);
-            } catch (error) {
-                console.error("Error loading employees:", error);
-                setErrorLoadingEmployees(error.message);
-            } finally {
-                setLoadingEmployees(false);
-            }
-        };
-
         fetchEmployees();
     }, [managerId]);
 
@@ -145,6 +148,29 @@ export default function TaskCreation({ onClose, onTaskCreated, managerId, projec
             setIsSubmitting(false);
         }
     };
+
+    if (createAsSubtask) {
+        return (
+            <SubTaskCreation 
+                onClose={() => {
+                    setCreateAsSubtask(false);
+                    onClose();
+                }}
+                onTaskCreated={onTaskCreated}
+                managerId={managerId}
+                projectId={projectId}
+                sprintId={sprintId}
+                initialData={{
+                    taskName,
+                    description,
+                    dueDate,
+                    responsibles,
+                    estHours
+                }}
+            />
+        );
+    }
+
 
     return (
         <div className="tc-modal-overlay">

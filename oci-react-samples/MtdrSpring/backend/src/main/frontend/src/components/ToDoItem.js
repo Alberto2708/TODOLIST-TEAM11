@@ -1,18 +1,27 @@
 import React, { useState } from "react";
 import "../styles/ToDoItem.css";
 
-const ToDoItem = ({ name, timestamp, statusColor, taskStatus, subTasks = [], onClick, subTaskOnClick }) => {
+const ToDoItem = ({
+  name,
+  timestamp,
+  statusColor,
+  taskStatus,
+  subTasks = [],
+  onClick,
+  subTaskOnClick,
+  isSubTask = false,
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleTaskClick = (e) => {
-    e.stopPropagation(); // Prevent click from bubbling up to parent
+    e.stopPropagation();
     if (onClick) {
-      onClick(); // Open modal with task details (only if onClick is defined)
+      onClick();
     }
   };
 
   const toggleSubtasks = (e) => {
-    e.stopPropagation(); // Prevent click from opening modal
+    e.stopPropagation();
     setIsExpanded(!isExpanded);
   };
 
@@ -53,13 +62,14 @@ const ToDoItem = ({ name, timestamp, statusColor, taskStatus, subTasks = [], onC
               timestamp={subTask.deadline}
               statusColor={getStatusColor(subTask.status)}
               taskStatus={subTask.status}
-              subTasks={subTask.subTasks || []} // Recursively pass subtasks
-              onClick={(e) => {
-                e.stopPropagation(); // Prevent parent task click
+              subTasks={subTask.subTasks || []}
+              isSubTask={true}
+              onClick={() => {
                 if (subTaskOnClick) {
-                  subTaskOnClick(subTask); // Pass the subtask to the handler (only if subTaskOnClick is defined)
+                  subTaskOnClick(subTask);
                 }
               }}
+              subTaskOnClick={subTaskOnClick}
             />
           ))}
         </div>
