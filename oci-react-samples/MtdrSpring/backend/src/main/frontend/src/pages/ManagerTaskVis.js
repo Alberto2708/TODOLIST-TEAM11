@@ -61,7 +61,7 @@ export default function ManagerTaskVis() {
     }, [selectedDeveloper, tasks]);
 
 
-    const handleRefresh = (managerId, projectId) => {
+    const handleRefresh = (projectId, managerId) => {
         setScreenLoading(true);
         fetchActualSprint(projectId, managerId);
     };
