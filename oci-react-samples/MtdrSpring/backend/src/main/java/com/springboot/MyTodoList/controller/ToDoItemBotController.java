@@ -33,9 +33,17 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
 
     private static final Logger logger = LoggerFactory.getLogger(ToDoItemBotController.class);
     private Map<Long, TaskCreationState> taskCreationStates = new HashMap<>();
+    private Map<Long, SubTaskCreationState> subTaskCreationStates = new HashMap<>();
 
     private class TaskCreationState {
 
+        String name;
+        Double estHours;
+        String description;
+        OffsetDateTime deadline;
+    }
+    private class SubTaskCreationState {
+        Integer parentTaskId;
         String name;
         Double estHours;
         String description;
@@ -88,6 +96,11 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         String command = update.getMessage().getText();
 
         try {
+            if (subTaskCreationStates.containsKey(chatId)) {
+                handleSubTaskCreationStep(chatId, user.getId(), command);
+                return;
+            }
+
             if (taskCreationStates.containsKey(chatId)) {
                 handleTaskCreationStep(chatId, user.getId(), command);
                 return;
@@ -127,8 +140,10 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
             // Row 2 - Manager only buttons
             KeyboardRow row2 = new KeyboardRow();
             row2.add(new KeyboardButton("➕ New Task"));
+            row2.add(new KeyboardButton("➕ New Subtask"));
             row2.add(new KeyboardButton("👥 Assign Task"));
             row2.add(new KeyboardButton("📂 Completed Tasks"));
+            row2.add(new KeyboardButton("📌 Pending Tasks"));
             keyboard.add(row2);
         }
 
@@ -159,6 +174,17 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
         sendMessage(chatId, "📝 Enter task name:");
     }
 
+    // This function handles the command for creating a new subtask, checking if the user is a manager,
+    private void handleNewSubtaskCommand(long chatId, long telegramId, String command) {
+        if (!authService.isManager(telegramId)) {
+            sendMessage(chatId, "⛔ Only managers can create subtasks");
+            return;
+        }
+
+        subTaskCreationStates.put(chatId, new SubTaskCreationState());
+        sendMessage(chatId, "🔗 Enter the Task ID for this subtask:");
+    }
+
     // This function handles the command for assigning a task, checking if the user is a manager,
     // and validating the input format
     // It also sends the result of the assignment back to the user
@@ -175,12 +201,53 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
             } else if ("📊 My KPIs".equals(command) || "/mykpis".equals(command)) {
                 String kpis = taskService.getDeveloperKPIs(telegramId);
                 sendMessage(chatId, kpis);
+            } else if (command.startsWith("/assignsubtask")) {
+                // Format: /assignsubtask TaskID SubTaskID email
+                if (!authService.isManager(telegramId)) {
+                    sendMessage(chatId, "⛔ Only managers can assign subtasks");
+                    return;
+                }
+                String[] parts = command.trim().split("\\s+");
+                if (parts.length < 4) {
+                    sendMessage(chatId, "❌ Format: /assignsubtask TaskID SubTaskID email@example.com");
+                    return;
+                }
+                try {
+                    int taskId = Integer.parseInt(parts[1]);
+                    int subTaskId = Integer.parseInt(parts[2]);
+                    String email = parts[3];
+                    String result = taskService.assignSubTask(telegramId, taskId, subTaskId, email);
+                    sendMessage(chatId, result);
+                } catch (NumberFormatException e) {
+                    sendMessage(chatId, "❌ Please enter valid Task ID and SubTask ID (numbers).");
+                }
+            } else if (command.startsWith("/completesubtask")) {
+                // Format: /completesubtask TaskID SubTaskID
+                String[] parts = command.trim().split("\\s+");
+                if (parts.length < 3) {
+                    sendMessage(chatId, "❌ Format: /completesubtask TaskID SubTaskID");
+                    return;
+                }
+                try {
+                    int taskId = Integer.parseInt(parts[1]);
+                    int subTaskId = Integer.parseInt(parts[2]);
+                    String result = taskService.completeSubTask(telegramId, taskId, subTaskId);
+                    sendMessage(chatId, result);
+                } catch (NumberFormatException e) {
+                    sendMessage(chatId, "❌ Please enter valid Task ID and SubTask ID (numbers).");
+                }
             } else if (command.startsWith("➕ New Task") || command.startsWith("/newtask")) {
                 if (!authService.isManager(telegramId)) {
                     sendMessage(chatId, "⛔ Only managers can create tasks");
                     return;
                 }
                 handleNewTaskCommand(chatId, telegramId, command);
+            } else if (command.startsWith("➕ New Subtask")) {
+                if (!authService.isManager(telegramId)) {
+                    sendMessage(chatId, "⛔ Only managers can create subtasks");
+                    return;
+                }
+                handleNewSubtaskCommand(chatId, telegramId, command);
             } else if (command.startsWith("👥 Assign Task") || command.startsWith("/assigntask")) {
                 if (!authService.isManager(telegramId)) {
                     sendMessage(chatId, "⛔ Only managers can assign tasks");
@@ -195,6 +262,13 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                     return;
                 }
                 handleCompletedTasksCommand(chatId, telegramId);
+            } else if ("📌 Pending Tasks".equals(command)) {
+                if (!authService.isManager(telegramId)) {
+                    sendMessage(chatId, "⛔ Only managers can view pending tasks");
+                    return;
+                }
+                String pendingTasks = taskService.getAllPendingTasks();
+                sendMessage(chatId, pendingTasks);
             } else {
                 sendMessage(chatId, "❌ Unknown command. Type /help for options.");
             }
@@ -238,6 +312,59 @@ public class ToDoItemBotController extends TelegramLongPollingBot {
                 sendMessage(chatId, "❌ Failed to create task");
                 taskCreationStates.remove(chatId);
                 logger.error("Task creation failed", e);
+            }
+        }
+    }
+
+    // Subtask creation steps
+    private void handleSubTaskCreationStep(long chatId, long telegramId, String input) {
+        SubTaskCreationState state = subTaskCreationStates.get(chatId);
+
+        if (state.parentTaskId == null) {
+            try {
+                int taskId = Integer.parseInt(input.trim());
+                state.parentTaskId = taskId;
+                sendMessage(chatId, "📝 Enter subtask name:");
+            } catch (NumberFormatException e) {
+                sendMessage(chatId, "❌ Please enter a valid Task ID (number):");
+            }
+        } else if (state.name == null) {
+            state.name = input;
+            sendMessage(chatId, "⏱️ Enter estimated hours for this subtask:");
+        } else if (state.estHours == null) {
+            try {
+                double hours = Double.parseDouble(input);
+                if (hours <= 0) {
+                    sendMessage(chatId, "❌ Estimated hours must be greater than 0. Please enter a valid number:");
+                    return;
+                }
+                state.estHours = hours;
+                sendMessage(chatId, "📝 Enter subtask description:");
+            } catch (NumberFormatException e) {
+                sendMessage(chatId, "❌ Please enter a valid number for hours");
+            }
+        } else if (state.description == null) {
+            state.description = input;
+            sendMessage(chatId, "📅 Enter deadline in format YYYY-MM-DD:");
+        } else if (state.deadline == null) {
+            try {
+                state.deadline = LocalDate.parse(input).atStartOfDay().atOffset(ZoneOffset.UTC);
+                String result = taskService.continueSubTaskCreation(
+                        telegramId,
+                        state.parentTaskId,
+                        state.name,
+                        state.estHours,
+                        state.description,
+                        state.deadline
+                );
+                sendMessage(chatId, result);
+                subTaskCreationStates.remove(chatId);
+            } catch (DateTimeParseException e) {
+                sendMessage(chatId, "❌ Invalid date format. Please use YYYY-MM-DD");
+            } catch (Exception e) {
+                sendMessage(chatId, "❌ Failed to create subtask");
+                subTaskCreationStates.remove(chatId);
+                logger.error("Subtask creation failed", e);
             }
         }
     }
