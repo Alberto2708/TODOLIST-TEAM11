@@ -69,7 +69,7 @@ function Login() {
   return (
     <div className="login-container">
       <form className="login-box" onSubmit={handleLogin}>
-        <h2>Login with Oracle Testing CI/CD</h2>
+        <h2>Login with Oracle</h2>
         {errorMessage && <p className="error-message">{errorMessage}</p>}
         <input
           type="email"
