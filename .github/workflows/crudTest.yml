@@ -58,9 +58,10 @@ jobs:
     - name : Set wallet path, username and password in application.properties for VM running action.
       run: |
         WALLET_PATH="$(pwd)/oci-react-samples/MtdrSpring/Wallet_TEAM11"
-        sed -i "s|spring.datasource.url=jdbc:oracle:thin:@.*|spring.datasource.url=jdbc:oracle:thin:@team11_high?TNS_ADMIN=${WALLET_PATH}|" oci-react-samples/MtdrSpring/backend/src/main/resources/application.properties
-        sed -i "s|spring.datasource.username=.*|spring.datasource.username=TODOUSER|" oci-react-samples/MtdrSpring/backend/src/main/resources/application.properties
-        sed -i "s|spring.datasource.password=.*|spring.datasource.password=Copiloto12345|" oci-react-samples/MtdrSpring/backend/src/main/resources/application.properties
+        sed -i "s|#spring.datasource.url=jdbc:oracle:thin:@.*|spring.datasource.url=jdbc:oracle:thin:@team11_high?TNS_ADMIN=${WALLET_PATH}|" oci-react-samples/MtdrSpring/backend/src/main/resources/application.properties
+        sed -i "s|#spring.datasource.username=.*|spring.datasource.username=TODOUSER|" oci-react-samples/MtdrSpring/backend/src/main/resources/application.properties
+        sed -i "s|#spring.datasource.password=.*|spring.datasource.password=Copiloto12345|" oci-react-samples/MtdrSpring/backend/src/main/resources/application.properties
+        sed -i "s|#server.port=8081|server.port=8081|" oci-react-samples/MtdrSpring/backend/src/main/resources/application.properties
         cat oci-react-samples/MtdrSpring/backend/src/main/resources/application.properties
 
   #Changing OracleConfiguration.java to use DB configuration for local, instead of using the OCI one, it prevents testing from succeeding
