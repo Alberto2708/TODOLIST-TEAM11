@@ -13,6 +13,8 @@ import com.springboot.MyTodoList.model.AssignedDev;
 import com.springboot.MyTodoList.model.AssignedDevId;
 import com.springboot.MyTodoList.model.Employee;
 import com.springboot.MyTodoList.model.Sprint;
+import com.springboot.MyTodoList.model.SubToDoItem;
+import com.springboot.MyTodoList.model.SubToDoItemId;
 import com.springboot.MyTodoList.model.ToDoItem;
 
 @Service
@@ -32,6 +34,9 @@ public class TelegramTaskService {
 
     @Autowired
     private TelegramAuthService authService;
+
+    @Autowired
+    private SubToDoItemService subToDoItemService;
 
     // Get all tasks for a specific employee in the current sprint by their Telegram ID
     // This method checks if the user is authenticated and retrieves their tasks
@@ -204,6 +209,37 @@ public class TelegramTaskService {
         }
     }
 
+    // Complete a subtask by its ID under a parent task
+    public String completeSubTask(long telegramId, int taskId, int subTaskId) {
+        try {
+            Employee employee = authService.getEmployee(telegramId);
+            if (employee == null) {
+                return "🔒 Please authenticate first";
+            }
+
+            ToDoItem subtask = toDoItemService.getItemById(subTaskId);
+            if (subtask == null) {
+                return "❌ Subtask not found or does not belong to the specified parent task";
+            }
+
+            if (!employee.getID().equals(subtask.getManagerId())) {
+                List<AssignedDev> assignments = assignedDevService.getAssignedDevsByDevId(employee.getID());
+                boolean isAssigned = assignments.stream()
+                    .anyMatch(a -> a.getId().getToDoItemId() == subTaskId);
+                if (!isAssigned) {
+                    return "⛔ You are not authorized to complete this subtask";
+                }
+            }
+
+            ToDoItem completedSubtask = toDoItemService.completeTask(subTaskId);
+            return completedSubtask != null
+                ? String.format("✅ Subtask #%d under Task #%d marked as completed!", subTaskId, taskId)
+                : "❌ Failed to complete subtask";
+        } catch (Exception e) {
+            return "❌ Error completing subtask";
+        }
+    }
+
     // Get tasks for a specific employee in a specific sprint by employee ID and sprint ID
     private List<ToDoItem> getTasksForEmployeeInSprint(Integer employeeId, Integer sprintId) {
         return assignedDevService.getAssignedDevsByDevId(employeeId).stream()
@@ -221,6 +257,15 @@ public class TelegramTaskService {
 
     // Format a single task for display
     private String formatTask(ToDoItem task) {
+        String displayName = task.getName();
+        if (isSubTask(task)) {
+            Integer parentId = getParentTaskId(task.getID());
+            if (parentId != null) {
+                displayName += " (Subtask from #" + parentId + ")";
+            } else {
+                displayName += " (Subtask)";
+            }
+        }
         return String.format(
                 "#%d - %s\n"
                 + "Status: %s\n"
@@ -228,12 +273,38 @@ public class TelegramTaskService {
                 + "Description: %s\n"
                 + "Deadline: %s",
                 task.getID(),
-                task.getName(),
+                displayName,
                 task.getStatus(),
                 task.getEstHours(),
                 task.getDescription() != null ? task.getDescription() : "No description",
                 task.getDeadline() != null ? task.getDeadline().toLocalDate() : "Not set"
         );
+    }
+
+    // Helper to get the parent task ID for a given subtask ID
+    private Integer getParentTaskId(Integer subTaskId) {
+        try {
+            List<SubToDoItem> allLinks = subToDoItemService.findAllSubToDoItems();
+            for (SubToDoItem link : allLinks) {
+                if (link.getId().getSubToDoItemId().equals(subTaskId)) {
+                    return link.getId().getToDoItemId();
+                }
+            }
+        } catch (Exception e) {
+            // ignore errors
+        }
+        return null;
+    }
+
+    // Helper to determine if a task is a subtask
+    private boolean isSubTask(ToDoItem task) {
+        try {
+            List<SubToDoItem> allLinks = subToDoItemService.findAllSubToDoItems();
+            return allLinks.stream()
+                .anyMatch(link -> link.getId().getSubToDoItemId().equals(task.getID()));
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     // Method to get all completed tasks in the actual sprint
@@ -256,7 +327,12 @@ public class TelegramTaskService {
                 if (!completedTasks.isEmpty()) {
                     result.append("👤 ").append(employee.getName()).append(":\n");
                     for (ToDoItem task : completedTasks) {
-                        result.append("- ").append(task.getName()).append(" (#").append(task.getID()).append(")\n");
+                        Integer parentId = getParentTaskId(task.getID());
+                        String subtaskInfo = "";
+                        if (parentId != null) {
+                            subtaskInfo = " (Subtask of Task #" + parentId + ")";
+                        }
+                        result.append("- ").append(task.getName()).append(" (#").append(task.getID()).append(")").append(subtaskInfo).append("\n");
                     }
                     result.append("\n");
                 }
@@ -267,4 +343,126 @@ public class TelegramTaskService {
             return "❌ Error retrieving completed tasks.";
         }
     }
+
+    // Method to get all pending tasks in the actual sprint
+    public String getAllPendingTasks() {
+        try {
+            ResponseEntity<Sprint> sprintResponse = sprintService.findActualSprintByProjectId(1);
+            if (sprintResponse.getStatusCode() != HttpStatus.OK) {
+                return "⚠️ No active sprint found";
+            }
+            Sprint sprint = sprintResponse.getBody();
+
+            List<Employee> allEmployees = employeeService.findAll();
+            StringBuilder result = new StringBuilder("📂 Pending Tasks This Sprint:\n\n");
+
+            for (Employee employee : allEmployees) {
+                List<ToDoItem> pendingTasks = getTasksForEmployeeInSprint(employee.getID(), sprint.getID()).stream()
+                        .filter(task -> "PENDING".equals(task.getStatus()))
+                        .collect(Collectors.toList());
+
+                if (!pendingTasks.isEmpty()) {
+                    result.append("👤 ").append(employee.getName()).append(":\n");
+                    for (ToDoItem task : pendingTasks) {
+                        Integer parentId = getParentTaskId(task.getID());
+                        String subtaskInfo = "";
+                        if (parentId != null) {
+                            subtaskInfo = " (Subtask of Task #" + parentId + ")";
+                        }
+                        result.append("- ").append(task.getName()).append(" (#").append(task.getID()).append(")").append(subtaskInfo).append("\n");
+                    }
+                    result.append("\n");
+                }
+            }
+
+            return result.length() > 0 ? result.toString() : "📭 No pending tasks in this sprint.";
+        } catch (Exception e) {
+            return "❌ Error retrieving pending tasks.";
+        }
+    }
+
+    // Subtask creation
+    public String initiateSubTaskCreation(long telegramId) {
+        Employee manager = authService.getEmployee(telegramId);
+        if (manager == null || !authService.isManager(telegramId)) {
+            return "⛔ Only managers can create subtasks";
+        }
+        return "Please enter the Task ID for which you want to create a subtask.";
+    }
+
+    // Continue subtask creation with validation and linking
+    public String continueSubTaskCreation(long telegramId, int taskId, String name, double estHours, String description, OffsetDateTime deadline) {
+        try {
+            Employee manager = authService.getEmployee(telegramId);
+            if (manager == null || !authService.isManager(telegramId)) {
+                return "⛔ Only managers can create subtasks";
+            }
+
+            ToDoItem parentTask = toDoItemService.getItemById(taskId);
+            if (parentTask == null || !parentTask.getManagerId().equals(manager.getID())) {
+                return "❌ Parent task not found or unauthorized";
+            }
+
+            // Prevent creating a subtask from another subtask
+            if (isSubTask(parentTask)) {
+                return "❌ You cannot create a subtask from another subtask.";
+            }
+
+            if (parentTask.getEstHours() == null || parentTask.getEstHours() < 4) {
+                return "❌ Parent task must have estimated hours of at least 4 to allow subtasks.";
+            }
+            if (estHours >= parentTask.getEstHours()) {
+                return String.format("❌ Subtask's estimated hours (%.2f) must be less than the parent task's estimated hours (%.2f).", estHours, parentTask.getEstHours());
+            }
+
+            if (parentTask.getDeadline() != null && deadline != null && deadline.isAfter(parentTask.getDeadline())) {
+                return String.format("❌ Subtask deadline (%s) cannot be after the parent task's deadline (%s).",
+                        deadline.toLocalDate(), parentTask.getDeadline().toLocalDate());
+            }
+
+            ToDoItem subtask = new ToDoItem();
+            subtask.setName(name);
+            subtask.setEstHours(estHours);
+            subtask.setDescription(description);
+            subtask.setDeadline(deadline);
+            subtask.setManagerId(manager.getID());
+            subtask.setStatus("PENDING");
+            subtask.setSprintId(parentTask.getSprintId());
+
+            ToDoItem savedSubtask = toDoItemService.addToDoItem(subtask);
+            SubToDoItem link = new SubToDoItem(new SubToDoItemId(taskId, savedSubtask.getID()));
+            subToDoItemService.addSubToDoItem(link);
+            return String.format("✅ Subtask #%d created under Task #%d!\n%s", savedSubtask.getID(), taskId, formatTask(savedSubtask));
+        } catch (Exception e) {
+            return "❌ Failed to create subtask";
+        }
+    }
+
+    public String assignSubTask(long telegramId, int parentTaskId, int subTaskId, String email) {
+        try {
+            Employee manager = authService.getEmployee(telegramId);
+            if (manager == null || !authService.isManager(telegramId)) {
+                return "⛔ Only managers can assign subtasks";
+            }
+
+            ResponseEntity<Employee> empResponse = employeeService.findEmployeeByEmail(email);
+            if (empResponse.getStatusCode() != HttpStatus.OK || empResponse.getBody() == null) {
+                return "❌ Employee not found";
+            }
+            Employee assignee = empResponse.getBody();
+
+            ToDoItem subtask = toDoItemService.getItemById(subTaskId);
+            if (subtask == null || !subtask.getManagerId().equals(manager.getID())) {
+                return "❌ Subtask not found or unauthorized";
+            }
+
+            AssignedDev assignment = new AssignedDev(new AssignedDevId(subTaskId, assignee.getID()));
+
+            assignedDevService.addAssignedDev(assignment);
+            return String.format("✅ Subtask #%d assigned to %s", subTaskId, assignee.getName());
+        } catch (Exception e) {
+            return "❌ Failed to assign subtask";
+        }
+    }
+
 }
